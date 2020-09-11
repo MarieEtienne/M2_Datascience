@@ -1,0 +1,52 @@
+---
+title: "Graphiques et cartes avec R"
+subtitle: "dans l'ère Hadley Wickham"
+author: "Marie-Pierre Etienne"
+institute: "Agrocampus Ouest"
+date: "2020/09/11 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["right", "top", "mon Titre"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: true
+---
+class: left, middle
+
+```{r, load_refs, include=FALSE, cache=FALSE}
+library(RefManageR)
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("visu.bib", check = FALSE)
+```
+
+# Tutoriel préparé à l'aide de 
+
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html)
+- [Geocomputation with R](https://geocompr.robinlovelace.net/)
+- [Tutoriel De raphaelle momal et Marie Perrot Dockès](https://stateofther.github.io/post/fancy-plotting/)
+- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+---
+
+# Des graphiques simples
+
+Le gg de ggplot vient de  *Grammar of Graphics* et son créateur Hadley Wickham  affirme ainsi *ggplot2 is
+ based on the Grammar of Graphics (Wilkinson 2005), that allows you to compose graphs by combining independent components**.
+
+*In brief, the grammar tells us that a graphic maps the data to the aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also include statistical transformations of the data and information about the plot’s coordinate system. Facetting can be used to plot for different subsets of the data. The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "wickham2016ggplot2")`.
+
+
+---
+
+# References
+
+```{r refs, echo=FALSE, results="asis"}
+PrintBibliography(myBib)
+```
