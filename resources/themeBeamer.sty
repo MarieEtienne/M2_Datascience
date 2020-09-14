@@ -1,0 +1,123 @@
+% __________________________________________________________________
+%
+% INCLUSION DES PACKAGES NECESSAIRES
+\RequirePackage{pgf}
+\RequirePackage{amsmath,amssymb,amsfonts}
+\RequirePackage[francais,english]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[OT1]{fontenc}
+\RequirePackage[normalem]{ulem}
+\RequirePackage{array}
+\usepackage{../resources/some_macros}
+
+\newcommand{\emphase}[1]{\textcolor{darkred}{#1}}
+\newcommand{\paragraph}[1]{\textcolor{darkred}{#1}}
+\newcommand{\refer}[1]{{\small{\textcolor{mred}{{\parencite{#1}}}}}}
+
+\usetheme{default}
+
+\setbeamersize{text margin left=1.25em,text margin right=1.25em}
+\useinnertheme{circles}
+\useoutertheme{default}
+\usefonttheme[onlymath]{serif}
+
+\setbeamertemplate{headline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{palette quaternary}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+  }
+}
+
+\setbeamertemplate{footline}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercovered{transparent=5}
+\setbeamerfont{date}{size=\scriptsize}
+\setbeamerfont{author}{size=\normalsize}
+\setbeamerfont{institute}{size=\scriptsize}
+\setbeamerfont{block title}{size=\normalsize}
+\setbeamercolor{date,author,institute,block title}{fg=mred}
+
+% PAS DE BARRE DE NAVIGUATION
+\setbeamertemplate{navigation symbols}{}
+
+%% COLOR
+\definecolor{darkred}{rgb}{0.65,0.15,0.25}
+\definecolor{lightgray}{gray}{0.90}
+\definecolor{mblue}{RGB}{94,135,173}
+\definecolor{mblack}{RGB}{62, 68, 68}
+%\definecolor{mdarkgreen}{RGB}{64, 93, 39}
+\definecolor{mdarkgreen}{RGB}{0, 111, 61}
+%\definecolor{mgreen}{RGB}{130, 183, 75}
+\definecolor{mgreen}{RGB}{26, 169, 104}
+\colorlet{mred}{red!80!black}
+
+% INNER
+\setbeamercolor{frametitle}{fg=mdarkgreen!75!black, bg=mgreen!20!white}
+\setbeamercolor{sur:head}{bg=mgreen!75!black,fg=white}
+\setbeamercolor{sur:bloc}{bg=black!5,fg=black}
+
+\setbeamercolor{title}{fg = mdarkgreen!75!black}
+\setbeamercolor{part title}{fg = mgreen!75!black}
+
+% In case you choose to display the Table of Contents, or the Outline slide.\
+\setbeamercolor{section in toc}{fg = mgreen!75!black}
+
+% The colour of all the items, subitems and and subsubitems are set to black.
+\setbeamercolor{item}{fg = mgreen!75!black}
+
+% \setbeamercolor{block title}{fg = mred, bg = white}
+% \setbeamercolor{block body}{bg = white}
+
+\setbeamercolor{block title}{fg = darkred, bg = mblue!15!white}
+\setbeamercolor{block body}{bg = mblue!10!white}
+
+\setbeamercolor*{block title example}{bg=darkred!10!white,fg= black}
+\setbeamercolor*{block body example}{bg=darkred!10!white,fg= black}
+
+
+\setbeamercolor{normal text}{fg = black}
+\setbeamercolor{alerted text}{fg = darkred}
+
+\setbeamercolor{section in head/foot}{fg=mdarkgreen!75!white,bg=mblue!75!black}
+\setbeamertemplate{section in head/foot shaded}[default][10]
+
+\setbeamercolor{caption name}{fg = darkred}
+
+\setbeamercolor{bibliography entry title}{fg = mgreen!75!black, bg = white}
+\setbeamercolor{bibliography entry author}{fg = mgreen!75!black, bg = white}
+
+% _________________________________________________________________
+% 
+%
+\def\th@mystyle{%
+    \normalfont % body font
+    \setbeamercolor{block body example}{bg=darkred!10!white,fg=black}
+     \def\inserttheoremblockenv{exampleblock}
+  }
+\theoremstyle{mystyle}
+\newtheorem*{question}{Question}
+
+% __________________________________________________________________
+%
+% THEOREMES
+{
+  \ifbeamer@blocks
+    \newtheorem{theoreme}[theorem]{Th\'{e}or\`{e}me}
+    \newtheorem{definitionf}[theorem]{D\'efinition}
+    \newtheorem{proposition}[theorem]{Proposition}
+    \newtheorem{propriete}[theorem]{Propri\'{e}t\'{e}}
+    \newtheorem{properties}[theorem]{Properties}
+    \newtheorem{corollaire}[theorem]{Corollaire}
+    \newtheorem{lemme}[theorem]{Lemme}
+    \newtheorem{probleme}[theorem]{Probl\`{e}me}
+    \newtheorem{fait}[theorem]{Fait}
+    \newtheorem{remarque}{Remarque}
+    \newtheorem{principe}{Principe}
+    \newtheorem{hypothese}{Hypoth\`{e}se}
+  \fi
+}
+
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=links}
