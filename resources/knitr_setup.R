@@ -2,9 +2,9 @@
 library(tidyverse)
 
 ## Basic option chunks
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE, verbose = TRUE,
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE, verbose = TRUE, comment = NA, 
                size = 'footnotesize',dev = 'pdf', fig.align = "center", results = "markup", 
-               fig.width = 6, fig.height = 4,  fig.pos = 'htbp!', out.width = '.8\\textwidth')
+               fig.width = 5, fig.height = 2.5,  fig.pos = 'htbp!', out.width = '.8\\textwidth')
 
 # knitr::knit_hooks$set(subdir = function(before, options, envir) {
 # 
