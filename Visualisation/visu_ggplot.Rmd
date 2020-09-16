@@ -7,13 +7,15 @@ institute: https://github.com/MarieEtienne/stateoftheRinRennes/
 csl: ../resources/apa-no-doi-no-issue.csl
 output:
   xaringan::moon_reader:
-    css: xaringan-themer.css 
-    #['default', 'metropolis', 'mpe_pres.css']
+    css: [  'metropolis', 'hygge', 'mpe_pres.css']
     lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+      ratio: 16:10
+    includes:
+      after_body: insert-logo.html
 bibliography: visu.bib
 fontsize: 10pt
 params:
@@ -21,136 +23,188 @@ params:
   setup_path: ../resources/
 ---
 
-```{r setup, include = FALSE, cahe = FALSE}
+```{r setup,   cahe = FALSE, eval = TRUE, echo = FALSE, message = FALSE}
 source(paste0(params$setup_path, "knitr_setup.R"))
 with_sol <- TRUE ## in order to control the output
 with_course <- TRUE
 ```
 
-
-```{r, load_refs, include=FALSE, cache=FALSE}
+```{r,  include=FALSE, cache=FALSE, eval = TRUE}
 library(kableExtra)
-## textformating function
-source('../utils/text_formatting.R')
-
-library(xaringanthemer)
-style_mono_accent(
-  base_color = "#5BBCD6",
-  header_font_google = google_font("Josefin Sans"),
-  text_font_google   = google_font("Montserrat", "300", "300i"),
-  code_font_google   = google_font("Fira Mono")
-)
+library(flipbookr)
 ```
 
 
-#  Introduction
+# Introduction
 
 ---
-#  Tutorial based on 
+
+# Tutorial based on
 
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) @wickham2016ggplot2
 - [Geocomputation with R](https://geocompr.robinlovelace.net/) @lovelace2019geocomputation`
-- [Tutoriel de Raphaelle Momal et Marie Perrot Dockès](https://stateofther.github.io/post/fancy-plotting/)
+- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
 - [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
 
 
 
+<!-- --- -->
 
-<!-- ### ggplot presentation -->
 
-<!-- gg stands for   *Grammar of Graphics*  and  ggplot2  is *based on the Grammar of Graphics @wilkinson2005grammar`, that allows you to compose graphs by combining independent components* (@wickham2016ggplot2). -->
+<!-- # ggplot presentation -->
 
-<!-- *[The] grammar tells us that a graphic maps `r colFmt("the data", "darj1")` to the `r colFmt("aesthetic attributes", "darj2")` (colour, shape, size) of `r colFmt("geometric objects",  "darj4")`  (points, lines, bars). The plot may also include statistical transformations of the data and information about the plot’s coordinate system. Facetting can be used to plot for different subsets of the data. The combination of these independent components are what make up a graphic.*  (@wickham2016ggplot2). --> -->
+<!-- gg stands for   *Grammar of Graphics*  and  ggplot2  is *based on the Grammar of Graphics @wilkinson2005gramma`, that allows you to compose graphs by combining independent components* (@wickham2016ggplot2). -->
+
+<!-- *[The] grammar tells us that a graphic maps the data to the aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also include statistical transformations of the data and information about the plot’s coordinate system. Facetting can be used to plot for different subsets of the data. The combination of these independent components are what make up a graphic.*  (@wickham2016ggplot2). -->
 
 
 <!-- For coherence, we will make use of the `tidyverse` suite. -->
 
-<!-- ```{r load_tidyverse, message = FALSE} -->
-<!-- library(tidyverse) -->
-<!-- ``` -->
+
+---
 
 
-
-<!-- ### First running example:  The Palmer Penguins dataset  -->
-
-<!-- The Palmer penguins  -->
-<!-- ```{r palmer_data} -->
-<!-- #remotes::install_github("allisonhorst/palmerpenguins") -->
-<!-- data(penguins,package = "palmerpenguins") -->
-<!-- penguins <- penguins %>%  -->
-<!--   rename(bill_l = bill_length_mm, bill_d = bill_depth_mm, flip_l = flipper_length_mm, bm = body_mass_g)  -->
-<!-- penguins %>%  -->
-<!--   print(n=2) -->
-
-<!-- ``` -->
-
-<!-- ### The Palmer Penguins dataset : overview -->
+# First running example:  The Palmer Penguins dataset
 
 
-<!-- ```{r show_data_palmer} -->
+```{r load_tidyverse, message = FALSE, eval = TRUE, echo = TRUE}
+library(tidyverse)
+```
 
-<!-- penguins %>%  -->
-<!--   group_by(species, sex, year, island) %>%  -->
-<!--   mutate(n = n()) %>%  -->
-<!--   summarise_if(is.numeric, mean, na.rm = TRUE) %>%  -->
-<!--   print(n=10) -->
-<!-- ``` -->
-
-
-<!-- # Simple plots -->
-
-<!-- ## Scatter plot -->
-
-<!-- ### Base information -->
-
-<!-- ```{r scatter_plot_void} -->
-<!-- ggplot( data = penguins) + aes( x= bill_l, y=bill_d)  -->
-
-<!-- ``` -->
-
-<!-- ### First scatter plot  -->
-
-<!-- ```{r scatter_plot_base} -->
-<!-- ggplot( data = penguins) + aes( x= bill_l, y=bill_d) + geom_point() -->
-
-<!-- ``` -->
+```{r palmer_data, eval = TRUE, echo = TRUE}
+#remotes::install_github("allisonhorst/palmerpenguins")
+data(penguins,package = "palmerpenguins")
+penguins <- penguins %>%
+  rename(bill_l = bill_length_mm, bill_d = bill_depth_mm, flip_l = flipper_length_mm, bm = body_mass_g)
+penguins %>%
+  print(n=2)
+```
 
 
+---
+
+# The Palmer Penguins dataset : overview
 
 
-<!-- ### Adding colors -->
+```{r show_data_palmer, eval = TRUE, echo = TRUE}
 
-<!-- ```{r scatter_plot1_species} -->
-<!-- gg <-  ggplot( data = penguins) +  -->
-<!--   aes( x= bill_l, y=bill_d, col = species) +  -->
-<!--   geom_point() -->
-<!-- gg -->
-<!-- ``` -->
-
-<!-- ###  Color blind compliant palette -->
-
-<!-- ```{r scatter_plot1_viridis} -->
-<!-- gg + scale_color_viridis_d() -->
-<!-- ``` -->
-
-<!-- ### Wesanderson palette -->
-
-<!-- Following  a Tumblr blog  [Wes Anderson Palettes](https://wesandersonpalettes.tumblr.com/), Karthik Ram proposes the [wesanderson palette](https://github.com/karthik/wesanderson) on Github.  -->
+penguins %>%
+  group_by(species, sex, year, island) %>%
+  mutate(n = n()) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  print(n=10)
+```
 
 
-<!-- ```{r scatter_wesanderson} -->
-<!-- ## remotes::install_github("wesanderson")  -->
-<!-- color_darj <- wesanderson::wes_palette(name = "Darjeeling1") -->
-<!-- gg + scale_color_manual(values = color_darj) -->
-<!-- ``` -->
+---
+ 
+# Simple plots 
 
-<!-- ### Changing  labels -->
+---
+ 
+# A scatter plot
 
-<!-- ```{r scatter_labels} -->
-<!-- gg <- gg + scale_color_manual(values = color_darj) + -->
-<!--   labs( x = 'Bill length in mm',  y = 'Bill depth in mm',  color = "Species") -->
-<!-- gg -->
-<!-- ``` -->
+```{r simple_scatter}
+penguins %>% 
+  ggplot() + 
+  aes( x= bill_l, y=bill_d) + 
+  geom_point()
+```
+
+---
+
+`r chunk_reveal("simple_scatter", break_type = "auto")`
+
+---
+
+# A scatter plot
+ 
+## with colors 
+
+```{r scatter_plot_species}
+penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d) +
+  geom_point() + #BREAK
+  aes(col = species)  #BREAK
+```
+
+---
+
+`r chunk_reveal("scatter_plot_species", break_type = "user")`
+
+---
+
+# A scatter plot
+
+## with a color blind compliant palette
+
+
+```{r gg1_save, eval = TRUE, echo = TRUE}
+gg <- penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d) +
+  geom_point() + 
+  aes(col = species)  
+```
+
+
+---
+
+```{r scatter_viridis}
+gg + 
+  scale_color_viridis_d()
+```
+
+`r chunk_reveal("scatter_viridis", break_type = "auto")`
+
+---
+
+# A scatter plot
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
+
+Following  a Tumblr blog  [Wes Anderson Palettes](https://wesandersonpalettes.tumblr.com/), Karthik Ram proposes the [wesanderson palette](https://github.com/karthik/wesanderson) on Github.
+
+---
+
+```{r scatter_wesanderson}
+## remotes::install_github("wesanderson")
+color_darj <- wesanderson::wes_palette(name = "Darjeeling1")
+gg + 
+  scale_color_manual(values = color_darj)
+```
+
+
+`r chunk_reveal("scatter_wesanderson", break_type = "auto")`
+
+---
+
+
+# A scatter plot
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
+
+## with nice labels
+
+```{r scatter_labels_gg, eval = TRUE, echo = TRUE}
+color_darj <- wesanderson::wes_palette(name = "Darjeeling1")
+gg <- gg + scale_color_manual(values = color_darj) 
+```
+
+
+---
+
+```{r scatter_labels}
+gg  +
+  labs( x = 'Bill length in mm') +
+  labs(y = 'Bill depth in mm') +
+  labs(color = "Species")
+```
+
+`r chunk_reveal("scatter_labels", break_type = "auto")`
+
+---
 
 <!-- ### Pre set general theme -->
 
@@ -172,13 +226,13 @@ style_mono_accent(
 
 <!-- ### Changing legend position -->
 
-<!-- The default theme might not be the best option  -->
+<!-- The default theme might not be the best option -->
 
 <!-- ```{r scatter_below} -->
 <!-- gg + theme(legend.position="bottom") -->
 <!-- ``` -->
 
-<!-- ### Customed legend position  -->
+<!-- ### Customed legend position -->
 
 <!-- The legend position can also be specified by a vector ` c(x,y)`.  Their values should be between 0 and 1. c(0,0) corresponds to the “bottom left” and c(1,1) corresponds to the “top right” position. We may want to change the size. -->
 
@@ -197,7 +251,7 @@ style_mono_accent(
 <!-- loadfonts() -->
 <!-- gg + theme(legend.position=c(.9, .6), -->
 <!--            text = element_text(size = 8, face = "italic"), -->
-<!--            axis.text.x = element_text(angle=90, hjust=1),  -->
+<!--            axis.text.x = element_text(angle=90, hjust=1), -->
 <!--            legend.text = element_text(size = 9, face = 'plain'), -->
 <!--            legend.title = element_text(size = 10, face = "bold") ) -->
 
@@ -206,7 +260,7 @@ style_mono_accent(
 
 <!-- ### Adding statistical transformation -->
 
-<!-- Adding a fitted linear regression  -->
+<!-- Adding a fitted linear regression -->
 
 <!-- ```{r stat_info_lm} -->
 <!-- gg + geom_smooth(method = 'lm', se = FALSE) -->
@@ -215,7 +269,7 @@ style_mono_accent(
 
 <!-- ### Adding statistical transformation -->
 
-<!-- Adding a fitted loess regression  with standaer estimation error  -->
+<!-- Adding a fitted loess regression  with standaer estimation error -->
 
 <!-- ```{r stat_info} -->
 <!-- gg + geom_smooth(method = 'loess', se = TRUE) -->
@@ -229,7 +283,7 @@ style_mono_accent(
 
 <!-- ```{r simple_hist} -->
 
-<!-- penguins %>%  -->
+<!-- penguins %>% -->
 <!--   ggplot() + aes(x = bill_l) + geom_histogram() + -->
 <!--   labs( x = 'Bill length in mm') + -->
 <!--   theme_minimal() -->
@@ -241,7 +295,7 @@ style_mono_accent(
 
 <!-- Add the color according to species and use the `GrandBudapest1` palette from `wesanderson` package. -->
 
-<!-- ```{r color_hist, eval = FALSE, echo = TRUE} -->
+<!-- ```{r color_hist,   echo = TRUE} -->
 
 <!-- penguins %>%  ... -->
 <!-- ``` -->
@@ -254,7 +308,7 @@ style_mono_accent(
 
 <!-- penguins %>% -->
 <!--   ggplot() + aes(x = bill_l, fill = species) + geom_histogram() + -->
-<!--   labs( x = 'Bill length in mm') +   -->
+<!--   labs( x = 'Bill length in mm') + -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('GrandBudapest1', n = 3)) + -->
 <!--   theme_minimal() -->
 <!-- ``` -->
@@ -265,9 +319,9 @@ style_mono_accent(
 <!-- ```{r color_hist_facet} -->
 
 <!-- penguins %>% -->
-<!--   ggplot() + aes(x = bill_l, fill = species) +  -->
+<!--   ggplot() + aes(x = bill_l, fill = species) + -->
 <!--   facet_wrap(~species) + geom_histogram() + -->
-<!--   labs( x = 'Bill length in mm') +   -->
+<!--   labs( x = 'Bill length in mm') + -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + -->
 <!--   theme_minimal() -->
 <!-- ``` -->
@@ -288,10 +342,10 @@ style_mono_accent(
 
 <!-- ```{r color_hist_dens_cor} -->
 
-<!--  penguins %>%  ggplot() + aes(x = bill_l, y = ..density..) +  -->
+<!--  penguins %>%  ggplot() + aes(x = bill_l, y = ..density..) + -->
 <!--   facet_wrap(~species) + geom_histogram(alpha=0.5, aes( fill = species)) + -->
 <!--    geom_density(aes(col = species)) + -->
-<!--   labs( x = 'Bill length in mm') +   -->
+<!--   labs( x = 'Bill length in mm') + -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + -->
 <!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1')) + -->
 <!--   theme_minimal() -->
@@ -319,7 +373,7 @@ style_mono_accent(
 <!-- gg_p2 <- penguins %>% -->
 <!--   ggplot()  + aes(x = bill_l, y = ..density..) + geom_histogram(alpha=0.5, aes( fill = species)) + -->
 <!--    geom_density(aes(col = species)) + -->
-<!--   labs( x = 'Bill length in mm') +   -->
+<!--   labs( x = 'Bill length in mm') + -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + -->
 <!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1')) + -->
 <!--   theme_minimal() -->
@@ -332,7 +386,7 @@ style_mono_accent(
 <!-- The `ggpubr' package is very helpful for publication. -->
 
 <!-- ```{r ggpubr_p3} -->
-<!-- ##install.packages('ggpubr')   -->
+<!-- ##install.packages('ggpubr') -->
 <!-- ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1) -->
 <!-- ``` -->
 
@@ -348,8 +402,8 @@ style_mono_accent(
 <!-- ```{r ggpairs} -->
 <!-- ##install.packages('GGally') -->
 <!-- library(GGally) -->
-<!-- penguins %>% ggpairs(columns = c(1,3,4,5), mapping = aes(col = species)) +  -->
-<!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+  -->
+<!-- penguins %>% ggpairs(columns = c(1,3,4,5), mapping = aes(col = species)) + -->
+<!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+ -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + theme(text = element_text(size = 6)) -->
 <!-- ``` -->
 
@@ -358,21 +412,29 @@ style_mono_accent(
 <!-- ```{r ggpairs_fancy} -->
 <!-- penguins %>% ggpairs(columns = c(1,3,4,5), mapping = aes(col = species), -->
 <!--                      upper = list(continuous = wrap( "cor",size = 2)), -->
-<!--                      lower = list(continuous = wrap('points', size = .5))) +  -->
-<!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+  -->
+<!--                      lower = list(continuous = wrap('points', size = .5))) + -->
+<!--   scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+ -->
 <!--   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + theme(text = element_text(size = 6)) -->
 <!-- ``` -->
 
 
-<!-- ### For presentation - `gganimate` -->
+---
 
-<!-- ```{r gganimate, cache = TRUE,  fig.show='animate', interval = 1/5} -->
-<!-- library(gganimate) -->
-<!-- gg_p1  + -->
-<!--   transition_states(year) + -->
-<!--   ease_aes('linear') -->
-<!-- ``` -->
+# For presentation - `gganimate`
+
+```{r ani_final, eval = T, echo = T, fig.height=5, fig.width=4}
+library(gganimate)
+gg  +    
+  transition_time(year)  +
+  geom_text(x = 56 , y = 15,  
+            aes(label = as.character(year)), 
+            size = 8, col = "grey50")
+```
+ 
 
 
 
-<!-- # References -->
+
+---
+
+# References

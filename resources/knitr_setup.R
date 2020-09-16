@@ -2,9 +2,20 @@
 library(tidyverse)
 
 ## Basic option chunks
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE, verbose = TRUE, comment = NA, 
-               size = 'footnotesize',dev = 'pdf', fig.align = "center", results = "markup", 
-               fig.width = 5, fig.height = 2.5,  fig.pos = 'htbp!', out.width = '.8\\textwidth')
+## for xaringan
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
+                      verbose = TRUE, comment = NA,
+                      echo = FALSE, eval = FALSE, 
+                      fig.align = "center", results = "markup", 
+                      fig.width = 6, fig.height = 4,  
+                      out.width = '.9\\textwidth')
+
+## for beamer pres
+# knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
+#                       verbose = TRUE, comment = NA, 
+#                       fig.align = "center", results = "markup", 
+#                       fig.width = 5, fig.height = 2.5,  fig.pos = 'htbp!',
+#                       out.width = '.8\\textwidth')
 
 # knitr::knit_hooks$set(subdir = function(before, options, envir) {
 # 
@@ -20,26 +31,28 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE, verbose = 
 ## Dplyr opt
 options(tibble.print_max = 4, tibble.print_min = 4)
 
+### for beamer pres
 ## Block font color in light gray
-color_block = function(color) {
-  function(x, options) sprintf('\\color{%s}\\begin{verbatim}%s\\end{verbatim}\\color{black}', color, x)
-}
-knitr::knit_hooks$set(output = color_block('gray'))
-def.chunk.hook  <- knitr::knit_hooks$get("chunk")
-knitr::knit_hooks$set(chunk = function(x, options) {
-  x <- def.chunk.hook(x, options)
-  ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
-})
+# color_block = function(color) {
+#   function(x, options) sprintf('\\color{%s}\\begin{verbatim}%s\\end{verbatim}\\color{black}', color, x)
+# }
+# 
+# knitr::knit_hooks$set(output = color_block('gray'))
+# def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+# knitr::knit_hooks$set(chunk = function(x, options) {
+#   x <- def.chunk.hook(x, options)
+#   ifelse(options$size != "normalsize", paste0("\\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+# })
 
 ## -----------------------------------------------------------------------------
 ## GGPLOT OPTIONS
 
 # Set plotting to bw plot default, but with transparent background elements.  
 # Note transparency requires the panel.background, plot.background, and device background all be set!
-theme_set(theme_bw(base_size=12))
-theme_update(panel.background = element_rect(fill = "transparent", colour = NA),
-             plot.background = element_rect(fill = "transparent", colour = NA))
-knitr::opts_chunk$set(dev.args=list(bg="transparent"))
+# theme_set(theme_bw(base_size=12))
+# theme_update(panel.background = element_rect(fill = "transparent", colour = NA),
+#              plot.background = element_rect(fill = "transparent", colour = NA))
+# knitr::opts_chunk$set(dev.args=list(bg="transparent"))
 # I fail to define a permanent palette up to now
 # # Set a color-blind friendly pallette
 # # adapted from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/

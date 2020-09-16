@@ -12,7 +12,7 @@ body {
 
 
 a, a > code {
-  color: rgb(249, 38, 114);
+  color: #B40F20;
   text-decoration: none;
 }
 .footnote {
@@ -86,7 +86,7 @@ th, td { padding: 5px; }
 
 .remark-slide-content {
   background-color: #FAFAFA;
-  border-top: 80px solid #23373B;
+  border-top: 80px solid #FAFAFA;
   font-size: 20px;
   font-weight: 300;
   line-height: 1.5;
@@ -107,17 +107,22 @@ th, td { padding: 5px; }
   border-top: 0px solid #FAFAFA;
 }
 
+.title-slide h1, h2, h3 {
+  text-align: center;
+  color: #0B775E;
+}
+
 h1 {
   font-weight: normal;
   margin-top: -95px;
   margin-left: -00px;
-  color: #5BBCD6;
+  color: #F2AD00;
 }
 
 h2, h3, h4 {
   padding-top: -15px;
   padding-bottom: 00px;
-  color: #FF0000;
+  color: #F2AD00;
   text-shadow: none;
   font-weight: 400;
   text-align: left;
@@ -181,10 +186,7 @@ h2, h3, h4 {
 
 hr, .title-slide h2::after, .mline h1::after {
   content: '';
-  display: block;
   border: none;
-  background-color: #EB811B;
-  color: #EB811B;
   height: 1px;
 }
 
@@ -205,6 +207,7 @@ hr, .mline h1::after {
   color: #272822;
   opacity: 1;
 }
+
 .inverse .remark-slide-number {
   font-size: 13pt;
   color: #FAFAFA;

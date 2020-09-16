@@ -8,6 +8,3 @@ colFmt = function(x,color){
   else
     x
 }
-
-
-color_darj <- wesanderson::wes_palette(name = "Darjeeling1")
