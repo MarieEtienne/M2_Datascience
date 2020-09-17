@@ -8,7 +8,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
                       echo = FALSE, eval = FALSE, 
                       fig.align = "center", results = "markup", 
                       fig.width = 6, fig.height = 4,  
-                      out.width = '.9\\textwidth')
+                      out.width = 'auto')
 
 ## for beamer pres
 # knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
