@@ -5,6 +5,7 @@ library(tidyverse)
 ## for xaringan
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
                       verbose = TRUE, comment = NA,
+                      dpi = 100,
                       echo = FALSE, eval = FALSE, 
                       fig.align = "center", results = "markup", 
                       fig.width = 6, fig.height = 4,  

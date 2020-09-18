@@ -24,14 +24,22 @@ params:
 ---
 
 ```{r setup,   cahe = FALSE, eval = TRUE, echo = FALSE, message = FALSE}
+library(flipbookr)
+library(RefManageR)
+library(kableExtra)
 source(paste0(params$setup_path, "knitr_setup.R"))
 with_sol <- TRUE ## in order to control the output
 with_course <- TRUE
 ```
 
-```{r,  include=FALSE, cache=FALSE, eval = TRUE}
-library(kableExtra)
-library(flipbookr)
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./visu.bib", check = FALSE)
 ```
 
 
@@ -40,8 +48,8 @@ library(flipbookr)
 ---
 
 
-- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) @wickham2016ggplot2
-- [Geocomputation with R](https://geocompr.robinlovelace.net/) @lovelace2019geocomputation`
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
+- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
 - [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
 - [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
 
@@ -49,11 +57,17 @@ library(flipbookr)
 
 ---
 
-<!-- # ggplot presentation -->
+# ggplot presentation
 
-<!-- gg stands for   *Grammar of Graphics*  and  ggplot2  is *based on the Grammar of Graphics @wilkinson2005gramma`, that allows you to compose graphs by combining independent components* (@wickham2016ggplot2). -->
+gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Graphics `r Citep(myBib, "wilkinson2005gramma")`, that allows you to compose graphs by combining independent components* `r Citep(myBib, "wickham2016ggplot2")`.
 
-<!-- *[The] grammar tells us that a graphic maps the data to the aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars). The plot may also include statistical transformations of the data and information about the plot’s coordinate system. Facetting can be used to plot for different subsets of the data. The combination of these independent components are what make up a graphic.*  (@wickham2016ggplot2). -->
+*[The] grammar tells us that a graphic maps the*
+- *data* 
+- *to the aesthetic attributes (colour, shape, size)* 
+- *of geometric objects (points, lines, bars)*. 
+- *The plot may also include statistical transformations of the data and information about the plot’s coordinate system*.
+- *Facetting can be used to plot for different subsets of the data.* 
+*The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "ickham2016ggplot2")`.
 
 
 For coherence, we will make use of the `tidyverse` suite.
@@ -98,7 +112,7 @@ penguins %>%
 # Simple plots 
 
 ---
- 
+name: scatter_slide
 # A scatter plot
 
 ```{r simple_scatter}
@@ -114,8 +128,10 @@ penguins %>%
 
 ---
 
-# A scatter plot
- 
+---
+template: scatter_slide
+count: false
+
 ## with colors 
 
 ```{r scatter_plot_species}
@@ -131,8 +147,8 @@ penguins %>%
 `r chunk_reveal("scatter_plot_species", break_type = "user")`
 
 ---
-
-# A scatter plot
+template: scatter_slide
+count: false
 
 ## with a color blind compliant palette
 
@@ -156,8 +172,8 @@ gg +
 `r chunk_reveal("scatter_viridis", break_type = "auto")`
 
 ---
-
-# A scatter plot
+template: scatter_slide
+count: false
 
 ##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
 
@@ -180,11 +196,24 @@ gg +
 `r chunk_reveal("scatter_wesanderson", break_type = "auto")`
 
 ---
-
+name: scatter_anderson
 
 # A scatter plot
 
 ##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
+
+---
+template: scatter_anderson
+count: true
+
+### Exercise
+
+Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation chance over year ?
+
+
+---
+template: scatter_anderson
+count: true
 
 ## with nice labels
 
@@ -205,10 +234,15 @@ gg  +
 `r chunk_reveal("scatter_labels", break_type = "auto")`
 
 ---
+name: scatter_label
 
 # A scatter plot
 
 ##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+
+---
+template: scatter_label
+count: true
 
 ## and a pre-set general theme
 
@@ -226,12 +260,10 @@ gg  +
 `r chunk_reveal("scatter_themelight", break_type = "user")`
 
 ---
+template: scatter_label
+count: false
 
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
-
-## and a pre set general theme
+## and another pre set general theme
 
 
 ---
@@ -247,12 +279,9 @@ gg + scale_color_manual(values = color_darj) +
 
 `r chunk_reveal("scatter_thememinimal", break_type = "user")`
 
-
 ---
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+template: scatter_label
+count: false
 
 ## and a pre set general theme
 
@@ -264,10 +293,8 @@ gg <- gg + scale_color_manual(values = color_darj) +
 ```
 
 ---
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+template: scatter_label
+count: true
 
 ## and a custom  theme
 
@@ -289,10 +316,8 @@ gg +
 `r chunk_reveal("scatter_below", break_type = "auto")`
 
 ---
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+template: scatter_label
+count: false
 
 ## and a custom  theme
 
@@ -304,32 +329,25 @@ gg +
   theme(legend.position=c(.9, .6))
 ```
 
+
 ---
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+template: scatter_label
+count: false
 
 ## and a custom  theme
 
-```{r scatter_custom, eval = TRUE, echo = FALSE}
-## install.packages('extrafont')
-library(extrafont)
-## font_import() # just run once after installation
-loadfonts()
+```{r scatter_custom, eval = TRUE, echo = TRUE}
 gg + theme(legend.position=c(.9, .6),
-           text = element_text(size = 8, face = "italic"),
+           text = element_text(size = 10, face = "italic"),
            axis.text.x = element_text(angle=90, hjust=1),
            legend.text = element_text(size = 9, face = 'plain'),
-           legend.title = element_text(size = 10, face = "bold") )
+           legend.title = element_text(size = 11, face = "bold") )
 
 ```
 
 ---
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels,nice custom theme
+template: scatter_label
+count: true
 
 ## and fitted statistical models
 
@@ -357,7 +375,7 @@ gg +
 
 # A scatter plot
 
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels,nice custom theme
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels, nice custom theme
 
 To keep the theme preferences for all plots to come
 
@@ -631,14 +649,15 @@ name: gganimate
 The `gganimate`  package produces animated graph (html only).
 
 
-<!-- ```{r ani_final, eval = T, echo = T, fig.height=5, fig.width=4} -->
-<!-- library(gganimate) -->
-<!-- gg  + -->
-<!--   transition_states(year)  + -->
-<!--   geom_text(x = 56 , y = 15, -->
-<!--             aes(label = as.character(year)), -->
-<!--             size = 8, col = "grey50") -->
-<!-- ``` -->
+```{r ani_final, eval = T, echo = T}
+library(gganimate)
+gg  +
+  transition_states(year)  +
+  geom_text(x = 56 , y = 15,
+            aes(label = as.character(year)),
+            size = 8, col = "grey50") +
+  theme(legend.position="bottom") 
+```
 
 
 ---
@@ -662,7 +681,11 @@ gg  %>%  ggplotly()
 - [Top50 ggplot Visualisation](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
 
 
-
 ---
 
 # References
+
+
+```{r refs, echo=FALSE, results="asis"}
+PrintBibliography(myBib)
+```
