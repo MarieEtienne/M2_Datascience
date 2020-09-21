@@ -2,60 +2,99 @@
 title: Graphics and maps with R - Part2
 subtitle: Under Hadley Wickham's reign
 author: Marie-Pierre Etienne
-date: "2020/09/11 (updated: `r Sys.Date()`)"
-institute: "https://github.com/MarieEtienne/stateoftheRinRennes/"
-csl: "../resources/apa-no-doi-no-issue.csl"
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/MarieEtienne/stateoftheRinRennes/
+csl: ../resources/apa-no-doi-no-issue.csl
 output:
-  beamer_presentation:
-    slide_level: 3
-    highlight: kate
-    keep_tex: true
+  xaringan::moon_reader:
+    css: [  'metropolis', 'hygge', 'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "./collapseoutput.js"
     includes:
-      in_header: ../resources/common_preamble.tex
-      before_body: ../resources/common_startup.tex
+      after_body: insert-logo.html
 bibliography: visu.bib
 fontsize: 10pt
-params: 
-  child_path : ""
-  setup_path : "../resources/"
+params:
+  child_path: ''
+  setup_path: ../resources/
 ---
-```{r setup, include=FALSE}
+
+```{r setup, include=FALSE, eval = TRUE}
 source(paste0(params$setup_path, "knitr_setup.R"))
 with_sol <- TRUE ## in order to control the output
 with_course <- TRUE
 ```
 
+# Drawing a simple map
+Get free maps thanks to  OpenStreetMap through the `osmdata` package (![vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) ) 
 
-# From spherical object to maps
+```{r openstreetmap_package}
+##remotes::install_github("ropensci/osmdata")
+zone_box <- c(-32.75, -4.7, -31.8, -3.75)
+# zone_map <- ggmap::get_stamenmap(bbox = zone_box, 
+#                                  zoom = 10)
+# save(zone_map, file = 'zone_map.RData')
+load('zone_map.RData')
+traj_plot <- ggmap::ggmap(zone_map) + 
+    labs(x = "Longitude", y = "Latitude") +
+    geom_path(data = fou_dta, aes(x = lon, y = lat, color = ID)) +
+  theme(legend.position = "none", axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 
-## Coordinate Reference system (CRS)
+library(osmdata)
+rennes_bb <- osmdata::getbb('Rennes') %>% as.numeric()
+zone_map <- ggmap::get_stamenmap(bbox = rennes_bb,
+                                 zoom = 10)
+zone_map %>% ggmap::ggmap()
+```
 
-### Geodetic datum (or geodetic system) 
+
+---
+name: coordinate_header
+# Coordinate Reference system (CRS)
+
+From spherical object to maps
+
+---
+template: coordinate_header
+
+## Geodetic datum (or geodetic system) 
 
 An  approximation of sea level on Earth contains:
 
 - the definition of the chosen ellipsoide
 - a geodetic datum on Earth 
 
-![Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf ) ](img/1280px-ECEF.png){height=40%}
+
+```{r fig_coord_sys,  out.width = "40%", fig.cap = "Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )", eval = TRUE}
+knitr::include_graphics("img/1280px-ECEF.png")
+```
 
 At global scale  *World Geodetic System* (WGS84) is the reference geodetic datum for GPS 
 
 
 
-### Projected CRS
+---
+template: coordinate_header
+
+## Projected CRS
 
 - Cartesian coordinates on  flat surface,
 - based on a geodetic datum
 - rely on on map projection to convert the 3d surface on Earth into Eastings and Northings (x and y)
 
+---
 
-
-### Examples
+# Examples
 
 The informations on the CRS used by a spatial object has ti be stored with the object
 
-```{r CRS_illustration}
+```{r CRS_illustration, eval = TRUE, echo = TRUE}
 library("sf")
 library("rnaturalearth")
 library("rnaturalearthdata")
@@ -64,11 +103,16 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 st_crs(world$geometry)
 ```
 
+---
+name: data_type
 # Data types
+
+---
+template: data_type
 
 ## Vector data
 
-### Representing geographic information
+## Representing geographic information
 
 - Vector data are collections of points,  lines, polygons (potentially connected). 
 - Many different objects in `R` deals with spatial data. \par \alert{focus on ` sf`  objects}
@@ -78,16 +122,31 @@ Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) 
 - easy and fancy plotting
 - `sf` objects can be used as `data.frame`
 
-### `sf` objects example
+---
+template: data_type
 
-```{r sf_world_example}
+## Vector data
+
+## `sf` objects example
+
+```{r sf_world_example, eval = TRUE}
 world %>% select(admin, income_grp, wikipedia, economy, geometry) %>% print(n=5)
 ```
-### `sf` objects example
+---
+template: data_type
 
-```{r sf_world_example}
+## Vector data
+
+## `sf` objects example
+
+```{r sf_world_example_map,  eval = TRUE, echo = TRUE}
 world %>% ggplot() + geom_sf()
 ```
+
+---
+template: data_type
+
+## Vector data
 
 ### Geometry types
 
@@ -100,7 +159,7 @@ Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) 
 - `sf` objects can be used as `data.frame`
 
 
-<!--  ```{r Rennes_geography, echo = FALSE} -->
+<!--  ```{r Rennes_geography, echo = FALSE, eval = TRUE} -->
 <!--  city_hall <- st_point(c(-1.679163, 48.111366)) -->
 <!--  st_crs(city_hall) <- 4326 -->
 <!-- ``` -->
