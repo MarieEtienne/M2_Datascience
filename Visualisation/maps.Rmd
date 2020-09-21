@@ -34,18 +34,6 @@ Get free maps thanks to  OpenStreetMap through the `osmdata` package (![vignette
 
 ```{r openstreetmap_package}
 ##remotes::install_github("ropensci/osmdata")
-zone_box <- c(-32.75, -4.7, -31.8, -3.75)
-# zone_map <- ggmap::get_stamenmap(bbox = zone_box, 
-#                                  zoom = 10)
-# save(zone_map, file = 'zone_map.RData')
-load('zone_map.RData')
-traj_plot <- ggmap::ggmap(zone_map) + 
-    labs(x = "Longitude", y = "Latitude") +
-    geom_path(data = fou_dta, aes(x = lon, y = lat, color = ID)) +
-  theme(legend.position = "none", axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank())
-
 library(osmdata)
 rennes_bb <- osmdata::getbb('Rennes') %>% as.numeric()
 zone_map <- ggmap::get_stamenmap(bbox = rennes_bb,
