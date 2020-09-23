@@ -14,7 +14,6 @@ jobs:
         uses: actions/checkout@v2
       - name: install imagemagick
         run: |
-          brew install imagemagick
           brew install cargo
       - name: Setup R
         uses: r-lib/actions/setup-r@master
