@@ -477,7 +477,7 @@ dpt_complete %>% ggplot() +
 
 
 
-```{r}
+```{r plot_data_dpt2}
 dpt_complete %>% 
   mutate(area = st_area(geometry), dens = p2017/area) %>% 
   ggplot() + 
@@ -485,9 +485,16 @@ dpt_complete %>%
   scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log")
 ```
 
-
 ---
 
+
+`r chunk_reveal("plot_data_dpt2", break_type = "auto")`
+
+
+<!-- Ajouter manip tidy pour mettre les années en tidy et faire les cartes par annéees -->
+
+
+---
 # References
 
 
