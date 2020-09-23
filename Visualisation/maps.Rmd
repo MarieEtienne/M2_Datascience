@@ -7,6 +7,7 @@ institute: https://github.com/MarieEtienne/stateoftheRinRennes/
 csl: ../resources/apa-no-doi-no-issue.csl
 output:
   xaringan::moon_reader:
+    chakra: libs/remark-latest.min.js
     css: [  'metropolis', 'hygge', 'mpe_pres.css']
     lib_dir: libs
     nature:
@@ -27,29 +28,134 @@ params:
 source(paste0(params$setup_path, "knitr_setup.R"))
 with_sol <- TRUE ## in order to control the output
 with_course <- TRUE
+library('flipbookr')
+library(RefManageR)
 ```
 
-# Drawing a simple map
-Get free maps thanks to  OpenStreetMap through the `osmdata` package (![vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) ) 
 
-```{r openstreetmap_package}
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./visu.bib", check = FALSE)
+```
+
+# Drawing a simple map with ggmap
+
+Get free maps thanks to  OpenStreetMap through the `osmdata` package  ( [vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) )
+
+
+```{r openstreetmap_package, eval = TRUE, echo = FALSE, fig.show = 'hide',  dpi =200, out.width='50%'}
 ##remotes::install_github("ropensci/osmdata")
-library(osmdata)
-rennes_bb <- osmdata::getbb('Rennes') %>% as.numeric()
-zone_map <- ggmap::get_stamenmap(bbox = rennes_bb,
-                                 zoom = 10)
-zone_map %>% ggmap::ggmap()
+rennes_bb <- osmdata::getbb('Rennes') %>% 
+  as.numeric() ##get bounding box
+rennes_bb
+bat24 <- data.frame(lat= 48.114072, lon = -1.710184, 
+                    text = 'Batiment 24')
+zone_map <- ggmap::get_stamenmap(bbox = rennes_bb, 
+                                 zoom = 13) 
+zone_map %>%
+  ggmap::ggmap() + 
+  geom_point(data = bat24, aes(x= lon, y = lat), col = 'red') + 
+  geom_text(data = bat24, aes(x= lon, y = lat, label = text), hjust = 0.1, nudge_x = 0.004, col = 'red' ) 
 ```
+
+---
+
+
+`r chunk_reveal("openstreetmap_package", break_type = "auto")`
+
+
+---
+name: data_type
+# Data types
+
+---
+template: data_type
+
+## Raster data
+
+Basically image ( a matrix where a cell represents a pixel)
+
+```{r class_raster, eval = TRUE, echo = TRUE}
+class(zone_map)
+```
+
+For simple plots only, difficult to transform
+
+--
+
+## Vector data
+
+- Vector data are collections of points,  lines, polygons (potentially connected). 
+- Many different objects in `R` deals with spatial data .highlight[focus on ` sf`  objects]
+
+Many possible operation (intersection, union, buffer, etc ....)
+
+Two main formats in R : [sp](https://cran.r-project.org/web/packages/sp/sp.pdf) and [sf](https://cran.r-project.org/web/packages/sf/sf.pdf)
+
+---
+template: data_type
+## Vector data
+
+### sf package
+
+
+Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) for spatial object with hierarchical structure. The package extends the data.frame format to account for a geometry column. The `sf` package provides
+- efficient access to data (writing and reading)
+- easy and fancy plotting
+- `sf` objects can be used as `data.frame`
+
+
+
+---
+template: data_type
+
+## Vector data
+
+### `sf` objects example
+
+
+```{r CRS_illustration, eval = TRUE, echo = TRUE}
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+```
+---
+template: data_type
+
+
+```{r sf_world_example, eval = TRUE, echo = TRUE}
+world %>% select(admin, income_grp, wikipedia, economy, geometry) %>% print(n=5)
+```
+
+
+---
+template: data_type
+
+
+```{r sf_world_example_crs, eval = TRUE, echo = TRUE}
+st_crs(world )
+```
+
+
 
 
 ---
 name: coordinate_header
 # Coordinate Reference system (CRS)
 
-From spherical object to maps
+
 
 ---
 template: coordinate_header
+
+From spherical object to maps
 
 ## Geodetic datum (or geodetic system) 
 
@@ -76,70 +182,102 @@ template: coordinate_header
 - based on a geodetic datum
 - rely on on map projection to convert the 3d surface on Earth into Eastings and Northings (x and y)
 
----
 
-# Examples
-
-The informations on the CRS used by a spatial object has ti be stored with the object
-
-```{r CRS_illustration, eval = TRUE, echo = TRUE}
-library("sf")
-library("rnaturalearth")
-library("rnaturalearthdata")
-
-world <- ne_countries(scale = "medium", returnclass = "sf")
-st_crs(world$geometry)
-```
 
 ---
-name: data_type
-# Data types
+template: coordinate_header
 
----
-template: data_type
 
-## Vector data
+## Effects of projection
 
-## Representing geographic information
-
-- Vector data are collections of points,  lines, polygons (potentially connected). 
-- Many different objects in `R` deals with spatial data. \par \alert{focus on ` sf`  objects}
-
-Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) for spatial object with hierarchical structure. The `sf` package provides
-- efficient access to data (writing and reading)
-- easy and fancy plotting
-- `sf` objects can be used as `data.frame`
-
----
-template: data_type
-
-## Vector data
-
-## `sf` objects example
-
-```{r sf_world_example, eval = TRUE}
-world %>% select(admin, income_grp, wikipedia, economy, geometry) %>% print(n=5)
-```
----
-template: data_type
-
-## Vector data
-
-## `sf` objects example
+### WGS84  representation
 
 ```{r sf_world_example_map,  eval = TRUE, echo = TRUE}
-world %>% ggplot() + geom_sf()
+world %>%  filter(brk_name == "United States") %>% ggplot() + geom_sf()
 ```
 
 ---
-template: data_type
+template: coordinate_header
 
-## Vector data
+## Effects of projection 
 
-### Geometry types
+### US National Atlas Equal Area
+
+```{r sf_world_example_map_2163,  eval = TRUE, echo = TRUE}
+world %>%   filter(brk_name == "United States") %>% st_transform(crs = 2163) %>% ggplot() + geom_sf()
+```
+
+---
+template: coordinate_header
+
+
+### Focus on France
+
+```{r sf_france_example_map}
+france_dta <-   world  %>% filter(name == 'France') 
+st_crs(france_dta)
+france_dta%>% ggplot() + geom_sf()
+```
+
+---
+
+`r chunk_reveal("sf_france_example_map", break_type = "auto")`
+
+```{r france_dta_save, eval = TRUE, echo = FALSE, results='hide'}
+france_dta <-   world  %>% filter(name == 'France') 
+```
+
+
+---
+template: coordinate_header
+
+### Focus on Metropolitan France 
+
+```{r sf_metro_example_map,  eval = TRUE, echo = TRUE}
+metro_dta <- france_dta %>% st_crop( xmin = -5, xmax = 11, ymin= 40.6, ymax = 52) 
+metro_dta %>% ggplot() + geom_sf()
+```
+
+---
+template: coordinate_header
+
+
+### Focus on Metropolitan France 
+
+Change of CRS for Lambert 93
+
+```{r sf_metro_example_map_lambert,  eval = TRUE, echo = TRUE}
+metro_dta %>% st_transform( crs = 2154 ) %>%
+  ggplot() + geom_sf() 
+```
+
+---
+template: coordinate_header
+
+### Focus on Metropolitan France 
+
+Change of CRS for UTM31N
+
+```{r sf_metro_example_map_utm,  eval = TRUE, echo = TRUE}
+metro_dta %>% st_transform( crs = 32631 ) %>%
+  ggplot() + geom_sf() 
+```
+
+
+
+---
+name: sf 
+
+# Simple features geometry
+
+---
+template: sf
+
+## Geometry types
+
 
 - Vector data are collections of points,  lines, polygons (potentially connected). 
-- Many different objects in `R` deals with spatial data. \par \alert{focus on ` sf`  objects}
+- Many different objects in `R` deals with spatial data. focus on ` sf`  objects}
 
 Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) for spatial object with hierarchical structure. The `sf` package provides
 - efficient access to data (writing and reading)
@@ -147,10 +285,29 @@ Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) 
 - `sf` objects can be used as `data.frame`
 
 
-<!--  ```{r Rennes_geography, echo = FALSE, eval = TRUE} -->
-<!--  city_hall <- st_point(c(-1.679163, 48.111366)) -->
-<!--  st_crs(city_hall) <- 4326 -->
-<!-- ``` -->
+---
+template: sf
 
-- Points : the location of the city hall in Rennes ( latitu 
 
+## What is feature ?
+*A feature is thought of as a thing, or an object in the real world, such as a building or a tree. As is the case with objects, they often consist of other objects. This is the case with features too: a set of features can form a single feature. A forest stand can be a feature, a forest can be a feature, a city can be a feature. A satellite image pixel can be a feature, a complete image can be a feature too.* `r Citep(myBib, "pebesma2018simple" )`.
+
+All geometries are composed by a set points. 
+
+---
+template: sf
+
+
+## Point
+
+A two dimensionnal point refer to Esating and northing or longitude and latitude (for extension to more than 2D see the [sf vignette](https://r-spatial.github.io/sf/articles/sf1.html)) 
+*A feature is thought of as a thing, or an object in the real world, such as a building or a tree. As is the case with objects, they often consist of other objects. This is the case with features too: a set of features can form a single feature. A forest stand can be a feature, a forest can be a feature, a city can be a feature. A satellite image pixel can be a feature, a complete image can be a feature too.* `r Citep(myBib, "pebesma2018simple" )`.
+
+---
+
+# References
+
+
+```{r refs, echo=FALSE, results="asis"}
+PrintBibliography(myBib)
+```
