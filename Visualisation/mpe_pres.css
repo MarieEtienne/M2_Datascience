@@ -21,7 +21,15 @@ a, a > code {
   padding-right: 4em;
   font-size: 90%;
 }
+
+
 .remark-code-line-highlighted     { background-color: #e2dd95; }
+
+.highlight { 
+  color: #278B9A; 
+  font-weight: 400;
+}
+
 
 .inverse {
   background-color: #272822;
@@ -119,7 +127,7 @@ h1 {
   color: #F2AD00;
 }
 
-h2, h3, h4 {
+h2,  {
   padding-top: -15px;
   padding-bottom: 00px;
   color: #46ACC8;
@@ -130,6 +138,17 @@ h2, h3, h4 {
   margin-bottom: -10px;
 }
 
+
+h3, h4 {
+  padding-top: -15px;
+  padding-bottom: 00px;
+  color: #B40F20;
+  text-shadow: none;
+  font-weight: 400;
+  text-align: left;
+  margin-left: 00px;
+  margin-bottom: -10px;
+}
 .remark-slide-content h1 {
   font-size: 35px;
 }

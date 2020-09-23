@@ -43,16 +43,6 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 ```
 
 
-# Introduction
-
----
-
-
-- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
-- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
-- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
-- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
-
 
 
 ---
@@ -72,6 +62,18 @@ gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Gra
 
 For coherence, we will make use of the `tidyverse` suite.
 
+
+---
+
+
+# Presentation based on 
+
+
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
+- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
+- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
+- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+- [Don’t cha wish your ggplot had colours like me?](https://www.dataembassy.co.nz/Liza-colours-in-R#22)
 
 ---
 
@@ -233,12 +235,25 @@ gg  +
 
 `r chunk_reveal("scatter_labels", break_type = "auto")`
 
+
+
+---
+template: scatter_slide
+
+## Some nice color palette
+- [Inspired by Ghibli](https://github.com/ewenme/ghibli)
+- [The yarr pirate palette](https://cran.r-project.org/web/packages/yarrr/vignettes/piratepal.html)
+- [Harry Potter inspiration](https://github.com/aljrico/harrypotter)![](https://github.com/aljrico/harrypotter/blob/master/man/figures/logo.png)
+
+
 ---
 name: scatter_label
 
 # A scatter plot
 
 ##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+
+
 
 ---
 template: scatter_label
@@ -679,7 +694,6 @@ gg  %>%  ggplotly()
 
 - [R Graph Gallery](https://www.r-graph-gallery.com/)
 - [Top50 ggplot Visualisation](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
-
 
 ---
 
