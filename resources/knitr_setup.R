@@ -1,5 +1,6 @@
 ## libraries always loaded 
 library(tidyverse)
+library(cowplot)
 
 ## Basic option chunks
 ## for xaringan

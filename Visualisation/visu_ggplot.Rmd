@@ -28,7 +28,7 @@ library(flipbookr)
 library(RefManageR)
 library(kableExtra)
 source(paste0(params$setup_path, "knitr_setup.R"))
-with_sol <- TRUE ## in order to control the output
+with_sol <- FALSE ## in order to control the output
 with_course <- TRUE
 ```
 
@@ -45,15 +45,36 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 
 # Introduction
 
----
+
+  
+  ```{css echo=FALSE}
+.pull-left {
+  float: left;
+  width: 44%;
+}
+.pull-right {
+  float: right;
+  width: 44%;
+}
+.pull-right ~ p {
+  clear: both;
+}
+```
 
 
+- [R for Data Science](https://r4ds.had.co.nz/) `r Citep(myBib, "wickham2017R")`
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
 - [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
 - [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
 - [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
 
 
+
+```{r graph_bib, out.height = "150px", eval = TRUE}
+book1 <- ggdraw() + draw_image("https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png")
+book2 <-  ggdraw() + draw_image("https://geocompr.robinlovelace.net/images/cover.png")
+plot_grid(book1, book2)
+```
 
 ---
 
@@ -70,17 +91,32 @@ gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Gra
 *The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "ickham2016ggplot2")`.
 
 
-For coherence, we will make use of the `tidyverse` suite.
+For coherence, we will make use of the `tidyverse` suite. Be sure to understand the `%>%` operator.
 
+
+```{r load_tidyverse, message = FALSE, eval = TRUE, echo = TRUE}
+library(tidyverse)
+```
+
+
+```{r tidy_ex}
+set.seed(1)
+n <- 8
+data.frame(x = sample(1:10, size = n, replace = TRUE), y = 3*rnorm(n)) %>% 
+  mutate(xplusy = x + y ) %>% 
+  filter( xplusy > 4) %>% 
+  select(x, y)
+```
+
+---
+
+`r chunk_reveal("tidy_ex", break_type = "auto")`
 
 ---
 
 # First running example:  The Palmer Penguins dataset
 
 
-```{r load_tidyverse, message = FALSE, eval = TRUE, echo = TRUE}
-library(tidyverse)
-```
 
 ```{r palmer_data, eval = TRUE, echo = TRUE}
 #remotes::install_github("allisonhorst/palmerpenguins")
@@ -127,8 +163,6 @@ penguins %>%
 `r chunk_reveal("simple_scatter", break_type = "auto")`
 
 ---
-
----
 template: scatter_slide
 count: false
 
@@ -150,8 +184,6 @@ penguins %>%
 template: scatter_slide
 count: false
 
-## with a color blind compliant palette
-
 
 ```{r gg1_save, eval = TRUE, echo = TRUE}
 gg <- penguins %>% 
@@ -160,6 +192,9 @@ gg <- penguins %>%
   geom_point() + 
   aes(col = species)  
 ```
+
+
+## with a color blind compliant palette
 
 
 ---
@@ -209,6 +244,17 @@ count: true
 ### Exercise
 
 Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation chance over year ?
+
+
+--
+
+```{r exo_relation_cor, eval =  TRUE, echo = with_sol}
+penguins %>% ggplot() +
+  aes(x= bm, y = flip_l, col = as_factor(year) ) + 
+  geom_point() + 
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+
+```
 
 
 ---
@@ -686,6 +732,6 @@ gg  %>%  ggplotly()
 # References
 
 
-```{r refs, echo=FALSE, results="asis"}
+```{r refs, echo=FALSE, results="asis", eval = TRUE, cache = FALSE}
 PrintBibliography(myBib)
 ```
