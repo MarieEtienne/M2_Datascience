@@ -1,0 +1,32 @@
+on:
+  push:
+    branches: master
+
+name: blogdown
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+
+      - name: Install packages
+        run: |
+           Rscript R/install.R
+           
+      # - name: Build site
+      #   run: |
+      #     Rscript R/build_site.R
+      # 
+      # - name: GitHub Pages action
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./_site
+      # 
