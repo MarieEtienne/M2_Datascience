@@ -20,13 +20,4 @@ jobs:
         run: |
            Rscript R/install.R
            
-      # - name: Build site
-      #   run: |
-      #     Rscript R/build_site.R
-      # 
-      # - name: GitHub Pages action
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./_site
-      # 
+      
