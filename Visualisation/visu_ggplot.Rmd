@@ -493,7 +493,7 @@ penguins %>%
 
 ```{r simple_hist}
 penguins %>%
-  ggplot() + aes(x = bill_l) + geom_histogram() +
+  ggplot() + aes(x = bill_l) + geom_histogram(position = 'identity') +
   labs( x = 'Bill length in mm') +
   theme_minimal()
 ```

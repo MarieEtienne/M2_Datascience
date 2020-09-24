@@ -210,7 +210,8 @@ penguins %>%
 
 ## ----color_hist_cor-----------------------------------------------------------------------------------------------------------------------
 penguins %>%
-  ggplot() + aes(x = bill_l, fill = species) + geom_histogram() +
+  ggplot() + aes(x = bill_l, fill = species) + 
+  geom_histogram(alpha = 0.5, position = 'identity') +
   labs( x = 'Bill length in mm') +
   scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
 

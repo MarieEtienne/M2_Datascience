@@ -441,8 +441,8 @@ count: false
 The population by department is available [here](https://www.insee.fr/fr/statistiques/fichier/2012713/TCRD_004.xls) or [here in csv format]()
 
 ```{r read_pop, echo = TRUE, eval = TRUE}
-pop <-  readr::read_delim("~/git/courses/data/population.csv", 
-    ";", escape_double = FALSE, col_types = cols(`1999` = col_double(), 
+population <- read_delim("~/git/courses/data/population.csv", 
+    ";", escape_double = FALSE,  col_types = cols(`1999` = col_double(), 
         `2007` = col_double(), `2012` = col_double(), 
         `2017` = col_double()), trim_ws = TRUE, 
     skip = 3) %>% 
@@ -454,7 +454,7 @@ pop <-  readr::read_delim("~/git/courses/data/population.csv",
 Joining the two dataset
 
 ```{r join_data, echo = TRUE, eval = TRUE}
-dpt_complete <- dpt_shape %>% inner_join( y = pop, by = "CODE_DEPT")
+dpt_complete <- dpt_shape %>% inner_join( y = population, by = "CODE_DEPT")
 ```
 
 
