@@ -1,0 +1,22 @@
+name: courses
+channels:
+  - conda-forge
+dependencies:
+  - jupytext
+  - r-codetools
+  - r-cowplot
+  - r-ggally
+  - r-gganimate
+  - r-ggplot2
+  - r-ggpubr
+  - r-gifski
+  - r-irkernel
+  - r-kableextra
+  - r-magick
+  - r-plotly
+  - r-refmanager
+  - r-rnaturalearth
+  - r-rnaturalearthdata
+  - r-tidyverse
+  - r-wesanderson
+  - r-xaringan
