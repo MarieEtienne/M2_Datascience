@@ -2,3 +2,10 @@ data/regions/fr-esr-referentiel-geographique.prj filter=lfs diff=lfs merge=lfs -
 data/regions/fr-esr-referentiel-geographique.shp filter=lfs diff=lfs merge=lfs -text
 data/regions/fr-esr-referentiel-geographique.shx filter=lfs diff=lfs merge=lfs -text
 data/regions/fr-esr-referentiel-geographique.dbf filter=lfs diff=lfs merge=lfs -text
+data/ile_de_france_shape filter=lfs diff=lfs merge=lfs -text
+data/metropolitan_cities_shape filter=lfs diff=lfs merge=lfs -text
+data/population.csv filter=lfs diff=lfs merge=lfs -text
+data/population.xls filter=lfs diff=lfs merge=lfs -text
+data/regions filter=lfs diff=lfs merge=lfs -text
+data/communes filter=lfs diff=lfs merge=lfs -text
+data/depts filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,18 @@
+!table
+!version 300
+!charset WindowsLatin1
+
+Definition Table
+  Type NATIVE Charset "WindowsLatin1"
+  Fields 11
+    ID_GEOFLA Decimal (10, 0) ;
+    CODE_DEPT Char (2) ;
+    NOM_DEPT Char (30) ;
+    CODE_CHF Char (3) ;
+    NOM_CHF Char (50) ;
+    X_CHF_LIEU Decimal (6, 0) ;
+    Y_CHF_LIEU Decimal (6, 0) ;
+    X_CENTROID Decimal (6, 0) ;
+    Y_CENTROID Decimal (6, 0) ;
+    CODE_REG Char (2) ;
+    NOM_REGION Char (30) ;
