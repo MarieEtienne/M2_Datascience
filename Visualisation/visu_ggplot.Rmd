@@ -47,6 +47,7 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 
 
 - [R for Data Science](https://r4ds.had.co.nz/) `r Citep(myBib, "wickham2017R")`
+- [R Graphics Cookbook](http://www.cookbook-r.com/)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
 - [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
 - [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
@@ -56,8 +57,9 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 
 ```{r graph_bib, out.height = "150px", eval = TRUE}
 book1 <- ggdraw() + draw_image("https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png")
-book2 <-  ggdraw() + draw_image("https://geocompr.robinlovelace.net/images/cover.png")
-plot_grid(book1, book2)
+book2 <-  ggdraw() + draw_image("http://www.cookbook-r.com/r_graphics_cookbook.png")
+book3 <-  ggdraw() + draw_image("https://geocompr.robinlovelace.net/images/cover.png")
+plot_grid(book1, book2, book3, nrow = 1)
 ```
 
 ---
@@ -239,7 +241,7 @@ count: true
 
 ### Exercise
 
-Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation chance over year ?
+Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
 
 
 --
@@ -251,6 +253,15 @@ penguins %>% ggplot() +
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
 
 ```
+
+
+---
+template: scatter_slide
+
+## Some nice color palette
+- [Inspired by Ghibli](https://github.com/ewenme/ghibli)
+- [The yarr pirate palette](https://cran.r-project.org/web/packages/yarrr/vignettes/piratepal.html)
+- [Harry Potter inspiration](https://github.com/aljrico/harrypotter)![](https://github.com/aljrico/harrypotter/blob/master/man/figures/logo.png)
 
 
 ---
@@ -276,14 +287,6 @@ gg  +
 `r chunk_reveal("scatter_labels", break_type = "auto")`
 
 
-
----
-template: scatter_slide
-
-## Some nice color palette
-- [Inspired by Ghibli](https://github.com/ewenme/ghibli)
-- [The yarr pirate palette](https://cran.r-project.org/web/packages/yarrr/vignettes/piratepal.html)
-- [Harry Potter inspiration](https://github.com/aljrico/harrypotter)![](https://github.com/aljrico/harrypotter/blob/master/man/figures/logo.png)
 
 
 ---
@@ -425,8 +428,27 @@ gg +
 
 `r chunk_reveal("stat_info_lm", break_type = "auto")`
 
----
 
+---
+template: scatter_anderson
+count: true
+
+### Exercise
+
+Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
+
+
+--
+
+```{r exo_relation_cor2, eval =  TRUE, echo = with_sol}
+penguins %>% ggplot() + 
+  aes(x= bm, y = flip_l, col = as_factor(year) ) + 
+  geom_point() + geom_smooth(method = 'lm') +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+
+```
+
+---
 
 # A scatter plot
 
