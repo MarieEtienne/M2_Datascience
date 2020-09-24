@@ -16,18 +16,23 @@ jobs:
         run: brew install gdal geos udunits gifski pandoc-citeproc imagemagick
 
       - name: Install R packages
+      - uses: r-lib/actions/setup-r@master
+      - name: Install dependencies
         run: |
-	  Rscript -e 'local({ r <- getOption("repos"); r["CRAN"] <- "https://cloud.r-project.org"; options(repos = r) })'
-          Rscript -e 'install.packages(c("remotes","devtools","plotly","ggpubr","gifski"))'
-          Rscript -e 'install.packages(c("tidyverse","magick","gganimate","GGally","sf"))'
-          Rscript -e 'install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))'
-          Rscript -e 'install.packages(c("kableExtra","RefManageR"))'
-          Rscript -e 'remotes::install_github("allisonhorst/palmerpenguins")'
-          Rscript -e 'remotes::install_github("yihui/xaringan")'
-          Rscript -e 'remotes::install_github("EvaMaeRey/flipbookr")'
-          Rscript -e 'remotes::install_github("ropensci/osmdata")'
+          install.packages("remotes")
+          remotes::install_deps(dependencies = TRUE)
+          install.packages(c("devtools","plotly","ggpubr","gifski"))
+          install.packages(c("tidyverse","magick","gganimate","GGally","sf"))
+          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))
+          install.packages(c("kableExtra","RefManageR"))
+          remotes::install_github("allisonhorst/palmerpenguins")
+          remotes::install_github("yihui/xaringan")
+          remotes::install_github("EvaMaeRey/flipbookr")
+          remotes::install_github("ropensci/osmdata")
+        shell: Rscript {0}
       - name: Generate slides
-        run: Rscript -e 'rmarkdown::render("Visualisation/visu_ggplot.Rmd")'
+        run: rmarkdown::render("Visualisation/visu_ggplot.Rmd")
+        shell: Rscript {0}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
