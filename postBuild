@@ -1,4 +1,0 @@
-#!/bin/bash
-
-Rscript -e 'remotes::install_github("EvaMaeRey/flipbookr")'
-Rscript -e 'remotes::install_github("allisonhorst/palmerpenguins")'
