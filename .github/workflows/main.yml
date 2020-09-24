@@ -18,7 +18,6 @@ jobs:
       - name: Install R packages
         run: |
           install.packages("remotes")
-          remotes::install_deps(dependencies = TRUE)
           install.packages(c("devtools","plotly","ggpubr","gifski"))
           install.packages(c("tidyverse","magick","gganimate","GGally","sf"))
           install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))
