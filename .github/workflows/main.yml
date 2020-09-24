@@ -17,7 +17,7 @@ jobs:
 
       - name: Install R packages
         run: |
-	  Rscript -e 'local({ r <- getOption("repos"); r["CRAN"] <- "https://cloud.r-project.org"; options(repos = r) })'
+          Rscript -e 'local({ r <- getOption("repos"); r["CRAN"] <- "https://cloud.r-project.org"; options(repos = r)})'
           Rscript -e 'install.packages(c("remotes","devtools","plotly","ggpubr","gifski"))'
           Rscript -e 'install.packages(c("tidyverse","magick","gganimate","GGally","sf"))'
           Rscript -e 'install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))'
@@ -26,8 +26,10 @@ jobs:
           Rscript -e 'remotes::install_github("yihui/xaringan")'
           Rscript -e 'remotes::install_github("EvaMaeRey/flipbookr")'
           Rscript -e 'remotes::install_github("ropensci/osmdata")'
+          
       - name: Generate slides
         run: Rscript -e 'rmarkdown::render("Visualisation/visu_ggplot.Rmd")'
+        	
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
