@@ -1,0 +1,4 @@
+data/regions/fr-esr-referentiel-geographique.prj filter=lfs diff=lfs merge=lfs -text
+data/regions/fr-esr-referentiel-geographique.shp filter=lfs diff=lfs merge=lfs -text
+data/regions/fr-esr-referentiel-geographique.shx filter=lfs diff=lfs merge=lfs -text
+data/regions/fr-esr-referentiel-geographique.dbf filter=lfs diff=lfs merge=lfs -text
