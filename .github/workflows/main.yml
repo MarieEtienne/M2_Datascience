@@ -17,6 +17,7 @@ jobs:
 
       - name: Install R packages
         run: |
+	  Rscript -e 'local({ r <- getOption("repos"); r["CRAN"] <- "https://cloud.r-project.org"; options(repos = r) })'
           Rscript -e 'install.packages(c("remotes","devtools","plotly","ggpubr","gifski"))'
           Rscript -e 'install.packages(c("tidyverse","magick","gganimate","GGally","sf"))'
           Rscript -e 'install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))'
