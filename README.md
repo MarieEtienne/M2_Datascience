@@ -2,3 +2,4 @@ Reproducible science also means reproducible teaching. This repo is an attempt t
 
 # Visualisation
 The first course developped for this series. First used in the Rennes R group on September 2020.
+

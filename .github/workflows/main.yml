@@ -1,0 +1,37 @@
+name: slides
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew install gdal geos udunits gifski pandoc-citeproc imagemagick
+      - uses: r-lib/actions/setup-r@master
+      - name: Install R packages
+        run: |
+          install.packages("remotes")
+          install.packages(c("devtools","plotly","ggpubr","gifski"))
+          install.packages(c("tidyverse","magick","gganimate","GGally","sf"))
+          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))
+          install.packages(c("kableExtra","RefManageR"))
+          remotes::install_github("allisonhorst/palmerpenguins")
+          remotes::install_github("yihui/xaringan")
+          remotes::install_github("EvaMaeRey/flipbookr")
+          remotes::install_github("ropensci/osmdata")
+        shell: Rscript {0}
+      - name: Generate slides
+        run: rmarkdown::render("Visualisation/visu_ggplot.Rmd")
+        shell: Rscript {0}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./Visualisation
