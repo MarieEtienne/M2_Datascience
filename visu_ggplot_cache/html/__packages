@@ -1,0 +1,17 @@
+base
+flipbookr
+RefManageR
+kableExtra
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+cowplot
+GGally
+gganimate
+plotly
