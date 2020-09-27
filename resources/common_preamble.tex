@@ -1,0 +1,109 @@
+
+
+\usepackage{../resources/themeBeamer}
+
+\usepackage{framed,xcolor}
+\usepackage{etextools}
+% make space after console-output smaller:
+\setlength{\OuterFrameSep}{2pt}
+\makeatletter
+\preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
+\makeatother
+
+%%% for animation
+\usepackage{animate}
+
+\makeatletter
+\addtobeamertemplate{block begin}{
+\def\@listi{\leftmargin\leftmargini
+              \topsep    0pt
+              \parsep    0pt
+              \itemsep   3pt plus 2pt minus 3pt}
+\partopsep 0pt
+}
+\makeatother
+
+\graphicspath{{../resources/common_figs/}}
+\usepackage{tikz}
+\usetikzlibrary{calc,shapes,backgrounds,arrows,automata,shadows,positioning}
+\tikzstyle{every state}=[fill=red,draw=none,scale=0.7,font=\small,text=white]
+\tikzstyle{every edge}=[-,shorten >=1pt,auto,thin,draw]
+\tikzstyle{alertstate}=[fill=bleu]
+\definecolor{genecolor}{RGB}{94,135,173}
+
+\let\oldtitle\title
+\subtitle{\huge\oldtitle\normalsize}
+\title{\currentCourse}
+\institute{\currentInstitute}
+
+\date{\currentDate}
+
+
+\setbeamerfont{section in toc}{size=\normalsize}
+\setbeamerfont{subsection in toc}{size=\footnotesize}
+
+
+
+\AtBeginSection{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \begin{multicols}{2}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/hide/hide]
+    \end{multicols}
+  \end{frame}
+}
+
+\AtBeginSubsection{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsubsection, subsectionstyle=show/shaded/hide, sectionstyle=show/hide]
+  \end{frame}
+}
+
+\AtBeginSubsubsection{
+  \begin{frame}<beamer>
+    \frametitle{Plan}
+    \framesubtitle{\insertpart}
+    \tableofcontents[currentsection,currentsubsection, subsectionstyle=show/shaded/hide, sectionstyle=show/hide]
+  \end{frame}
+}
+
+\let\oldtitlepage\titlepage
+\renewcommand{\titlepage}{%
+    \oldtitlepage
+    \vfill
+
+\begin{tikzpicture}[remember picture,overlay]
+  \node [xshift=2cm,yshift=1.5cm] at (current page.south west)    {\includegraphics[width=2.5cm]{sticker_sotr}};
+  \node [xshift=-2cm,yshift=1.35cm] at (current page.south east)   {\includegraphics[width=2.5cm]{LogoAgrocampusOuestPetit}};
+\end{tikzpicture}
+}
+
+
+\usepackage{multicol}
+ 
+
+\newcommand{\Eb}{\boldsymbol{E}}
+\newcommand{\Db}{\boldsymbol{D}}
+
+\newcommand{\Ub}{\boldsymbol{U}}
+\newcommand{\Sb}{\boldsymbol{S}}
+\newcommand{\Yb}{\boldsymbol{Y}}
+\newcommand{\Xb}{\boldsymbol{X}}
+\newcommand{\Zb}{\boldsymbol{Z}}
+\newcommand{\Ob}{\boldsymbol{O}}
+\newcommand{\Rb}{\boldsymbol{R}}
+\newcommand{\Sigmabf}{\boldsymbol{\Sigma}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+
+
+
+%%% Darjeeling color
+\definecolor{darj1}{HTML}{FF0000}
+\definecolor{darj2}{HTML}{00A08A}
+\definecolor{darj3}{HTML}{F2AD00}
+\definecolor{darj4}{HTML}{F98400}
+\definecolor{darj5}{HTML}{5BBCD6}
+

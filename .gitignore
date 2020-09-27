@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.pdf
+*_cache/
+ Rscript R/
+*/libs/
+*_files/
+Visualisation/visu_ggplot.html
