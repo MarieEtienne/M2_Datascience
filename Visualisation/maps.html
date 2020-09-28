@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Graphics and maps with R - Part2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marie-Pierre Etienne" />
+    <script src="libs/header-attrs-2.3/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
+    <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Graphics and maps with R - Part2
+## Under Hadley Wickham’s reign
+### Marie-Pierre Etienne
+### <a href="https://github.com/MarieEtienne/stateoftheRinRennes/" class="uri">https://github.com/MarieEtienne/stateoftheRinRennes/</a>
+### 2020/09/11 (updated: 2020-09-28)
+
+---
+
+
+
+
+
+
+
+
+
+# Drawing a simple map with ggmap
+
+Get free maps thanks to  OpenStreetMap through the `osmdata` package  ( [vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) )
+
+
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+
+---
+
+
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+*##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+*rennes_bb &lt;- osmdata::getbb('Rennes')
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+* as.numeric()  ##get bounding box
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+*rennes_bb
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+*bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+*                   text = 'Batiment 24')
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+                    text = 'Batiment 24')
+*zone_map &lt;- ggmap::get_stamenmap(bbox = rennes_bb,
+*                                zoom = 13)
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+                    text = 'Batiment 24')
+zone_map &lt;- ggmap::get_stamenmap(bbox = rennes_bb,
+                                 zoom = 13)
+*zone_map
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+
+```
+682x746 terrain map image from Stamen Maps. 
+See ?ggmap to plot it.
+```
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+                    text = 'Batiment 24')
+zone_map &lt;- ggmap::get_stamenmap(bbox = rennes_bb,
+                                 zoom = 13)
+zone_map %&gt;%
+* ggmap::ggmap()
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_08_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+                    text = 'Batiment 24')
+zone_map &lt;- ggmap::get_stamenmap(bbox = rennes_bb,
+                                 zoom = 13)
+zone_map %&gt;%
+  ggmap::ggmap() +
+* geom_point(data = bat24, aes(x= lon, y = lat), col = 'red')
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_09_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-openstreetmap_package-auto[
+
+```r
+##remotes::install_github("ropensci/osmdata")  ##remotes::install_github("ropensci/osmdata")
+rennes_bb &lt;- osmdata::getbb('Rennes') %&gt;%
+  as.numeric()  ##get bounding box
+rennes_bb
+bat24 &lt;- data.frame(lat= 48.114072, lon = -1.710184,
+                    text = 'Batiment 24')
+zone_map &lt;- ggmap::get_stamenmap(bbox = rennes_bb,
+                                 zoom = 13)
+zone_map %&gt;%
+  ggmap::ggmap() +
+  geom_point(data = bat24, aes(x= lon, y = lat), col = 'red') +
+* geom_text(data = bat24, aes(x= lon, y = lat, label = text), hjust = 0.1, nudge_x = 0.004, col = 'red' )
+```
+]
+ 
+.panel2-openstreetmap_package-auto[
+
+```
+[1] -1.752588 48.076915 -1.624405 48.154970
+```
+
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_10_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-openstreetmap_package-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-openstreetmap_package-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-openstreetmap_package-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+---
+name: data_type
+# Data types
+
+---
+template: data_type
+
+## Raster data
+
+Basically image ( a matrix where a cell represents a pixel)
+
+
+```r
+class(zone_map)
+```
+
+```
+[1] "ggmap"  "raster"
+```
+
+For simple plots only, difficult to transform
+
+--
+
+## Vector data
+
+- Vector data are collections of points,  lines, polygons (potentially connected). 
+- Many different objects in `R` deals with spatial data .highlight[focus on ` sf`  objects]
+
+Many possible operation (intersection, union, buffer, etc ....)
+
+Two main formats in R : [sp](https://cran.r-project.org/web/packages/sp/sp.pdf) and [sf](https://cran.r-project.org/web/packages/sf/sf.pdf)
+
+---
+template: data_type
+## Vector data
+
+### sf package
+
+
+Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) for spatial object with hierarchical structure. The package extends the data.frame format to account for a geometry column. The `sf` package provides
+- efficient access to data (writing and reading)
+- easy and fancy plotting
+- `sf` objects can be used as `data.frame`
+
+
+
+---
+template: data_type
+
+## Vector data
+
+### `sf` objects example
+
+
+
+```r
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+
+world &lt;- ne_countries(scale = "medium", returnclass = "sf")
+```
+---
+template: data_type
+
+
+
+```r
+world %&gt;% select(admin, income_grp, wikipedia, economy, geometry) %&gt;% print(n=5)
+```
+
+```
+Simple feature collection with 241 features and 4 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: -180 ymin: -89.99893 xmax: 180 ymax: 83.59961
+CRS:            +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0
+First 5 features:
+        admin              income_grp wikipedia                   economy
+0       Aruba 2. High income: nonOECD        NA      6. Developing region
+1 Afghanistan           5. Low income        NA 7. Least developed region
+2      Angola  3. Upper middle income        NA 7. Least developed region
+3    Anguilla  3. Upper middle income        NA      6. Developing region
+4     Albania  4. Lower middle income        NA      6. Developing region
+                        geometry
+0 MULTIPOLYGON (((-69.89912 1...
+1 MULTIPOLYGON (((74.89131 37...
+2 MULTIPOLYGON (((14.19082 -5...
+3 MULTIPOLYGON (((-63.00122 1...
+4 MULTIPOLYGON (((20.06396 42...
+```
+
+
+---
+template: data_type
+
+
+
+```r
+st_crs(world )
+```
+
+```
+Coordinate Reference System:
+  User input: +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+  wkt:
+BOUNDCRS[
+    SOURCECRS[
+        GEOGCRS["unknown",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]],
+                ID["EPSG",6326]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433],
+                ID["EPSG",8901]],
+            CS[ellipsoidal,2],
+                AXIS["longitude",east,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]],
+                AXIS["latitude",north,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]]]],
+    TARGETCRS[
+        GEOGCRS["WGS 84",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433]],
+            CS[ellipsoidal,2],
+                AXIS["latitude",north,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+                AXIS["longitude",east,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+            ID["EPSG",4326]]],
+    ABRIDGEDTRANSFORMATION["Transformation from unknown to WGS84",
+        METHOD["Geocentric translations (geog2D domain)",
+            ID["EPSG",9603]],
+        PARAMETER["X-axis translation",0,
+            ID["EPSG",8605]],
+        PARAMETER["Y-axis translation",0,
+            ID["EPSG",8606]],
+        PARAMETER["Z-axis translation",0,
+            ID["EPSG",8607]]]]
+```
+
+
+
+
+---
+name: coordinate_header
+# Coordinate Reference system (CRS)
+
+
+
+---
+template: coordinate_header
+
+From spherical object to maps
+
+## Geodetic datum (or geodetic system) 
+
+An  approximation of sea level on Earth contains:
+
+- the definition of the chosen ellipsoide
+- a geodetic datum on Earth 
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="img/1280px-ECEF.png" alt="Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )" width="40%" /&gt;
+&lt;p class="caption"&gt;Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )&lt;/p&gt;
+&lt;/div&gt;
+
+At global scale  *World Geodetic System* (WGS84) is the reference geodetic datum for GPS 
+
+
+
+---
+template: coordinate_header
+
+## Projected CRS
+
+- Cartesian coordinates on  flat surface,
+- based on a geodetic datum
+- rely on on map projection to convert the 3d surface on Earth into Eastings and Northings (x and y)
+
+
+
+---
+template: coordinate_header
+
+
+## Effects of projection
+
+### WGS84  representation
+
+
+```r
+world %&gt;%  filter(brk_name == "United States") %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/sf_world_example_map-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+---
+template: coordinate_header
+
+## Effects of projection 
+
+### US National Atlas Equal Area
+
+
+```r
+world %&gt;%   filter(brk_name == "United States") %&gt;% st_transform(crs = 2163) %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/sf_world_example_map_2163-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+---
+template: coordinate_header
+
+
+### Focus on France
+
+
+
+---
+
+count: false
+ 
+
+.panel1-sf_france_example_map-auto[
+
+```r
+*france_dta &lt;-   world  %&gt;% filter(name == 'France')
+```
+]
+ 
+.panel2-sf_france_example_map-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-sf_france_example_map-auto[
+
+```r
+france_dta &lt;-   world  %&gt;% filter(name == 'France')
+*st_crs(france_dta)
+```
+]
+ 
+.panel2-sf_france_example_map-auto[
+
+```
+Coordinate Reference System:
+  User input: +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+  wkt:
+BOUNDCRS[
+    SOURCECRS[
+        GEOGCRS["unknown",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]],
+                ID["EPSG",6326]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433],
+                ID["EPSG",8901]],
+            CS[ellipsoidal,2],
+                AXIS["longitude",east,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]],
+                AXIS["latitude",north,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]]]],
+    TARGETCRS[
+        GEOGCRS["WGS 84",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433]],
+            CS[ellipsoidal,2],
+                AXIS["latitude",north,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+                AXIS["longitude",east,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+            ID["EPSG",4326]]],
+    ABRIDGEDTRANSFORMATION["Transformation from unknown to WGS84",
+        METHOD["Geocentric translations (geog2D domain)",
+            ID["EPSG",9603]],
+        PARAMETER["X-axis translation",0,
+            ID["EPSG",8605]],
+        PARAMETER["Y-axis translation",0,
+            ID["EPSG",8606]],
+        PARAMETER["Z-axis translation",0,
+            ID["EPSG",8607]]]]
+```
+]
+
+---
+count: false
+ 
+
+.panel1-sf_france_example_map-auto[
+
+```r
+france_dta &lt;-   world  %&gt;% filter(name == 'France')
+st_crs(france_dta)
+*france_dta%&gt;% ggplot() + geom_sf()
+```
+]
+ 
+.panel2-sf_france_example_map-auto[
+
+```
+Coordinate Reference System:
+  User input: +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+  wkt:
+BOUNDCRS[
+    SOURCECRS[
+        GEOGCRS["unknown",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]],
+                ID["EPSG",6326]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433],
+                ID["EPSG",8901]],
+            CS[ellipsoidal,2],
+                AXIS["longitude",east,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]],
+                AXIS["latitude",north,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433,
+                        ID["EPSG",9122]]]]],
+    TARGETCRS[
+        GEOGCRS["WGS 84",
+            DATUM["World Geodetic System 1984",
+                ELLIPSOID["WGS 84",6378137,298.257223563,
+                    LENGTHUNIT["metre",1]]],
+            PRIMEM["Greenwich",0,
+                ANGLEUNIT["degree",0.0174532925199433]],
+            CS[ellipsoidal,2],
+                AXIS["latitude",north,
+                    ORDER[1],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+                AXIS["longitude",east,
+                    ORDER[2],
+                    ANGLEUNIT["degree",0.0174532925199433]],
+            ID["EPSG",4326]]],
+    ABRIDGEDTRANSFORMATION["Transformation from unknown to WGS84",
+        METHOD["Geocentric translations (geog2D domain)",
+            ID["EPSG",9603]],
+        PARAMETER["X-axis translation",0,
+            ID["EPSG",8605]],
+        PARAMETER["Y-axis translation",0,
+            ID["EPSG",8606]],
+        PARAMETER["Z-axis translation",0,
+            ID["EPSG",8607]]]]
+```
+
+&lt;img src="maps_files/figure-html/sf_france_example_map_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-sf_france_example_map-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-sf_france_example_map-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-sf_france_example_map-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+
+---
+template: coordinate_header
+
+### Focus on Metropolitan France 
+
+Change of WGS84
+
+
+
+```r
+metro_dta &lt;- france_dta %&gt;% st_crop( xmin = -5, xmax = 11, ymin= 40.6, ymax = 52) 
+metro_dta %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/sf_metro_example_map-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+---
+template: coordinate_header
+
+
+### Focus on Metropolitan France 
+
+Change of CRS for Lambert 93
+
+
+```r
+metro_dta %&gt;% st_transform( crs = 2154 ) %&gt;%
+  ggplot() + geom_sf() 
+```
+
+&lt;img src="maps_files/figure-html/sf_metro_example_map_lambert-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+---
+template: coordinate_header
+
+### Focus on Metropolitan France 
+
+Change of CRS for UTM31N
+
+
+```r
+metro_dta %&gt;% st_transform( crs = 32631 ) %&gt;%
+  ggplot() + geom_sf() 
+```
+
+&lt;img src="maps_files/figure-html/sf_metro_example_map_utm-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+name: sf 
+
+# Simple features geometry
+
+---
+template: sf
+
+## Geometry types
+
+
+- Vector data are collections of points,  lines, polygons (potentially connected). 
+- Many different objects in `R` deals with spatial data. focus on ` sf`  objects}
+
+Simple features (`sf`) is an [open standard](https://www.ogc.org/standards/sfa) for spatial object with hierarchical structure. The `sf` package provides
+- efficient access to data (writing and reading)
+- easy and fancy plotting
+- `sf` objects can be used as `data.frame`
+
+
+---
+template: sf
+
+
+## What is feature ?
+*A feature is thought of as a thing, or an object in the real world, such as a building or a tree. As is the case with objects, they often consist of other objects. This is the case with features too: a set of features can form a single feature. A forest stand can be a feature, a forest can be a feature, a city can be a feature. A satellite image pixel can be a feature, a complete image can be a feature too.* [Peb18].
+
+All geometries are composed by a set points. 
+
+---
+template: sf
+
+*A feature is thought of as a thing, or an object in the real world, such as a building or a tree. As is the case with objects, they often consist of other objects. This is the case with features too: a set of features can form a single feature. A forest stand can be a feature, a forest can be a feature, a city can be a feature. A satellite image pixel can be a feature, a complete image can be a feature too.* [Peb18].
+
+
+---
+template: sf
+
+
+### Point
+
+A two dimensionnal point refer to Esating and northing or longitude and latitude (for extension to more than 2D see the [sf vignette](https://r-spatial.github.io/sf/articles/sf1.html)) 
+
+
+
+```r
+x &lt;- st_point(c(1,2))
+x
+class(x)
+```
+
+```
+[1] "XY"    "POINT" "sfg"  
+```
+
+
+
+```r
+x %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/plot_point-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+---
+template: sf
+count: false
+
+
+### Multi Point
+
+
+```r
+p &lt;- rbind( c(3.2,4), c(3,4.6), c(3.8,4.4), c(3.5,3.8), c(3.4,3.6), c(3.9,4.5))
+(mp &lt;- st_multipoint(p))
+mp
+class(mp)
+```
+
+```
+[1] "XY"         "MULTIPOINT" "sfg"       
+```
+
+
+
+```r
+mp %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/multipoint_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: sf
+count: false
+
+
+### Line
+
+
+```r
+line_sfg &lt;- st_linestring(p)
+line_sfg
+class(line_sfg)
+```
+
+```
+[1] "XY"         "LINESTRING" "sfg"       
+```
+
+
+
+```r
+line_sfg%&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/line_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+---
+template: sf
+count: false
+
+
+
+### Polygon
+
+
+```r
+p1 &lt;- rbind(c(0,0), c(1,0), c(3,2), c(2,4), c(1,4), c(0,0))
+p2 &lt;- rbind(c(1,1), c(1,2), c(2,2), c(1,1))
+poly_sfg &lt;- st_polygon(list(p1, p2))
+poly_sfg 
+class(poly_sfg )
+```
+
+```
+[1] "XY"      "POLYGON" "sfg"    
+```
+
+
+
+
+
+```r
+poly_sfg %&gt;% ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/poly_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+---
+template: sf
+count: false
+
+
+### Point, Line Polygon
+
+### MultiPoint, MultiLine MultiPolygon
+
+### Geometry collection
+
+
+---
+template: sf
+
+## Reading vector spatial data 
+
+The shapefile of the cities in Ile de France is available [here](https://www.data.gouv.fr/en/datasets/r/aad5c727-290e-4bc3-bc7e-d1e6b020f5c1)
+
+
+```r
+idf_shape &lt;- st_read(dsn = '../data/ile_de_france_shape/')
+```
+
+```
+Reading layer `donnees-communales-sur-la-population-dile-de-france' from data source `/Users/runner/work/courses/courses/data/ile_de_france_shape' using driver `ESRI Shapefile'
+Simple feature collection with 1287 features and 24 fields
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 1.480775 ymin: 48.1406 xmax: 3.489334 ymax: 49.21325
+geographic CRS: WGS 84
+```
+
+```r
+idf_shape %&gt;% print(n=10)
+```
+
+```
+Simple feature collection with 1287 features and 24 fields
+geometry type:  POINT
+dimension:      XY
+bbox:           xmin: 1.480775 ymin: 48.1406 xmax: 3.489334 ymax: 49.21325
+geographic CRS: WGS 84
+First 10 features:
+   insee pop1946 psdc1962 psdc1968 psdc1975 psdc1982 psdc1990 popexh1999
+1  93070   45465    51956    48886    43588    43606    42343      39719
+2  91573     571      602      611     1360     1849     3342       5797
+3  77434     123      105       69       98      172      214        289
+4  94070     688      701      774     2242     2621     2810       3138
+5  78586   17494    31267    40277    42253    46197    50329      50222
+6  77450     405      822     1174     1163     1526     1924       2791
+7  95607    5899     8606    12902    16963    21299    25151      25906
+8  77463    1378     1949     1906     2249     2647     3025       3200
+9  95610     163      180      173      188      201      229        229
+10 92076    3283     6690     8065     9257     8313     8118       8130
+   psdc82df99 psdc90df99 popmun2006 popmun2007 popmun2008 popmun2009 popmun2010
+1       43606      42343      42950   43954.30      45595      46510      47189
+2        1849       3342       7733    7818.00       7844       8083       8350
+3         172        214        312     316.00        320        322        330
+4        2621       2810       3550    3610.00       3675       3676       3724
+5       46197      50329      51600   51601.15      51447      51459      51150
+6        1526       1924       2851    2880.68       2910       2940       2974
+7       21299      25151      26436   26228.12      26349      26134      26144
+8        2647       3025       3290    3345.36       3385       3425       3436
+9         201        229        259     263.00        266        259        264
+10       8313       8118       8547    8670.01       8636       8618       8615
+   popmun2011 objectid popmun2012 popmun2013 popmun2014 popmun2015   tcam1217
+1       47783     1037      47499      47534      47432      48431 1.47542617
+2        8618     1042       9370       9758      10151      10501 2.94798840
+3         339     1048        347        350        348        352 0.68226909
+4        3688     1070       3651       3640       3644       3640 0.67022160
+5       51431     1073      51713      51599      51747      52538 0.09804205
+6        3104     1088       3121       3138       3154       3133 0.81952342
+7       26195     1113      26094      25998      25875      26077 0.26455800
+8        3429     1120       3443       3468       3493       3502 0.13902620
+9         268     1123        273        278        278        284 1.69948658
+10       8612     1156       8611       8816       8747       8688 0.12972916
+   popmun2016 popmun2017                  geometry
+1       49664      51108 POINT (2.333478 48.90959)
+2       10851      10835 POINT (2.517426 48.60545)
+3         355        359 POINT (3.205181 48.43767)
+4        3708       3775 POINT (2.576295 48.73522)
+5       52648      51967 POINT (2.174487 48.93982)
+6        3233       3251 POINT (2.591731 48.71473)
+7       26296      26441 POINT (2.220662 49.02636)
+8        3493       3467 POINT (2.781282 48.40434)
+9         291        297 POINT (1.905006 49.09092)
+10       8628       8667 POINT (2.160643 48.84209)
+```
+
+---
+template: sf
+
+## Metropolitan French departments
+
+The limit of the French department are descibed in [this archive](http://www.infosig.net/telechargements/IGN_GEOFLA/GEOFLA-Dept-FR-Corse-TAB-L93.zip).
+
+
+```r
+dpt_shape &lt;-  st_read(dsn = '../data/depts/') 
+```
+
+```
+Multiple layers are present in data source /Users/runner/work/courses/courses/data/depts, reading layer `DEPARTEMENT'.
+Use `st_layers' to list all layer names and their type in a data source.
+Set the `layer' argument in `st_read' to read a particular layer.
+Reading layer `DEPARTEMENT' from data source `/Users/runner/work/courses/courses/data/depts' using driver `MapInfo File'
+Simple feature collection with 96 features and 11 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 99226 ymin: 6049647 xmax: 1242375 ymax: 7110524
+projected CRS:  RGF93 / Lambert-93
+```
+
+```r
+dpt_shape %&gt;% print(n=10)
+```
+
+```
+Simple feature collection with 96 features and 11 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 99226 ymin: 6049647 xmax: 1242375 ymax: 7110524
+projected CRS:  RGF93 / Lambert-93
+First 10 features:
+   ID_GEOFLA CODE_DEPT                NOM_DEPT CODE_CHF              NOM_CHF
+1          1        01                     AIN      053      BOURG-EN-BRESSE
+2          2        02                   AISNE      408                 LAON
+3          3        03                  ALLIER      190              MOULINS
+4          4        04 ALPES-DE-HAUTE-PROVENCE      070      DIGNE-LES-BAINS
+5          5        05            HAUTES-ALPES      061                  GAP
+6          6        06         ALPES-MARITIMES      088                 NICE
+7          7        07                 ARDECHE      186               PRIVAS
+8          8        08                ARDENNES      105 CHARLEVILLE-MEZIERES
+9          9        09                  ARIEGE      122                 FOIX
+10        10        10                    AUBE      387               TROYES
+   X_CHF_LIEU Y_CHF_LIEU X_CENTROID Y_CENTROID CODE_REG
+1        8717      65696       8814      65582       82
+2        7451      69406       7404      69401       22
+3        7254      66072       7144      65882       83
+4        9590      63379       9596      63394       93
+5        9443      63891       9585      64014       93
+6       10439      62985      10303      63240       93
+7        8266      64052       8127      64068       82
+8        8239      69649       8186      69475       21
+9        5862      62083       5777      62035       73
+10       7799      68003       7861      68010       21
+                   NOM_REGION                       geometry
+1                 RHONE-ALPES MULTIPOLYGON (((919195 6541...
+2                    PICARDIE MULTIPOLYGON (((735603 6861...
+3                    AUVERGNE MULTIPOLYGON (((753769 6537...
+4  PROVENCE-ALPES-COTE-D'AZUR MULTIPOLYGON (((992638 6305...
+5  PROVENCE-ALPES-COTE-D'AZUR MULTIPOLYGON (((1012913 640...
+6  PROVENCE-ALPES-COTE-D'AZUR MULTIPOLYGON (((1018256 627...
+7                 RHONE-ALPES MULTIPOLYGON (((831641 6353...
+8           CHAMPAGNE-ARDENNE MULTIPOLYGON (((842092 6905...
+9               MIDI-PYRENEES MULTIPOLYGON (((631545 6174...
+10          CHAMPAGNE-ARDENNE MULTIPOLYGON (((796594 6759...
+```
+
+---
+template: sf
+count: false
+
+## Metropolitan French departments
+
+
+```r
+dpt_shape %&gt;% 
+  ggplot() + geom_sf()
+```
+
+&lt;img src="maps_files/figure-html/plot_shp_dpt-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: sf
+count: false
+
+## Metropolitan French departments
+
+The population by department is available [here](https://www.insee.fr/fr/statistiques/fichier/2012713/TCRD_004.xls) or [here in csv format]()
+
+
+```r
+population &lt;- read_delim("../data/population.csv", 
+    ";", escape_double = FALSE,  col_types = cols(`1999` = col_double(), 
+        `2007` = col_double(), `2012` = col_double(), 
+        `2017` = col_double()), trim_ws = TRUE, 
+    skip = 3) %&gt;% 
+  rename(CODE_DEPT = X1, p2020 = '2020 (p)', p2017 = '2017', p2012 = '2012',
+          p2007 = '2007', p1999 = '1999')
+```
+
+Joining the two dataset
+
+
+```r
+dpt_complete &lt;- dpt_shape %&gt;% inner_join( y = population, by = "CODE_DEPT")
+```
+
+
+---
+template: sf
+count: false
+
+## Metropolitan French departments
+
+
+
+---
+
+
+count: false
+ 
+
+.panel1-plot_data_dpt1-auto[
+
+```r
+*dpt_complete %&gt;% ggplot()
+```
+]
+ 
+.panel2-plot_data_dpt1-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_01_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt1-auto[
+
+```r
+dpt_complete %&gt;% ggplot() +
+* geom_sf(aes(fill = p2017))
+```
+]
+ 
+.panel2-plot_data_dpt1-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_02_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt1-auto[
+
+```r
+dpt_complete %&gt;% ggplot() +
+  geom_sf(aes(fill = p2017)) +
+* scale_fill_gradient(low = "#75c9c5", high = "#fb1c05")
+```
+]
+ 
+.panel2-plot_data_dpt1-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-plot_data_dpt1-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-plot_data_dpt1-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-plot_data_dpt1-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+
+
+---
+
+
+count: false
+ 
+
+.panel1-plot_data_dpt2-auto[
+
+```r
+*dpt_complete
+```
+]
+ 
+.panel2-plot_data_dpt2-auto[
+
+```
+Simple feature collection with 96 features and 18 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 99226 ymin: 6049647 xmax: 1242375 ymax: 7110524
+projected CRS:  RGF93 / Lambert-93
+First 10 features:
+   ID_GEOFLA CODE_DEPT                NOM_DEPT CODE_CHF              NOM_CHF
+1          1        01                     AIN      053      BOURG-EN-BRESSE
+2          2        02                   AISNE      408                 LAON
+3          3        03                  ALLIER      190              MOULINS
+4          4        04 ALPES-DE-HAUTE-PROVENCE      070      DIGNE-LES-BAINS
+5          5        05            HAUTES-ALPES      061                  GAP
+6          6        06         ALPES-MARITIMES      088                 NICE
+7          7        07                 ARDECHE      186               PRIVAS
+8          8        08                ARDENNES      105 CHARLEVILLE-MEZIERES
+9          9        09                  ARIEGE      122                 FOIX
+10        10        10                    AUBE      387               TROYES
+   X_CHF_LIEU Y_CHF_LIEU X_CENTROID Y_CENTROID CODE_REG
+1        8717      65696       8814      65582       82
+2        7451      69406       7404      69401       22
+3        7254      66072       7144      65882       83
+4        9590      63379       9596      63394       93
+5        9443      63891       9585      64014       93
+6       10439      62985      10303      63240       93
+7        8266      64052       8127      64068       82
+8        8239      69649       8186      69475       21
+9        5862      62083       5777      62035       73
+10       7799      68003       7861      68010       21
+                   NOM_REGION                      X2   p2020
+1                 RHONE-ALPES                     Ain  656955
+2                    PICARDIE                   Aisne  526050
+3                    AUVERGNE                  Allier  331315
+4  PROVENCE-ALPES-COTE-D'AZUR Alpes-de-Haute-Provence  165197
+5  PROVENCE-ALPES-COTE-D'AZUR            Hautes-Alpes  141756
+6  PROVENCE-ALPES-COTE-D'AZUR         Alpes-Maritimes 1079396
+7                 RHONE-ALPES                 Ardèche  326875
+8           CHAMPAGNE-ARDENNE                Ardennes  265531
+9               MIDI-PYRENEES                  Ariège  152398
+10          CHAMPAGNE-ARDENNE                    Aube  309907
+   Part dans la France (p) (en %)   p2017   p2012   p2007   p1999
+1                             1.0  643350  612191  574377  514331
+2                             0.8  534490  540888  537820  536181
+3                             0.5  337988  342911  343114  345072
+4                             0.2  163915  161241  156067  139515
+5                             0.2  141284  139554  132482  121338
+6                             1.6 1083310 1082014 1082465 1010644
+7                             0.5  325712  318407  309456  285889
+8                             0.4  273579  282778  284749  290452
+9                             0.2  153153  152366  148568  137201
+10                            0.5  310020  305606  300840  292317
+                         geometry
+1  MULTIPOLYGON (((919195 6541...
+2  MULTIPOLYGON (((735603 6861...
+3  MULTIPOLYGON (((753769 6537...
+4  MULTIPOLYGON (((992638 6305...
+5  MULTIPOLYGON (((1012913 640...
+6  MULTIPOLYGON (((1018256 627...
+7  MULTIPOLYGON (((831641 6353...
+8  MULTIPOLYGON (((842092 6905...
+9  MULTIPOLYGON (((631545 6174...
+10 MULTIPOLYGON (((796594 6759...
+```
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt2-auto[
+
+```r
+dpt_complete %&gt;%
+* mutate(area = st_area(geometry), dens = p2017/area)
+```
+]
+ 
+.panel2-plot_data_dpt2-auto[
+
+```
+Simple feature collection with 96 features and 20 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 99226 ymin: 6049647 xmax: 1242375 ymax: 7110524
+projected CRS:  RGF93 / Lambert-93
+First 10 features:
+   ID_GEOFLA CODE_DEPT                NOM_DEPT CODE_CHF              NOM_CHF
+1          1        01                     AIN      053      BOURG-EN-BRESSE
+2          2        02                   AISNE      408                 LAON
+3          3        03                  ALLIER      190              MOULINS
+4          4        04 ALPES-DE-HAUTE-PROVENCE      070      DIGNE-LES-BAINS
+5          5        05            HAUTES-ALPES      061                  GAP
+6          6        06         ALPES-MARITIMES      088                 NICE
+7          7        07                 ARDECHE      186               PRIVAS
+8          8        08                ARDENNES      105 CHARLEVILLE-MEZIERES
+9          9        09                  ARIEGE      122                 FOIX
+10        10        10                    AUBE      387               TROYES
+   X_CHF_LIEU Y_CHF_LIEU X_CENTROID Y_CENTROID CODE_REG
+1        8717      65696       8814      65582       82
+2        7451      69406       7404      69401       22
+3        7254      66072       7144      65882       83
+4        9590      63379       9596      63394       93
+5        9443      63891       9585      64014       93
+6       10439      62985      10303      63240       93
+7        8266      64052       8127      64068       82
+8        8239      69649       8186      69475       21
+9        5862      62083       5777      62035       73
+10       7799      68003       7861      68010       21
+                   NOM_REGION                      X2   p2020
+1                 RHONE-ALPES                     Ain  656955
+2                    PICARDIE                   Aisne  526050
+3                    AUVERGNE                  Allier  331315
+4  PROVENCE-ALPES-COTE-D'AZUR Alpes-de-Haute-Provence  165197
+5  PROVENCE-ALPES-COTE-D'AZUR            Hautes-Alpes  141756
+6  PROVENCE-ALPES-COTE-D'AZUR         Alpes-Maritimes 1079396
+7                 RHONE-ALPES                 Ardèche  326875
+8           CHAMPAGNE-ARDENNE                Ardennes  265531
+9               MIDI-PYRENEES                  Ariège  152398
+10          CHAMPAGNE-ARDENNE                    Aube  309907
+   Part dans la France (p) (en %)   p2017   p2012   p2007   p1999
+1                             1.0  643350  612191  574377  514331
+2                             0.8  534490  540888  537820  536181
+3                             0.5  337988  342911  343114  345072
+4                             0.2  163915  161241  156067  139515
+5                             0.2  141284  139554  132482  121338
+6                             1.6 1083310 1082014 1082465 1010644
+7                             0.5  325712  318407  309456  285889
+8                             0.4  273579  282778  284749  290452
+9                             0.2  153153  152366  148568  137201
+10                            0.5  310020  305606  300840  292317
+                         geometry             area                 dens
+1  MULTIPOLYGON (((919195 6541... 5773973636 [m^2] 1.114224e-04 [1/m^2]
+2  MULTIPOLYGON (((735603 6861... 7426879436 [m^2] 7.196697e-05 [1/m^2]
+3  MULTIPOLYGON (((753769 6537... 7366243992 [m^2] 4.588336e-05 [1/m^2]
+4  MULTIPOLYGON (((992638 6305... 6994842466 [m^2] 2.343369e-05 [1/m^2]
+5  MULTIPOLYGON (((1012913 640... 5684669533 [m^2] 2.485351e-05 [1/m^2]
+6  MULTIPOLYGON (((1018256 627... 4295964144 [m^2] 2.521692e-04 [1/m^2]
+7  MULTIPOLYGON (((831641 6353... 5560374049 [m^2] 5.857735e-05 [1/m^2]
+8  MULTIPOLYGON (((842092 6905... 5249534160 [m^2] 5.211491e-05 [1/m^2]
+9  MULTIPOLYGON (((631545 6174... 4916047427 [m^2] 3.115369e-05 [1/m^2]
+10 MULTIPOLYGON (((796594 6759... 6020293118 [m^2] 5.149583e-05 [1/m^2]
+```
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt2-auto[
+
+```r
+dpt_complete %&gt;%
+  mutate(area = st_area(geometry), dens = p2017/area) %&gt;%
+* ggplot()
+```
+]
+ 
+.panel2-plot_data_dpt2-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt2-auto[
+
+```r
+dpt_complete %&gt;%
+  mutate(area = st_area(geometry), dens = p2017/area) %&gt;%
+  ggplot() +
+* geom_sf(aes(fill = as.numeric(dens)))
+```
+]
+ 
+.panel2-plot_data_dpt2-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_04_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-plot_data_dpt2-auto[
+
+```r
+dpt_complete %&gt;%
+  mutate(area = st_area(geometry), dens = p2017/area) %&gt;%
+  ggplot() +
+  geom_sf(aes(fill = as.numeric(dens))) +
+* scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log")
+```
+]
+ 
+.panel2-plot_data_dpt2-auto[
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_05_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-plot_data_dpt2-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-plot_data_dpt2-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-plot_data_dpt2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+---
+
+template: sf
+count: false
+
+## From departments to regions
+
+
+### Tidying the dataset
+
+
+
+```r
+dpt_complete %&gt;%  print(n=5)
+```
+
+```
+Simple feature collection with 96 features and 18 fields
+geometry type:  MULTIPOLYGON
+dimension:      XY
+bbox:           xmin: 99226 ymin: 6049647 xmax: 1242375 ymax: 7110524
+projected CRS:  RGF93 / Lambert-93
+First 5 features:
+  ID_GEOFLA CODE_DEPT                NOM_DEPT CODE_CHF         NOM_CHF
+1         1        01                     AIN      053 BOURG-EN-BRESSE
+2         2        02                   AISNE      408            LAON
+3         3        03                  ALLIER      190         MOULINS
+4         4        04 ALPES-DE-HAUTE-PROVENCE      070 DIGNE-LES-BAINS
+5         5        05            HAUTES-ALPES      061             GAP
+  X_CHF_LIEU Y_CHF_LIEU X_CENTROID Y_CENTROID CODE_REG
+1       8717      65696       8814      65582       82
+2       7451      69406       7404      69401       22
+3       7254      66072       7144      65882       83
+4       9590      63379       9596      63394       93
+5       9443      63891       9585      64014       93
+                  NOM_REGION                      X2  p2020
+1                RHONE-ALPES                     Ain 656955
+2                   PICARDIE                   Aisne 526050
+3                   AUVERGNE                  Allier 331315
+4 PROVENCE-ALPES-COTE-D'AZUR Alpes-de-Haute-Provence 165197
+5 PROVENCE-ALPES-COTE-D'AZUR            Hautes-Alpes 141756
+  Part dans la France (p) (en %)  p2017  p2012  p2007  p1999
+1                            1.0 643350 612191 574377 514331
+2                            0.8 534490 540888 537820 536181
+3                            0.5 337988 342911 343114 345072
+4                            0.2 163915 161241 156067 139515
+5                            0.2 141284 139554 132482 121338
+                        geometry
+1 MULTIPOLYGON (((919195 6541...
+2 MULTIPOLYGON (((735603 6861...
+3 MULTIPOLYGON (((753769 6537...
+4 MULTIPOLYGON (((992638 6305...
+5 MULTIPOLYGON (((1012913 640...
+```
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+*region_complete &lt;- dpt_complete
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+* select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+*        p2020, p2017, p2012, p2007, p1999)
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+* pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+* group_by(NOM_REGION, Year)
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+  group_by(NOM_REGION, Year) %&gt;%
+* summarise(pop = sum(Population), geometry= st_union(geometry),
+*           area = units::set_units(st_area(geometry), km^2), dens = (pop/area))
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+  group_by(NOM_REGION, Year) %&gt;%
+  summarise(pop = sum(Population), geometry= st_union(geometry),
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area))
+
+*region_complete
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+
+```
+[90m# A tibble: 110 x 6[39m
+[90m# Groups:   NOM_REGION [22][39m
+  NOM_REGION Year      pop                             geometry    area     dens
+  [3m[90m&lt;chr&gt;[39m[23m      [3m[90m&lt;chr&gt;[39m[23m   [3m[90m&lt;dbl&gt;[39m[23m                        [3m[90m&lt;POLYGON [m]&gt;[39m[23m  [90m[km^2][39m [90m[1/km^2][39m
+[90m1[39m ALSACE     p1999 1[4m7[24m[4m3[24m[4m2[24m588 ((1040442 6789985, 1040405 6789659,… 8319.64 208.2528
+[90m2[39m ALSACE     p2007 1[4m8[24m[4m2[24m[4m7[24m248 ((1040442 6789985, 1040405 6789659,… 8319.64 219.6307
+[90m3[39m ALSACE     p2012 1[4m8[24m[4m5[24m[4m9[24m869 ((1040442 6789985, 1040405 6789659,… 8319.64 223.5516
+[90m4[39m ALSACE     p2017 1[4m8[24m[4m8[24m[4m9[24m589 ((1040442 6789985, 1040405 6789659,… 8319.64 227.1239
+[90m# … with 106 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+  group_by(NOM_REGION, Year) %&gt;%
+  summarise(pop = sum(Population), geometry= st_union(geometry),
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area))
+
+region_complete %&gt;%
+* ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry))
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_07_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+  group_by(NOM_REGION, Year) %&gt;%
+  summarise(pop = sum(Population), geometry= st_union(geometry),
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area))
+
+region_complete %&gt;%
+  ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry)) +
+* scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log", breaks = c(50, 150, 450),
+*                     name = 'Density')
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_08_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-tidying_eval2-auto[
+
+```r
+region_complete &lt;- dpt_complete %&gt;%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %&gt;%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%&gt;%
+  group_by(NOM_REGION, Year) %&gt;%
+  summarise(pop = sum(Population), geometry= st_union(geometry),
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area))
+
+region_complete %&gt;%
+  ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry)) +
+  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log", breaks = c(50, 150, 450),
+                      name = 'Density')
+```
+]
+ 
+.panel2-tidying_eval2-auto[
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_09_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-tidying_eval2-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-tidying_eval2-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-tidying_eval2-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+---
+# References
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="./collapseoutput.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<style>
+.logo {
+  background-image: url(img/sticker_sotr.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  width: 66px;
+  height: 78px;
+  z-index: 0;
+}
+</style>
+
+<script>
+document
+  .querySelectorAll(
+    '.remark-slide-content' +
+    ':not(.title-slide)' +
+    // add additional classes to exclude here, e.g.
+    // ':not(.inverse)' +
+    ':not(.hide-logo)'
+  )
+  .forEach(el => {
+    el.innerHTML += '<div class="logo"></div>';
+  });
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
