@@ -1,0 +1,121 @@
+---
+title: Analyse de la variance
+subtitle: à 1 facteur
+author: Marie-Pierre Etienne
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/marieetienne
+csl: ../resources/apa-no-doi-no-issue.csl
+output:
+  xaringan::moon_reader:
+    css: [  'metropolis', 'hygge', 'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "./collapseoutput.js"
+    includes:
+      after_body: insert-logo.html
+bibliography: visu.bib
+fontsize: 10pt
+params:
+  child_path: ''
+  setup_path: ../resources/
+---
+
+
+
+```{r setup, include=FALSE, eval = TRUE}
+source(paste0(params$setup_path, "knitr_setup.R"))
+with_sol <- TRUE ## in order to control the output
+with_course <- TRUE
+library('flipbookr')
+library(RefManageR)
+```
+
+
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./lm.bib", check = FALSE)
+```
+---
+name: intro
+# Introduction
+
+---
+template: intro
+## Un exemple jouet sans intérêt 
+
+On a mesuré la fréquence cardiaque de 
+
+
+---
+template: intro
+## Un véritable exemple
+
+## Cadre général
+
+## Les questions qu'on se pose
+
+
+# Le modèle d'analyse de la variance à 1 facteur
+
+## Version régulière du modèle
+
+## Version singulière du modèle
+
+## Sous forme matricielle
+
+## Déclinaisons sur les exemples
+
+
+# Pause
+
+# Etude des paramètres du modèle
+
+## Estimation des paramètres du modèle version régulière
+
+## Estimation des paramètres du modèle version singulière
+
+## Estimation des paramètres du modèle version matricielle
+
+## Estimation de la variance de l'erreur
+
+## Distinction estimateur / estimations
+
+## Loi des estimateurs 
+
+## Loi des estimateurs sur les exemples
+
+## Extension au modèle linéaire en général
+
+## Déclnaisons sur les exemples
+
+# Pause
+
+# Test du modèle complet
+
+## Test de l'existence d'un effet
+
+## Hypothèses du test
+
+## Déclinaison sur les exemples
+
+## Loi de la statistique de test sous H0
+
+## Déclinaison sur les exemples
+
+# Test sur un paramètre
+
+## Réflexion sur le sens de ce test
+
+## loi de la statistique de test
+
+## Déclinaisonsur les exemples
+
+
