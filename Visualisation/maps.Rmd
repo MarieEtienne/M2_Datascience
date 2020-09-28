@@ -234,6 +234,9 @@ template: coordinate_header
 
 ### Focus on Metropolitan France 
 
+Change of WGS84
+
+
 ```{r sf_metro_example_map,  eval = TRUE, echo = TRUE}
 metro_dta <- france_dta %>% st_crop( xmin = -5, xmax = 11, ymin= 40.6, ymax = 52) 
 metro_dta %>% ggplot() + geom_sf()
@@ -441,7 +444,7 @@ count: false
 The population by department is available [here](https://www.insee.fr/fr/statistiques/fichier/2012713/TCRD_004.xls) or [here in csv format]()
 
 ```{r read_pop, echo = TRUE, eval = TRUE}
-population <- read_delim("~/git/courses/data/population.csv", 
+population <- read_delim("../data/population.csv", 
     ";", escape_double = FALSE,  col_types = cols(`1999` = col_double(), 
         `2007` = col_double(), `2012` = col_double(), 
         `2017` = col_double()), trim_ws = TRUE, 
@@ -527,7 +530,6 @@ region_complete %>%
 
 `r chunk_reveal("tidying_eval2", break_type = "auto")`
 
-<!-- Ajouter manip tidy pour mettre les années en tidy et faire les cartes par annéees -->
 
 
 ---
