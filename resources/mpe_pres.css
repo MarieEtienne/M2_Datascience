@@ -7,7 +7,7 @@ body {
 
 .remark-code, .remark-inline-code {
   font-family: 'Fira Code', 'Lucida Console', Monaco, monospace;
-  font-size: 80%;
+  font-size: 70%;
 }
 
 
@@ -32,13 +32,28 @@ a, a > code {
 
 
 .inverse {
-  background-color: #272822;
+  background-color: #1A292C;
   color: #d6d6d6;
   text-shadow: 0 0 20px #333;
 }
-.inverse h1, .inverse h2, .inverse h3 {
-  color: #f3f3f3;
+
+
+.question {
+  background-color: #ecefef;
+  color: #B40F20;
+  text-align: center;
+  align-content: center;
+  text-shadow: 0 0 20px #333;
+  font-size: 110%;
+  
 }
+
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #1A292C;
+}
+
+
+
 /* Two-column layout */
 .left-column {
   color: #777;
@@ -95,7 +110,7 @@ th, td { padding: 5px; }
 .remark-slide-content {
   background-color: #FAFAFA;
   border-top: 70px solid #d4e7ed;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 300;
   line-height: 1.5;
   padding: 3% 2em 1em 2em

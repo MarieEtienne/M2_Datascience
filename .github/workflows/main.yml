@@ -22,10 +22,11 @@ jobs:
           install.packages(c("tidyverse","magick","gganimate","GGally","sf"))
           install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))
           install.packages(c("kableExtra","RefManageR"))
-          remotes::install_github("allisonhorst/palmerpenguins")
           remotes::install_github("yihui/xaringan")
           remotes::install_github("EvaMaeRey/flipbookr")
           remotes::install_github("ropensci/osmdata")
+          remotes::install_github("allisonhorst/palmerpenguins")
+          remotes::install_github("MarieEtienne/coursesdata")
         shell: Rscript {0}
       - name: Generate slides
         run: Rscript R/render.R
