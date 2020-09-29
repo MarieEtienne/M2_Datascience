@@ -28,39 +28,105 @@ class: center, middle, inverse, title-slide
 
 
 
----
+
 name: intro
 # Introduction
 
 ---
 template: intro
-## Un exemple jouet sans intérêt 
+## Un exemple jouet à but pédagogique
 
-On a mesuré la fréquence cardiaque de 
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
 
+
+
+
+
+```r
+library(coursesdata)
+data(freqdata)
+freqdata %&gt;% ggplot() + geom_boxplot(aes(x= Sexe, y = freqC))
+```
+
+&lt;img src="anova_files/figure-html/freqdata-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+--
+&lt;p class="question"&gt; Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?&lt;/p&gt;
 
 ---
 template: intro
-## Un véritable exemple
+## Cas d'étude Chauve souris
 
-## Cadre général
+- Des espèces avec différents régimes alimentaires.
+- L'écho localisation (capacité auditive) est un sens essentiel pour les insectivores.
 
-## Les questions qu'on se pose
+Hutcheon, Kirsch, and Garland [HKG02] ont recensé pour 63 espèces de chauves souris l'espèce, le régime alimentaire, le clade (groupe dans l'arbre phylogénétique), différentes variables morphologiques dont le volume du cerveau dédié à l'audition (AUD)
+
+&lt;img src="anova_files/figure-html/batsdata-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
+
+--
+&lt;p class="question"&gt; Le volume de la partie auditive du cerveau est il lié au régime alimentaire ?&lt;/p&gt;
+
+---
+template: intro
+## Cadre général du modèle d'analyse de la variance à 1 facteur
+On étudie le lien entre  
+- variable quantitative notée `\(Y\)` (la fréquence cardiaque, volume de cerveau),
+- et une variable qualitative (un facteur) pourvant prendre `\(I\)` modalités (I=2 pour l'exemple 1 et I=4 dans l'exemple 2). 
 
 
+Les données peuvent être visualisées à l'aide d'un boxplot.
+
+
+--
+&lt;p class="question"&gt; La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?&lt;/p&gt;
+
+
+
+---
+name: model
 # Le modèle d'analyse de la variance à 1 facteur
 
+---
+name: model
+# Le modèle d'analyse de la variance à 1 facteur
+
+## Graphiquement 
+
+
+
+
+
+---
+template: model
 ## Version régulière du modèle
 
+
+---
+template: model
 ## Version singulière du modèle
 
+
+---
+template: model
 ## Sous forme matricielle
 
+
+---
+template: model
 ## Déclinaisons sur les exemples
 
 
+---
+class: inverse
+name: pause
 # Pause
 
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
+
+---
 # Etude des paramètres du modèle
 
 ## Estimation des paramètres du modèle version régulière
@@ -81,7 +147,11 @@ template: intro
 
 ## Déclnaisons sur les exemples
 
-# Pause
+
+---
+template: pause
+
+---
 
 # Test du modèle complet
 

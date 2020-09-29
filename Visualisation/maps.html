@@ -215,7 +215,7 @@ zone_map %&gt;%
 [1] -1.752588 48.076915 -1.624405 48.154970
 ```
 
-&lt;img src="maps_files/figure-html/openstreetmap_package_auto_08_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_08_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -245,7 +245,7 @@ zone_map %&gt;%
 [1] -1.752588 48.076915 -1.624405 48.154970
 ```
 
-&lt;img src="maps_files/figure-html/openstreetmap_package_auto_09_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_09_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -276,7 +276,7 @@ zone_map %&gt;%
 [1] -1.752588 48.076915 -1.624405 48.154970
 ```
 
-&lt;img src="maps_files/figure-html/openstreetmap_package_auto_10_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/openstreetmap_package_auto_10_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
@@ -484,7 +484,7 @@ An  approximation of sea level on Earth contains:
 
 
 &lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="img/1280px-ECEF.png" alt="Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )" width="40%" /&gt;
+&lt;img src="img/1280px-ECEF.png" alt="Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )" width="40%" height="30%" /&gt;
 &lt;p class="caption"&gt;Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )&lt;/p&gt;
 &lt;/div&gt;
 
@@ -516,7 +516,7 @@ template: coordinate_header
 world %&gt;%  filter(brk_name == "United States") %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/sf_world_example_map-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_world_example_map-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: coordinate_header
@@ -530,7 +530,7 @@ template: coordinate_header
 world %&gt;%   filter(brk_name == "United States") %&gt;% st_transform(crs = 2163) %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/sf_world_example_map_2163-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_world_example_map_2163-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: coordinate_header
@@ -684,7 +684,7 @@ BOUNDCRS[
             ID["EPSG",8607]]]]
 ```
 
-&lt;img src="maps_files/figure-html/sf_france_example_map_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_france_example_map_auto_03_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
@@ -733,7 +733,7 @@ metro_dta &lt;- france_dta %&gt;% st_crop( xmin = -5, xmax = 11, ymin= 40.6, yma
 metro_dta %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/sf_metro_example_map-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_metro_example_map-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: coordinate_header
@@ -749,7 +749,7 @@ metro_dta %&gt;% st_transform( crs = 2154 ) %&gt;%
   ggplot() + geom_sf() 
 ```
 
-&lt;img src="maps_files/figure-html/sf_metro_example_map_lambert-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_metro_example_map_lambert-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: coordinate_header
@@ -764,7 +764,7 @@ metro_dta %&gt;% st_transform( crs = 32631 ) %&gt;%
   ggplot() + geom_sf() 
 ```
 
-&lt;img src="maps_files/figure-html/sf_metro_example_map_utm-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/sf_metro_example_map_utm-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -829,7 +829,7 @@ class(x)
 x %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/plot_point-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_point-1.png" width="30%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: sf
@@ -856,7 +856,7 @@ class(mp)
 mp %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/multipoint_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/multipoint_plot-1.png" width="30%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -883,7 +883,7 @@ class(line_sfg)
 line_sfg%&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/line_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/line_plot-1.png" width="30%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: sf
@@ -914,7 +914,7 @@ class(poly_sfg )
 poly_sfg %&gt;% ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/poly_plot-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/poly_plot-1.png" width="30%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: sf
@@ -1088,7 +1088,7 @@ dpt_shape %&gt;%
   ggplot() + geom_sf()
 ```
 
-&lt;img src="maps_files/figure-html/plot_shp_dpt-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_shp_dpt-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -1140,7 +1140,7 @@ count: false
 ]
  
 .panel2-plot_data_dpt1-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_01_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_01_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1156,7 +1156,7 @@ dpt_complete %&gt;% ggplot() +
 ]
  
 .panel2-plot_data_dpt1-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_02_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_02_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1173,7 +1173,7 @@ dpt_complete %&gt;% ggplot() +
 ]
  
 .panel2-plot_data_dpt1-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt1_auto_03_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
@@ -1382,7 +1382,7 @@ dpt_complete %&gt;%
 ]
  
 .panel2-plot_data_dpt2-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_03_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_03_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1400,7 +1400,7 @@ dpt_complete %&gt;%
 ]
  
 .panel2-plot_data_dpt2-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_04_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_04_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1419,7 +1419,7 @@ dpt_complete %&gt;%
 ]
  
 .panel2-plot_data_dpt2-auto[
-&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_05_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/plot_data_dpt2_auto_05_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
@@ -1656,7 +1656,7 @@ region_complete %&gt;%
 ]
  
 .panel2-tidying_eval2-auto[
-&lt;img src="maps_files/figure-html/tidying_eval2_auto_07_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_07_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1682,7 +1682,7 @@ region_complete %&gt;%
 ]
  
 .panel2-tidying_eval2-auto[
-&lt;img src="maps_files/figure-html/tidying_eval2_auto_08_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_08_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1708,7 +1708,7 @@ region_complete %&gt;%
 ]
  
 .panel2-tidying_eval2-auto[
-&lt;img src="maps_files/figure-html/tidying_eval2_auto_09_output-1.png" width="auto" style="display: block; margin: auto;" /&gt;
+&lt;img src="maps_files/figure-html/tidying_eval2_auto_09_output-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
