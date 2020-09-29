@@ -13,10 +13,9 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      beforeInit: "./collapseoutput.js"
+      beforeInit: '../resources/collapseoutput.js'
     includes:
-      after_body: insert-logo.html
-bibliography: visu.bib
+      after_body: '../resources/insert-logo.html'
 fontsize: 10pt
 params:
   child_path: ''
