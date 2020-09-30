@@ -7,7 +7,7 @@ institute: https://github.com/marieetienne
 csl: ../resources/apa-no-doi-no-issue.csl
 output:
   xaringan::moon_reader:
-    css: [  'metropolis', 'hygge', 'mpe_pres.css']
+    css: [  'kunoichi', 'ninjutsu', 'mpe_pres.css']
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -108,17 +108,28 @@ name: model
 # Le modèle d'analyse de la variance à 1 facteur
 
 ---
-name: model
+template: model
 # Le modèle d'analyse de la variance à 1 facteur
 
 ## Graphiquement 
 
-```{r anova_versiongraphique}
+Une visalisation graphique du modèle d'analyse de la variance.
+
+<br> <br> <br> <br>
+
+
+Comment imagine-t-on le processus qui a conduit à nos données ?
+
+
+---
+
+```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
+set.seed(123)
 I <- 3
 mu <- round(5 * rnorm(I))
 effectif <- runif(n = I, min = 10, max = 30)
 fake_dta <- tibble( groupe = rep(1:I, effectif)) %>% group_by(groupe) %>% 
-  mutate(y = round(rnorm(n(), mean = mu[groupe], sd = 1.5),2) ) %>% mutate(groupe = as.factor(groupe), ord=0)  
+  mutate(y = round(rnorm(n(), mean = mu[groupe], sd = 1.5),2), mean = mu[groupe] ) %>% mutate(groupe = as.factor(groupe), ord=0)  
 norm_dta <- tibble( x  = seq( min(mu) -3*1.5, max(mu)+ 3* 1.5, length.out = 100))  %>% 
   mutate(d1 = dnorm(x, mean = mu[1], sd = 1.5),
          d2 = dnorm(x, mean = mu[2], sd = 1.5),
@@ -126,10 +137,89 @@ norm_dta <- tibble( x  = seq( min(mu) -3*1.5, max(mu)+ 3* 1.5, length.out = 100)
   ) %>% 
   pivot_longer(cols = starts_with("d"), names_to = 'Groupe', values_to ='density' )%>% 
   mutate(groupe = as.factor(as.numeric(as.factor(Groupe))))
-
-ggplot() + theme(legend.position = 'none') + labs(col = 'Groupe') + geom_line(data = norm_dta, aes(x= x, y = density, col = groupe)) +  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))  +
-  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) 
 ```
+
+```{r anova_versiongraphique_proba}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M1') +
+  geom_line(data = norm_dta, aes(x= x, y = density, col = groupe)) +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
+  theme(legend.position = 'none') + 
+  labs(col = 'Groupe') +
+  geom_vline(data=fake_dta, aes(xintercept = mean, col = groupe), alpha = 0.6) +#BREAK
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) #BREAK
+
+```
+
+`r chunk_reveal("anova_versiongraphique_proba", break_type = "user", display_type="output")`
+---
+count:false
+
+```{r anova_versiongraphique_proba2, eval = TRUE, echo = FALSE}
+ggplot() +  ggtitle('Modèle M1') +  
+  xlab('y') +
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +  theme(legend.position = 'none') +
+  labs(col = 'Groupe') +
+geom_line(data = norm_dta, aes(x= x, y = density, col = groupe), alpha= 0.1) +   
+  geom_vline(data=fake_dta, aes(xintercept = mean, col = groupe), alpha = 0.1) #BREAK
+```
+
+
+
+
+```{r anova_versiongraphiqueM0, eval = TRUE, echo = FALSE}
+set.seed(123)
+mu0 <- mean(round(5 * rnorm(I)))
+sd0 <- sd(fake_dta$y)
+fake_dta_M0 <- tibble( groupe = rep(1:I, effectif)) %>% group_by(groupe) %>% 
+  mutate(y = round(rnorm(n(), mean = mu0, sd = sd0), 2), mean = mu0 ) %>% mutate(groupe = as.factor(groupe), ord=0)  
+norm_dta_M0 <- tibble( x  = seq( min(mu) -3*1.5, max(mu)+ 3* 1.5, length.out = 100))  %>% 
+  mutate(d1 = dnorm(x, mean = mu0, sd = sd0),
+         d2 = dnorm(x, mean = mu0, sd = sd0),
+         d3 = dnorm(x, mean = mu0, sd = sd0)
+  ) %>% 
+  pivot_longer(cols = starts_with("d"), names_to = 'Groupe', values_to ='density' )%>% 
+  mutate(groupe = as.factor(as.numeric(as.factor(Groupe))))
+```
+---
+
+```{r anova_versiongraphique_proba_M0}
+ggplot() + ggtitle('Modèle M0') + 
+  xlab('y') +
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe)) +  
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
+  theme(legend.position = 'none') + 
+  labs(col = 'Groupe') + 
+  geom_vline(data=fake_dta_M0, aes(xintercept = mean, col = groupe), alpha = 0.6) +#BREAK
+  geom_point(data = fake_dta_M0, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) #BREAK
+
+```
+
+`r chunk_reveal("anova_versiongraphique_proba_M0", break_type = "user", display_type="output")`
+
+---
+count: false
+
+```{r anova_versiongraphique_proba2_M0, eval = TRUE, echo = FALSE}
+ggplot() +  
+  xlab('y') +
+  ggtitle('Modèle M0')  +  
+  geom_point(data = fake_dta_M0, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +  
+  theme(legend.position = 'none') + 
+  labs(col = 'Groupe') + 
+geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe), alpha= 0.1) +  
+  geom_vline(data=fake_dta_M0, aes(xintercept = mean, col = groupe), alpha = 0.1) #BREAK
+```
+
+--
+<p class="question"> La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?</p>
+
+--
+
+<p class="question"> Au vu de nos données, le modèle M1 est-il plus pertinent que le modèle M0 ?</p>
 
 
 

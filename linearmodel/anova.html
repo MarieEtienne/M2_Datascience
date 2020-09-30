@@ -5,8 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Marie-Pierre Etienne" />
     <script src="libs/header-attrs-2.3/header-attrs.js"></script>
-    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
-    <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/kunoichi.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
     <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
   </head>
   <body>
@@ -17,7 +17,7 @@ class: center, middle, inverse, title-slide
 ## à 1 facteur
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
-### 2020/09/11 (updated: 2020-09-29)
+### 2020/09/11 (updated: 2020-09-30)
 
 ---
 
@@ -48,7 +48,7 @@ data(freqdata)
 freqdata %&gt;% ggplot() + geom_boxplot(aes(x= Sexe, y = freqC))
 ```
 
-&lt;img src="anova_files/figure-html/freqdata-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="anova_files/figure-html/freqdata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 --
@@ -63,7 +63,7 @@ template: intro
 
 Hutcheon, Kirsch, and Garland [HKG02] ont recensé pour 63 espèces de chauves souris l'espèce, le régime alimentaire, le clade (groupe dans l'arbre phylogénétique), différentes variables morphologiques dont le volume du cerveau dédié à l'audition (AUD)
 
-&lt;img src="anova_files/figure-html/batsdata-1.png" width="50%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="anova_files/figure-html/batsdata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 --
 &lt;p class="question"&gt; Le volume de la partie auditive du cerveau est il lié au régime alimentaire ?&lt;/p&gt;
@@ -89,12 +89,134 @@ name: model
 # Le modèle d'analyse de la variance à 1 facteur
 
 ---
-name: model
+template: model
 # Le modèle d'analyse de la variance à 1 facteur
 
 ## Graphiquement 
 
+Une visalisation graphique du modèle d'analyse de la variance.
 
+&lt;br&gt; &lt;br&gt; &lt;br&gt; &lt;br&gt;
+
+
+Comment imagine-t-on le processus qui a conduit à nos données ?
+
+
+---
+
+
+
+
+
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-anova_versiongraphique_proba-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-anova_versiongraphique_proba-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-anova_versiongraphique_proba-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+---
+count:false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+---
+
+
+
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_M0_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_M0_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_M0_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-anova_versiongraphique_proba_M0-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-anova_versiongraphique_proba_M0-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-anova_versiongraphique_proba_M0-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_versiongraphique_proba2_M0-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+--
+&lt;p class="question"&gt; La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?&lt;/p&gt;
+
+--
+
+&lt;p class="question"&gt; Au vu de nos données, le modèle M1 est-il plus pertinent que le modèle M0 ?&lt;/p&gt;
 
 
 
