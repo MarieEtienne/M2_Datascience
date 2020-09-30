@@ -5,8 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Marie-Pierre Etienne" />
     <script src="libs/header-attrs-2.3/header-attrs.js"></script>
-    <link href="libs/remark-css-0.0.1/kunoichi.css" rel="stylesheet" />
-    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
   </head>
   <body>
@@ -222,17 +221,186 @@ count: false
 
 ---
 template: model
-## Version régulière du modèle
+
+## Version régulière du modèle M1
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_i, \sigma^2),$$`
+avec 
+- `\(i=1,\ldots,I\)` le numéro du groupe,
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`,
+- `\(\mu_i\)` le comportement moyen du groupe `\(i\)`,
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+### Une écriture équivalente 
+
+`$$Y_{ik} = \mu_{i} + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2).$$`
+
+
+### Nombre de paramètres du modèle
+
+- `\(I\)` paramètres de moyenne  `\((\mu_1, \mu_2, \ldots, \mu_I)\)`; 
+- 1 paramètre de variance `\(\sigma^2\)`
+
+---
+template: model
+
+## Version régulière du modèle M1 sur l'exemple 1
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_i, \sigma^2),$$`
+avec 
+- `\(I=2\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
+
+On compte le nombre d'individus dans chaque modalité. 
+
+
+```r
+freqdata %&gt;%group_by(Sexe) %&gt;% summarise(n= n())
+```
+
+```
+[90m# A tibble: 2 x 2[39m
+  Sexe      n
+  [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m
+[90m1[39m F        20
+[90m2[39m M        20
+```
+Ainsi 
+- `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)`
+- `\(\mu_1\)` la fréquence cardiaque moyenne des femmes et `\(\mu_2\)` celle des hommes. 
+- `\(\sigma^2\)` la variance autour de cette valeur moyenne.
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+### nombre de paramètres
+-2 paramètres de moyenne
+- 1 paramètre de variance
+
+---
+template: model
+## Version singulière du modèle du modèle M1
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$`
+avec 
+- `\(i=1,\ldots,I\)` le numéro du groupe,
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`,
+- `\(\mu\)`un comportement moyen de référence,
+- `\(\alpha_i\)` un effet différentiel du groupe `\(i\)`par rapport à la référence,
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+### Une écriture équivalente 
+
+`$$Y_{ik} = \mu + \alpha_{i} + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2).$$`
+
+### Nombre de paramètres du modèle
+
+- `\(I+1\)` paramètres de moyenne `\((\mu, \alpha_1, \alpha_2, \ldots, \alpha_I)\)`,
+- 1 paramètre de variance `\(\sigma^2.\)`
+
+--
+
+#### La version dans les logiciels et celle qui se généralise à plusieurs facteurs.
+
+---
+template: model
+## Version singulière du modèle du modèle M1 sur l'exemple 1
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$`
+avec 
+- `\(I=2\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
+- `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)`
+- `\(\mu\)` la fréquence cardiaque moyenne de référence &lt;a class="care"&gt; Référence à définir &lt;/a&gt; 
+- `\(\alpha_1\)`, l'effet différentiel d'être une femme par rapport à la différence et `\(\alpha_2\)` l'effet différentiel d'être un homme.
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+
+
+### Nombre de paramètres
+- 3 paramètres de moyenne
+- 1 paramètre de variance
 
 
 ---
 template: model
-## Version singulière du modèle
+## Lien entre les deux versions du même modèle
+
+ &lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Groupe&lt;/th&gt;
+    &lt;th&gt;V. singulière&lt;/th&gt;
+    &lt;th&gt;V. régulière&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;1&lt;/td&gt;
+    &lt;td&gt; `\(\mu_1\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_1\)` &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;2&lt;/td&gt;
+    &lt;td&gt; `\(\mu_2\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_2\)` &lt;/td&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;I&lt;/td&gt;
+    &lt;td&gt; `\(\mu_I\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_I\)` &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt; 
+
+--
+
+&lt;a class=care&gt; Problème &lt;/a&gt; : Version régulière mal définie. Le modèle dans cette version est dit &lt;a style="font-weight:400;"&gt; indéterminé&lt;/a&gt;.
+
+
+--
+###Exemples
+
+`$$\mu_1 =10,\ \mu_2=12,$$`
+peut se décomposer en 
+
+- `\(\mu =10,\ \alpha_1=0, \ \alpha_2=2,\)`
+- ou `\(\mu =0,\ \alpha_1=10, \ \alpha_2=12,\)`
+- ou `\(\mu =11,\ \alpha_1=-1, \ \alpha_2=1,\)`
+- ou `\(\mu =15,\ \alpha_1=-5, \ \alpha_2=-3,\)`
+- `\(\ldots\)`
+
+
+
 
 
 ---
 template: model
 ## Sous forme matricielle
+
+### Forme singulière 
+
+`$$Y =\begin{pmatrix}
+Y_{11}\\
+Y_{12}\\
+Y_{13}\\
+\vdots\\
+Y_{1n_1}\\
+Y_{21}\\
+Y_{22}\\
+\vdots\\
+Y_{2n_2}\\
+\vdots
+Y_{In_I}\end{pmatrix}$$`
 
 
 ---
