@@ -48,6 +48,12 @@ a, a > code {
   
 }
 
+
+.care {
+  color: #B40F20;
+  font-weight: 700;
+}
+
 .inverse h1, .inverse h2, .inverse h3 {
   color: #1A292C;
 }
