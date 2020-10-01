@@ -4,7 +4,7 @@
     <title>Analyse de la variance</title>
     <meta charset="utf-8" />
     <meta name="author" content="Marie-Pierre Etienne" />
-    <script src="libs/header-attrs-2.3/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.4/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
     <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
   </head>
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 ## à 1 facteur
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
-### 2020/09/11 (updated: 2020-09-30)
+### 2020/09/11 (updated: 2020-10-01)
 
 ---
 
@@ -227,7 +227,8 @@ template: model
 `$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_i, \sigma^2),$$`
 avec 
 - `\(i=1,\ldots,I\)` le numéro du groupe,
-- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`,
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`, 
+- `\(n_i\)` le nombre d'individus dans le groupe `\(i\)` et `\(n=\sum_i n_i\)` le nombre total d'individus,
 - `\(\mu_i\)` le comportement moyen du groupe `\(i\)`,
 - `\(\sigma^2\)` la variance commune à tous les groupes.
 
@@ -247,10 +248,7 @@ template: model
 ## Version régulière du modèle M1 sur l'exemple 1
 
 `$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_i, \sigma^2),$$`
-avec 
-- `\(I=2\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
-
-On compte le nombre d'individus dans chaque modalité. 
+avec  `\(I=2\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
 
 
 ```r
@@ -265,13 +263,12 @@ freqdata %&gt;%group_by(Sexe) %&gt;% summarise(n= n())
 [90m2[39m M        20
 ```
 Ainsi 
-- `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)`
+- `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)` et `\(n=40\)`.
 - `\(\mu_1\)` la fréquence cardiaque moyenne des femmes et `\(\mu_2\)` celle des hommes. 
-- `\(\sigma^2\)` la variance autour de cette valeur moyenne.
 - `\(\sigma^2\)` la variance commune à tous les groupes.
 
-### nombre de paramètres
--2 paramètres de moyenne
+### Nombre de paramètres
+- 2 paramètres de moyenne
 - 1 paramètre de variance
 
 ---
@@ -281,8 +278,8 @@ template: model
 `$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$`
 avec 
 - `\(i=1,\ldots,I\)` le numéro du groupe,
-- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`,
-- `\(\mu\)`un comportement moyen de référence,
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`, ($\sum_i n_i=n$)
+- `\(\mu\)` un comportement moyen de référence,
 - `\(\alpha_i\)` un effet différentiel du groupe `\(i\)`par rapport à la référence,
 - `\(\sigma^2\)` la variance commune à tous les groupes.
 
@@ -325,8 +322,8 @@ template: model
  &lt;table style="width:100%"&gt;
   &lt;tr&gt;
     &lt;th&gt;Groupe&lt;/th&gt;
-    &lt;th&gt;V. singulière&lt;/th&gt;
     &lt;th&gt;V. régulière&lt;/th&gt;
+    &lt;th&gt;V. singulière&lt;/th&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
     &lt;td&gt;1&lt;/td&gt;
@@ -368,10 +365,8 @@ template: model
 
 
 --
-###Exemples
-
-`$$\mu_1 =10,\ \mu_2=12,$$`
-peut se décomposer en 
+####Exemple
+Si `\(\mu_1 =10,\ \mu_2=12,\)` dans la forme singulière peut correspondre à 
 
 - `\(\mu =10,\ \alpha_1=0, \ \alpha_2=2,\)`
 - ou `\(\mu =0,\ \alpha_1=10, \ \alpha_2=12,\)`
@@ -380,16 +375,59 @@ peut se décomposer en
 - `\(\ldots\)`
 
 
+--
+&lt;a class=care&gt; Solution &lt;/a&gt; : Choisir une contrainte. Par défaut dans R, `\(\alpha_1=0\)`. La référence est le comportement du groupe 1. 
 
 
 
 ---
 template: model
+## Version singulière du modèle du modèle M1 en intégrant la contrainte par défaut
+
+
+
+`$$Y_{ik} = \mu + \alpha_{i} + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2).$$`
+
+avec 
+- `\(i=1,\ldots,I\)` le numéro du groupe,
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`, ($\sum_i n_i = n$ nombre total d'individus)
+- `\(\mu\)` un comportement moyen de référence &lt;a class=care&gt; c'est celui du groupe 1&lt;/a&gt;
+- `\(\alpha_1=0\)`  la contrainte choisie, `\(\alpha_1\)` n'est plus un paramètre d'intérêt.
+- `\(\alpha_i, i\geq 2\)` un effet différentiel du groupe `\(i\)`par rapport à la référence(i.e. le groupe 1)
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+
+### Nombre de paramètres du modèle
+
+- `\(I\)` paramètres de moyenne `\((\mu,  \alpha_2, \ldots, \alpha_I)\)`,
+- 1 paramètre de variance `\(\sigma^2.\)`
+
+---
+template: model
+## Version singulière du modèle du modèle M1 sur l'exemple 1  en intégrant la contrainte par défaut
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$`
+avec 
+- `\(I=2\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
+- `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)`
+- `\(\mu\)` la fréquence cardiaque moyenne des femmesei 
+- `\(\alpha_1\)`, l'effet différentiel d'être une femme par rapport à la différence et `\(\alpha_2\)` l'effet différentiel d'être un homme.
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+
+
+### Nombre de paramètres
+- 3 paramètres de moyenne
+- 1 paramètre de variance
+
+
+---
+template: model
 ## Sous forme matricielle
+ `$$\bf{Y = X\theta + E}$$`
+### Forme régulière 
 
-### Forme singulière 
-
-`$$Y =\begin{pmatrix}
+`$${\bf{Y}} = \overset{}{\begin{pmatrix}
 Y_{11}\\
 Y_{12}\\
 Y_{13}\\
@@ -399,14 +437,97 @@ Y_{21}\\
 Y_{22}\\
 \vdots\\
 Y_{2n_2}\\
-\vdots
-Y_{In_I}\end{pmatrix}$$`
+\vdots\\
+Y_{In_I}\end{pmatrix}}, \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_1 &amp; \mu_2 &amp; \ldots &amp; \ldots &amp;\mu_I\end{matrix}}}{\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+\vdots\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+0 &amp; 1 &amp; 0 &amp; \ldots 0 \\
+0 &amp; 1 &amp; 0 &amp; \ldots 0 \\\vdots\\
+0 &amp; 1 &amp; 0 &amp; \ldots 0 \\\vdots\\
+0 &amp; 0 &amp; 0 &amp; \ldots 1 \end{pmatrix}}, \quad
+{\bf{\theta}} =\begin{pmatrix}
+\mu_{1}\\
+\mu_{2}\\
+\vdots\\
+\mu_I\end{pmatrix}, \quad{\bf{E}} =\begin{pmatrix}
+E_{11}\\
+E_{12}\\
+E_{13}\\
+\vdots\\
+E_{1n_1}\\
+E_{21}\\
+E_{22}\\
+\vdots\\
+E_{2n_2}\\
+\vdots\\
+E_{In_I}\end{pmatrix}. \quad$$`
+
 
 
 ---
 template: model
-## Déclinaisons sur les exemples
+## Sous forme matricielle
+ `$$\bf{Y = X\theta + E}$$`
+### Forme singulière 
 
+`$${\bf{Y}} = \overset{}{\begin{pmatrix}
+Y_{11}\\
+Y_{12}\\
+Y_{13}\\
+\vdots\\
+Y_{1n_1}\\
+Y_{21}\\
+Y_{22}\\
+\vdots\\
+Y_{2n_2}\\
+\vdots\\
+Y_{In_I}\end{pmatrix}}, \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu &amp; \alpha_2 &amp; \ldots &amp; \ldots &amp;\alpha_I\end{matrix}}}{\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+\vdots\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 1 &amp; 0 &amp; \ldots 0 \\
+1 &amp; 1 &amp; 0 &amp; \ldots 0 \\\vdots\\
+1 &amp; 1 &amp; 0 &amp; \ldots 0 \\\vdots\\
+1 &amp; 0 &amp; 0 &amp; \ldots 1 \end{pmatrix}}, \quad
+{\bf{\theta}} =\begin{pmatrix}
+\mu\\
+\alpha\\
+\vdots\\
+\alpha_I\end{pmatrix}, \quad{\bf{E}} =\begin{pmatrix}
+E_{11}\\
+E_{12}\\
+E_{13}\\
+\vdots\\
+E_{1n_1}\\
+E_{21}\\
+E_{22}\\
+\vdots\\
+E_{2n_2}\\
+\vdots\\
+E_{In_I}\end{pmatrix}. \quad$$`
+
+---
+count: false
+template: model
+## Déclinaisons sur l'exemple 1 (fréquence cardiaque)
+
+#### Donner les dimensions de `\(\bf{Y,\ X,\ \theta}\)`  et `\(\bf{E}\)` (nombre de lignes et de colonnes)
+
+#### Ecrire `\(\theta\)`
+
+#### Expliquer comment construire `\(\bf{X}\)`
+
+
+.footnote[
+ Pour un rappel sur le produit matriciel : [Wkipedia](https://fr.wikipedia.org/wiki/Produit_matriciel)
+]
 
 ---
 class: inverse
@@ -417,10 +538,95 @@ name: pause
 &lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
 
 ---
+name: parametre
 # Etude des paramètres du modèle
 
+---
+template: parametre
+## Quelques précisions de notations et de vocabulaires
+
+- Les données observées (les valeurs prises par la variable `\(Y\)` ) : `\(\bf{y}=(y_{11}, y_{12}, \ldots, y_{I n_I}).\)` 
+
+- En refaisant la même expérience, on obtiendrait d'autres valeurs (liées àaux choix d'individus différents par exemple, ou mesuré un autre jour, ...), on va noter `\(Y_{ik}\)` la variable aléatoire qui décrit la loi des valeurs possibles pour l'individu k du groupe i.   
+
+&lt;br&gt;
+&lt;a class=care&gt; les minuscules notent des valeurs, les majuscules des variables aléatoires. &lt;/a&gt;
+&lt;br&gt;
+
+--
+
+Les paramètres du modèle  sont inconnus. Ils sont notés par des lettres grecques `\(\bf{\theta}\)`, `\(\mu, \alpha, \dots\)`. 
+
+
+On veut en donner une estimation à partir des données observées ( `\(\bf{y}\)`). Les estimations des paramètres sont notées par les mêmes lettres décorées d'un chapeau `\(\bf{\hat{\theta}}, \hat{\mu}, \hat{\alpha}, \dots\)`.  
+
+
+L'estimateur d'un paramètre est la variable aléatoire correspondante. Il sera noté en majuscule avec une lettre latine. Par exemple, l'etimateur de `\(\theta\)` sera noté `\(T\)`, l'estimateur de `\(\mu\)` sera noté `\(M\)` et l'estimateur de `\(\alpha_1\)` sera noté `\(A_1\)`.
+
+
+
+---
+template: parametre
 ## Estimation des paramètres du modèle version régulière
 
+`$$Y_{ik} = \mu_i + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0,\sigma^2).$$`
+
+### Estimation
+
+`\(\mu_i\)` représente le comportement moyen de l'ensemble des individus du groupe `\(i\)`.  On peut l'estimer par `\(\hat{\mu}_i = \frac{1}{n_i}\sum_{k=1}^{n_i} y_{ik}\)`
+
+--
+
+### Estimateur 
+
+L'estimateur de `\(\mu_i\)` est donc défini par `\(M_i= \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik},\)`  c'est une variable aléatoire
+
+--
+- de loi normale (somme de variables normales)
+
+--
+- d'espérance `\(\mathbb{E}(M_i) = \mathbb{E}\left( \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik}\right) =  \frac{1}{n_i} \sum_{k=1}^{n_i} \mathbb{E}(Y_{ik}) =\mu_i.\)` 
+--
+&lt;a class=care&gt; C'est un estimateur sans biais&lt;/a&gt;
+--
+
+- de variance `\(\mathbb{V}(M_i) = \mathbb{V}\left( \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik}\right) =  \frac{1}{n_i^2} \sum_{k=1}^{n_i} \mathbb{V}(Y_{ik}) = \frac{\sigma^2}{n_i}\)`
+--
+&lt;a class=care&gt; la variance de l'estimateur diminue quand le nombre de personnes dans le groupe augmente.&lt;/a&gt;
+--
+
+`$$M_i \sim\mathcal{N}\left(\mu_i, \frac{\sigma^2}{n_i}\right).$$`
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version singulière avec la contrainte par défaut
+
+`$$Y_{ik} = \mu + \alpha_i + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0,\sigma^2).$$`
+
+### Estimation
+
+- `\(\mu\)` représente le comportement moyen du groupe 1 (groupe de référence) : `\(\hat{\mu} = \frac{1}{n_1}\sum_{k=1}^{n_1} y_{1k}\)`
+--
+
+- `\(\mu + \alpha_i = \mu_i\)`, donc  `\(\alpha_i = \mu_i -\mu\)` ,représente l'effet différentiel du groupe i par rapport au groupe de référence.  `\(\hat{\alpha_i} = \frac{1}{n_i}\sum_{k=1}^{n_i} y_{1k} - \hat{\mu}\)`
+
+--
+
+### Estimateur 
+
+L'estimateur de `\(\mu\)` est donc défini par `\(M_1= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.\)`  
+
+`$$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$`
+
+--
+
+L'estimateur de `\(\alpha_i\)` est donc défini par `\(A_i= \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik} - \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.\)`
+
+`$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_2}\right) \right).$$`
+
+
+---
 ## Estimation des paramètres du modèle version singulière
 
 ## Estimation des paramètres du modèle version matricielle
@@ -469,6 +675,7 @@ template: pause
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="../resources/collapseoutput.js"></script>
 <script>var slideshow = remark.create({
+"ratio": "16:10",
 "highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false
