@@ -23,6 +23,7 @@ jobs:
           install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos"))
           install.packages(c("kableExtra","RefManageR"))
           remotes::install_github("yihui/xaringan")
+          remotes::install_github("gadenbuie/xaringanExtra")
           remotes::install_github("EvaMaeRey/flipbookr")
           remotes::install_github("ropensci/osmdata")
           remotes::install_github("allisonhorst/palmerpenguins")
