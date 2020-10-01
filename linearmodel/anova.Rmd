@@ -35,6 +35,9 @@ library(tidyverse)
 library(ggplot2)
 ```
 
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+```
 
 ```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
 BibOptions(check.entries = FALSE,
@@ -623,21 +626,269 @@ $$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_2}
 
 
 ---
-## Estimation des paramètres du modèle version singulière
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
 
+### Ce qu'on doit trouver
+
+$$\hat{\mu} =\sum_{k=1}^{n_i} y_{1k}, \quad \hat{\alpha}_2 =\sum_{k=1}^{n_i} y_{2k} - \sum_{k=1}^{n_i} y_{1k}$$
+
+```{r estim_par1,  echo = TRUE, eval = TRUE}
+freqdata %>% group_by(Sexe) %>% summarise(m = mean(freqC), n= n())
+```
+```{r estim_par1_save, eval = TRUE}
+resM1 <- freqdata %>% group_by(Sexe) %>% summarise(m = mean(freqC), n= n())
+```
+
+
+--
+
+$\hat{\mu} =$ `r resM1$m[1]` et $\hat{\alpha}_2=$ `r resM1$m[2] - resM1$m[1]`. 
+
+
+---
+count: false
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
+
+### Ce qu'on doit trouver
+
+$\hat{\mu} =$ `r resM1$m[1]` et $\hat{\alpha}_2=$ `r resM1$m[2] - resM1$m[1]`. 
+
+--
+
+
+### Estimer avec R
+
+```{r estim_par_lm, echo = TRUE, eval = TRUE}
+freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
+summary(freq_M1)$coefficients
+```
+
+---
+count: false
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
+
+```{r estim_par_lm_2, echo = TRUE, eval = TRUE}
+freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
+summary(freq_M1)
+```
+
+```{r estim_par_lm_3, echo = FALSE, eval = TRUE}
+sigma_hat <- summary(freq_M1)$sigma
+```
+
+---
+template: parametre
+## Retour sur la méthode d'estimation - Somme des carrés résiduel (RSS)
+
+Naturellement, on a choisi d'estimer  $\mu_i$ par $\frac{1}{n_1}\sum_{k=1}^{n_1} y_{ik}.$ 
+
+--
+
+En fait, $\hat{\mu}_i$ est choisi pour minimiser $RSS_{obs}$, la somme observée des erreurs au carré  donnée par  
+
+$$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{\mu}_i)^2.$$ 
+--
+
+Le modèle d'analyse de la variance 
+$$Y_{ik} =\mu_i +E_{ik}.$$
+Pour un nouvel individu $k_0$ dans le groupe $i$, le modèle prédit que sa fréquence cardiaque sera $\hat{y}_{ik_0}=\hat{\mu}_i$.
+
+$RSS_{obs}$ se réécrit dans un cadre général comme 
+
+$$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$ 
+
+
+
+
+---
+template: parametre
+
+## Loi de RSS
+
+$$\frac{RSS}{\sigma^2} \sim \chi^2(n-I).$$
+
+
+--
+
+### D'où vient ce $n-I$ ?
+
+La variabilité totale des erreurs est donnée par 
+
+$$\sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$
+C'est la somme de n variables aléaoires normales centrée de variance $\sigma^2$, donc 
+
+$$\sum_{i=1}^I \sum_{k=1}^{n_i} \left( \frac{E_{ik}}{\sigma}\right)^2 \sim\chi^2(n).$$
+--
+
+Mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
+
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où le $n-I$.
+
+
+
+
+---
+template: parametre
+## Le paramètre de variance
+
+Rappel:
+
+Si une variable $U\sim\chi^2(l)$ alors $\mathbb{E}(U)=l$.
+
+Alors $\mathbb{E}\left( \frac{RSS}{\sigma^2} \right) = n-I,$ donc  $\mathbb{E}\left( \frac{RSS}{n-I} \right) = \sigma^2.$
+
+--
+
+## Estimateur de la variance 
+
+La variable aléatoire)  $$S^2 =\frac{1}{n-I} RSS, $$
+est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
+
+--
+
+## Estimation de $\sigma^2$
+
+$$\hat{\sigma}^2 =\frac{1}{n-I} RSS_{obs}.$$
+
+
+
+---
+template: parametre
+## Estimation du paramètre de variance
+ 
+### Pourquoi diviser par n-I au lieu de n ? 
+
+
+Le modèle d'analyse de la variance 
+$$Y_{ik} =\mu_i +E_{ik}.$$
+
+
+On aimerait estimer $\sigma$ par  $\frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$
+
+mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
+
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où la nor 
+
+
+
+---
+
+```{r var_est}
+freqdata %>%  mutate(yhat =  ifelse(Sexe == 'F', 
+                                              resM1$m[1], 
+                                              resM1$m[2]), 
+                               Ehat = freqC-yhat, 
+                               Ehat_2 = Ehat^2) %>% #BREAK
+  summarise(s=sum(Ehat_2)) %>% simplify() -> RSSobs 
+RSSobs #BREAK
+sigma2_hat <- RSSobs / (nrow(freqdata) - 2)
+sigma2_hat #BREAK
+sigma_hat <- sqrt(sigma2_hat)
+sigma_hat #BREAK
+```
+
+
+
+`r chunk_reveal("var_est", break_type = "user")`
+
+---
+
+template: parametre
+## Estimation du paramètre de variance sur l'exemple 1
+
+### On doit trouver
+
+$\hat{\sigma}=$ `r sigma_hat`.
+
+
+--
+
+### Avec R
+
+
+```{r recal_lm_fit_command, echo = TRUE}
+freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
+```
+
+--
+
+```{r var_est_lm, echo = TRUE, eval = TRUE}
+summary(freq_M1)$sigma
+```
+
+---
+count: false
+template: parametre
+## Estimation du paramètre de variance sur l'exemple 1
+
+### On doit trouver
+
+$\hat{\sigma}=$ `r sigma_hat`.
+
+
+
+```{r var_est_lm2, echo = TRUE, eval = TRUE}
+summary(freq_M1)
+```
+
+
+---
+template: parametre
+## Visualisation graphique des paramètres estimées
+
+```{r anova_visu_par}
+freqdata %>% mutate(ord = 0) %>% ggplot() + xlab('freqC') + ylab('Density') + geom_point(aes(x=freqC, col = Sexe, y = ord), alpha = 0.5) +  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + #BREAK
+  geom_vline(data=resM1, aes(xintercept = m, col = Sexe)) + #BREAK
+  stat_function(fun = dnorm, n = 101, args = list(mean = resM1$m[1], sd = sigma_hat ), col =  "#FF0000") +
+  stat_function(fun = dnorm, n = 101, args = list(mean = resM1$m[2], sd = sigma_hat ), col =  "#00A08A") 
+```
+
+---
+
+`r chunk_reveal("anova_visu_par", break_type = "user", display_type="output")`
+
+
+---
+template: parametre
 ## Estimation des paramètres du modèle version matricielle
 
-## Estimation de la variance de l'erreur
 
-## Distinction estimateur / estimations
+Le modèle sous forme matricielle s'écrit
 
-## Loi des estimateurs 
+$$\bf{Y = X\theta + E}.$$
+--
 
-## Loi des estimateurs sur les exemples
+### Estimation de $\theta$
 
-## Extension au modèle linéaire en général
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
 
-## Déclnaisons sur les exemples
+--
+
+### Estimation de $\theta$
+
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+--
+
+### Loi de l'estimation de $\theta$
+
+
+$$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+
+---
+template: parametre
+### Déclinaison sur les exemples
+
+A partir des données de chauve souris, ajuster un modèle  permettant d'expliquer le volume de la partie Auditive (AUD) en fonction du régime.
+
+
+### Méfiez vous 
+
+- vérifier les degrés de liberté et le nom des paramètres
+- Si quelque chose cloche, vérifier la nature de la variable Diet
+- On peut transformer une variable en facteur à l'aide de la fonction `as.factor`.
 
 
 ---
