@@ -28,6 +28,7 @@ class: center, middle, inverse, title-slide
 
 
 
+
 name: intro
 # Introduction
 
@@ -627,21 +628,539 @@ L'estimateur de `\(\alpha_i\)` est donc défini par `\(A_i= \frac{1}{n_i}\sum_{k
 
 
 ---
-## Estimation des paramètres du modèle version singulière
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
 
+### Ce qu'on doit trouver
+
+`$$\hat{\mu} =\sum_{k=1}^{n_i} y_{1k}, \quad \hat{\alpha}_2 =\sum_{k=1}^{n_i} y_{2k} - \sum_{k=1}^{n_i} y_{1k}$$`
+
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;% summarise(m = mean(freqC), n= n())
+```
+
+```
+[90m# A tibble: 2 x 3[39m
+  Sexe      m     n
+  [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m
+[90m1[39m F      84.3    20
+[90m2[39m M      84.6    20
+```
+
+
+
+--
+
+`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.3. 
+
+
+---
+count: false
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
+
+### Ce qu'on doit trouver
+
+`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.3. 
+
+--
+
+
+### Estimer avec R
+
+
+```r
+freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+summary(freq_M1)$coefficients
+```
+
+```
+            Estimate Std. Error    t value     Pr(&gt;|t|)
+(Intercept)     84.3  0.8995613 93.7123466 1.452324e-46
+SexeM            0.3  1.2721718  0.2358172 8.148409e-01
+```
+
+---
+count: false
+template: parametre
+## Estimation des paramètres pour l'exemple 1.
+
+
+```r
+freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+summary(freq_M1)
+```
+
+```
+
+Call:
+lm(formula = freqC ~ Sexe, data = freqdata)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.600 -2.550 -0.450  2.475  8.700 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  84.3000     0.8996  93.712   &lt;2e-16 ***
+SexeM         0.3000     1.2722   0.236    0.815    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.023 on 38 degrees of freedom
+Multiple R-squared:  0.001461,	Adjusted R-squared:  -0.02482 
+F-statistic: 0.05561 on 1 and 38 DF,  p-value: 0.8148
+```
+
+
+
+---
+template: parametre
+## Retour sur la méthode d'estimation - Somme des carrés résiduel (RSS)
+
+Naturellement, on a choisi d'estimer  `\(\mu_i\)` par `\(\frac{1}{n_1}\sum_{k=1}^{n_1} y_{ik}.\)` 
+
+--
+
+En fait, `\(\hat{\mu}_i\)` est choisi pour minimiser `\(RSS_{obs}\)`, la somme observée des erreurs au carré  donnée par  
+
+`$$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{\mu}_i)^2.$$` 
+--
+
+Le modèle d'analyse de la variance 
+`$$Y_{ik} =\mu_i +E_{ik}.$$`
+Pour un nouvel individu `\(k_0\)` dans le groupe `\(i\)`, le modèle prédit que sa fréquence cardiaque sera `\(\hat{y}_{ik_0}=\hat{\mu}_i\)`.
+
+`\(RSS_{obs}\)` se réécrit dans un cadre général comme 
+
+`$$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$` 
+
+
+
+
+---
+template: parametre
+
+## Loi de RSS
+
+`$$\frac{RSS}{\sigma^2} \sim \chi^2(n-I).$$`
+
+
+--
+
+### D'où vient ce `\(n-I\)` ?
+
+La variabilité totale des erreurs est donnée par 
+
+`$$\sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$`
+C'est la somme de n variables aléaoires normales centrée de variance `\(\sigma^2\)`, donc 
+
+`$$\sum_{i=1}^I \sum_{k=1}^{n_i} \left( \frac{E_{ik}}{\sigma}\right)^2 \sim\chi^2(n).$$`
+--
+
+Mais les `\(\mu_i\)` sont inconnus, on les remplace par leur estimation `\(\hat{\mu}_i.\)`
+
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé `\(I\)` paramètres de moyenne, d'où le `\(n-I\)`.
+
+
+
+
+---
+template: parametre
+## Le paramètre de variance
+
+Rappel:
+
+Si une variable `\(U\sim\chi^2(l)\)` alors `\(\mathbb{E}(U)=l\)`.
+
+Alors `\(\mathbb{E}\left( \frac{RSS}{\sigma^2} \right) = n-I,\)` donc  `\(\mathbb{E}\left( \frac{RSS}{n-I} \right) = \sigma^2.\)`
+
+--
+
+## Estimateur de la variance 
+
+La variable aléatoire)  $$S^2 =\frac{1}{n-I} RSS, $$
+est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
+
+--
+
+## Estimation de `\(\sigma^2\)`
+
+`$$\hat{\sigma}^2 =\frac{1}{n-I} RSS_{obs}.$$`
+
+
+
+---
+template: parametre
+## Estimation du paramètre de variance
+ 
+### Pourquoi diviser par n-I au lieu de n ? 
+
+
+Le modèle d'analyse de la variance 
+`$$Y_{ik} =\mu_i +E_{ik}.$$`
+
+
+On aimerait estimer `\(\sigma\)` par  `\(\frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,\)`
+
+mais les `\(\mu_i\)` sont inconnus, on les remplace par leur estimation `\(\hat{\mu}_i.\)`
+
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé `\(I\)` paramètres de moyenne, d'où la nor 
+
+
+
+---
+
+
+
+
+
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+*freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
+*                                             resM1$m[1],
+*                                             resM1$m[2]),
+*                              Ehat = freqC-yhat,
+*                              Ehat_2 = Ehat^2)
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+   freqC Sport Sexe yhat Ehat Ehat_2
+1     83     1    M 84.6 -1.6   2.56
+2     82     1    F 84.3 -2.3   5.29
+3     77     1    M 84.6 -7.6  57.76
+4     79     1    F 84.3 -5.3  28.09
+5     81     1    M 84.6 -3.6  12.96
+6     83     1    F 84.3 -1.3   1.69
+7     76     1    M 84.6 -8.6  73.96
+8     80     1    F 84.3 -4.3  18.49
+9     80     2    M 84.6 -4.6  21.16
+10    83     2    F 84.3 -1.3   1.69
+11    83     2    M 84.6 -1.6   2.56
+12    81     2    F 84.3 -3.3  10.89
+13    81     2    M 84.6 -3.6  12.96
+14    84     2    F 84.3 -0.3   0.09
+15    80     2    M 84.6 -4.6  21.16
+16    82     2    F 84.3 -2.3   5.29
+17    88     3    M 84.6  3.4  11.56
+18    81     3    F 84.3 -3.3  10.89
+19    87     3    M 84.6  2.4   5.76
+20    83     3    F 84.3 -1.3   1.69
+21    86     3    M 84.6  1.4   1.96
+22    83     3    F 84.3 -1.3   1.69
+23    87     3    M 84.6  2.4   5.76
+24    83     3    F 84.3 -1.3   1.69
+25    85     4    M 84.6  0.4   0.16
+26    85     4    F 84.3  0.7   0.49
+27    84     4    M 84.6 -0.6   0.36
+28    86     4    F 84.3  1.7   2.89
+29    87     4    M 84.6  2.4   5.76
+30    87     4    F 84.3  2.7   7.29
+31    85     4    M 84.6  0.4   0.16
+32    85     4    F 84.3  0.7   0.49
+33    92     5    M 84.6  7.4  54.76
+34    88     5    F 84.3  3.7  13.69
+35    91     5    M 84.6  6.4  40.96
+36    93     5    F 84.3  8.7  75.69
+37    90     5    M 84.6  5.4  29.16
+38    88     5    F 84.3  3.7  13.69
+39    89     5    M 84.6  4.4  19.36
+40    90     5    F 84.3  5.7  32.49
+```
+]
+
+---
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
+                                              resM1$m[1],
+                                              resM1$m[2]),
+                               Ehat = freqC-yhat,
+                               Ehat_2 = Ehat^2) %&gt;%
+* summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+*RSSobs
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+  s 
+615 
+```
+]
+
+---
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
+                                              resM1$m[1],
+                                              resM1$m[2]),
+                               Ehat = freqC-yhat,
+                               Ehat_2 = Ehat^2) %&gt;%
+  summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+RSSobs
+*sigma2_hat &lt;- RSSobs / (nrow(freqdata) - 2)
+*sigma2_hat
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+  s 
+615 
+```
+
+```
+       s 
+16.18421 
+```
+]
+
+---
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
+                                              resM1$m[1],
+                                              resM1$m[2]),
+                               Ehat = freqC-yhat,
+                               Ehat_2 = Ehat^2) %&gt;%
+  summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+RSSobs
+sigma2_hat &lt;- RSSobs / (nrow(freqdata) - 2)
+sigma2_hat
+*sigma_hat &lt;- sqrt(sigma2_hat)
+*sigma_hat
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+  s 
+615 
+```
+
+```
+       s 
+16.18421 
+```
+
+```
+      s 
+4.02296 
+```
+]
+
+&lt;style&gt;
+.panel1-var_est-user {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-var_est-user {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-var_est-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+template: parametre
+## Estimation du paramètre de variance sur l'exemple 1
+
+### On doit trouver
+
+`\(\hat{\sigma}=\)` 4.0229604.
+
+
+--
+
+### Avec R
+
+
+
+```r
+freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+```
+
+--
+
+
+```r
+summary(freq_M1)$sigma
+```
+
+```
+[1] 4.02296
+```
+
+---
+count: false
+template: parametre
+## Estimation du paramètre de variance sur l'exemple 1
+
+### On doit trouver
+
+`\(\hat{\sigma}=\)` 4.0229604.
+
+
+
+
+```r
+summary(freq_M1)
+```
+
+```
+
+Call:
+lm(formula = freqC ~ Sexe, data = freqdata)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.600 -2.550 -0.450  2.475  8.700 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  84.3000     0.8996  93.712   &lt;2e-16 ***
+SexeM         0.3000     1.2722   0.236    0.815    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.023 on 38 degrees of freedom
+Multiple R-squared:  0.001461,	Adjusted R-squared:  -0.02482 
+F-statistic: 0.05561 on 1 and 38 DF,  p-value: 0.8148
+```
+
+
+---
+template: parametre
+## Visualisation graphique des paramètres estimées
+
+
+
+---
+
+count: false
+
+&lt;img src="anova_files/figure-html/anova_visu_par_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_visu_par_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/anova_visu_par_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-anova_visu_par-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-anova_visu_par-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-anova_visu_par-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+---
+template: parametre
 ## Estimation des paramètres du modèle version matricielle
 
-## Estimation de la variance de l'erreur
 
-## Distinction estimateur / estimations
+Le modèle sous forme matricielle s'écrit
 
-## Loi des estimateurs 
+`$$\bf{Y = X\theta + E}.$$`
+--
 
-## Loi des estimateurs sur les exemples
+### Estimation de `\(\theta\)`
 
-## Extension au modèle linéaire en général
+`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$`
 
-## Déclnaisons sur les exemples
+--
+
+### Estimation de `\(\theta\)`
+
+`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$`
+--
+
+### Loi de l'estimation de `\(\theta\)`
+
+
+`$$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$`
+
+---
+template: parametre
+### Déclinaison sur les exemples
+
+A partir des données de chauve souris, ajuster un modèle  permettant d'expliquer le volume de la partie Auditive (AUD) en fonction du régime.
+
+
+### Méfiez vous 
+
+- vérifier les degrés de liberté et le nom des paramètres
+- Si quelque chose cloche, vérifier la nature de la variable Diet
+- On peut transformer une variable en facteur à l'aide de la fonction `as.factor`.
 
 
 ---
