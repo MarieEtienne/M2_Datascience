@@ -76,6 +76,14 @@ library(tidyverse)
 library(ggplot2)
 ```
 
+On utilisera également des fonctions spécifiques du modèle linéaire
+
+```{r ml}
+#install.packages('car')
+#install.packages('emmeans')
+library(car)
+library(emmeans)
+```
 
 
 ---
