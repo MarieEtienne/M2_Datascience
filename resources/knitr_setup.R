@@ -9,7 +9,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
                       dpi = 100,
                       echo = FALSE, eval = FALSE, 
                       fig.align = "center", results = "markup", 
-                      fig.width = 8, fig.height = 5,  
+                      fig.width = 7, fig.height = 3.5,  
                       out.width = '60%', out.height = '30%' )
 
 ## for beamer pres

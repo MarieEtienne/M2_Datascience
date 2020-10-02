@@ -636,7 +636,7 @@ $$Y_{ik} = \mu + \alpha_i + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0
 
 ### Estimateur 
 
-L'estimateur de $\mu$ est donc défini par $M_1= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$  
+L'estimateur de $\mu$ est donc défini par $M= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$  
 
 $$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$
 
@@ -644,7 +644,7 @@ $$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$
 
 L'estimateur de $\alpha_i$ est donc défini par $A_i= \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik} - \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$
 
-$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_2}\right) \right).$$
+$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_1}\right) \right).$$
 
 
 ---
@@ -653,7 +653,7 @@ template: parametre
 
 ### Ce qu'on doit trouver
 
-$$\hat{\mu} =\sum_{k=1}^{n_i} y_{1k}, \quad \hat{\alpha}_2 =\sum_{k=1}^{n_i} y_{2k} - \sum_{k=1}^{n_i} y_{1k}$$
+$$\hat{\mu} =\frac{1}{20}\sum_{k=1}^{20} y_{1k}, \quad \hat{\alpha}_2 =\frac{1}{20}\sum_{k=1}^{20} y_{2k} - \frac{1}{20}\sum_{k=1}^{20} y_{1k}$$
 
 ```{r estim_par1,  echo = TRUE, eval = TRUE}
 freqdata %>% group_by(Sexe) %>% summarise(m = mean(freqC), n= n())
@@ -705,7 +705,7 @@ sigma_hat <- summary(M1)$sigma
 template: parametre
 ## Retour sur la méthode d'estimation - Somme des carrés résiduel (RSS)
 
-Naturellement, on a choisi d'estimer  $\mu_i$ par $\frac{1}{n_1}\sum_{k=1}^{n_1} y_{ik}.$ 
+Naturellement, on a choisi d'estimer  $\mu_i$ par $\frac{1}{n_i}\sum_{k=1}^{n_1} y_{ik}.$ 
 
 --
 
@@ -722,6 +722,7 @@ $RSS_{obs}$ se réécrit dans un cadre général comme
 
 $$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$ 
 
+$$RSS = \sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \hat{Y}_{ik})^2.$$ 
 
 
 
@@ -739,15 +740,15 @@ $$\frac{RSS}{\sigma^2} \sim \chi^2(n-I).$$
 
 La variabilité totale des erreurs est donnée par 
 
-$$\sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$
-C'est la somme de n variables aléaoires normales centrée de variance $\sigma^2$, donc 
+$$\sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$
+C'est la somme de n variables aléaoires normales centrées de variance $\sigma^2$, donc 
 
 $$\sum_{i=1}^I \sum_{k=1}^{n_i} \left( \frac{E_{ik}}{\sigma}\right)^2 \sim\chi^2(n).$$
 --
 
-Mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
+Mais les $\mu_i$ sont inconnus, on les remplace par leur estimateurs  $M_i.$
 
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où le $n-I$.
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimateur, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où le $n-I$.
 
 
 
@@ -766,7 +767,7 @@ Alors $\mathbb{E}\left( \frac{RSS}{\sigma^2} \right) = n-I,$ donc  $\mathbb{E}\l
 
 ## Estimateur de la variance 
 
-La variable aléatoire)  $$S^2 =\frac{1}{n-I} RSS, $$
+  $$S^2 =\frac{1}{n-I} RSS, $$
 est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
 
 --
@@ -776,35 +777,13 @@ est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
 $$\hat{\sigma}^2 =\frac{1}{n-I} RSS_{obs}.$$
 
 
-
----
-template: parametre
-## Estimation du paramètre de variance
- 
-### Pourquoi diviser par n-I au lieu de n ? 
-
-
-Le modèle d'analyse de la variance 
-$$Y_{ik} =\mu_i +E_{ik}.$$
-
-
-On aimerait estimer $\sigma$ par  $\frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$
-
-mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
-
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où la nor 
-
-
-
 ---
 
 ```{r var_est}
-freqdata %>%  mutate(yhat =  ifelse(Sexe == 'F', 
-                                              resM1$m[1], 
-                                              resM1$m[2]), 
-                               Ehat = freqC-yhat, 
-                               Ehat_2 = Ehat^2) %>% #BREAK
-  summarise(s=sum(Ehat_2)) %>% simplify() -> RSSobs 
+freqdata %>%  group_by(Sexe) %>% #BREAK
+  mutate(yhat =  mean(freqC)) %>% #BREAK
+  mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2) %>% #BREAK
+  ungroup %>% summarise(RSSobs=sum(Ehat_2)) %>% as.numeric() -> RSSobs 
 RSSobs #BREAK
 sigma2_hat <- RSSobs / (nrow(freqdata) - 2)
 sigma2_hat #BREAK
@@ -889,12 +868,12 @@ $$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
 
 --
 
-### Estimation de $\theta$
+### Estimateur de $\theta$
 
-$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y.$$
 --
 
-### Loi de l'estimation de $\theta$
+### Loi de l'estimateur de $\theta$
 
 
 $$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
@@ -1012,9 +991,6 @@ On a mis en évidence des différences entre les populations.
 ---
 ## Calcul de RSS sur l'exemple 1
  A la main :
-
-```{r rss_cache, ref.label=rss, eval = TRUE}
-```
 
 
 
