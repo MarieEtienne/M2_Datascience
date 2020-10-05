@@ -94,8 +94,20 @@ Les questions sont plus que bienvenues pendant les séances de TD.
 Elles peuvent aussi être posées par [mail](mailto:marie-pierre.etienne@agrocampus-ouest.fr)
 
 
-Ce cours a une approche très similaire de celle proposée dans le livre `r \Citet(mmyBib, "daudin2015modele"}\ disponible en [pdf](https://marieetienne.github.io/MesPapiers/2012_ModeleLineaireEt_Extensions.pdf).
+Ce cours a une approche très similaire de celle proposée dans le livre `r Citet(myBib, "daudin2015modele")` disponible en [pdf](https://marieetienne.github.io/MesPapiers/2012_ModeleLineaireEt_Extensions.pdf).
 
 --
 
 ### C'est parti !
+
+---
+# Références
+
+
+```{r refs, echo=FALSE, results="asis", eval = TRUE, cache = FALSE}
+PrintBibliography(myBib)
+```
+
+
+
+

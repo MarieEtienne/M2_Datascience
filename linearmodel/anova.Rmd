@@ -1124,22 +1124,83 @@ $$F= \frac{\frac{SS_{M1}}{I-1}}{\frac{RSS}{n-I}} \underset{H_0}{\sim}\mathcal{F}
 
 
 ---
+
 template: modcomp
 ## Loi de la statistique de test sous H0 - graphiquement
 
 Sous $H0$ la loi de distribution de $F$ est 
 
-```{r , eval = TRUE}
-tibble(x = seq(0, 3, length.out = 501)) %>% 
+```{r p_value, eval = TRUE}
+tibble(x = seq(0, 10, length.out = 2001)) %>% 
   mutate(y = df(x, df1 = 4, df= 38)) -> chi_dta
+Fobs <- 1
+chi_dta %>% filter(x> Fobs) %>% add_row(x=100,y = 0) %>%  add_row(x=Fobs, y =0)  %>% 
+  add_row(x=Fobs, y =df(Fobs, df1 = 4, df= 38)) %>% arrange(x,y)  -> chi_dta_poly
 ```
 
---- 
 
-Si on a observé $Fobs$, comment savaoir si--
+```{r pvalue_graphique}
+ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y)) + #BREAK
+  annotate("text", x = Fobs- 0.5, y = 0.05, label = "Fobs", col = 'red')+  geom_vline(aes(xintercept = Fobs), col = 'red') + #BREAK
+  geom_polygon(data = chi_dta_poly,  aes(x=x, y= y), alpha = 0.3) + xlim(c(0, max(chi_dta$x))) 
+
+```
+
+---
+
+`r chunk_reveal("pvalue_graphique", break_type = "user", display_type="output")`
+
+---
+
+template: modcomp
+
+## Proabilité critique
+
+La probabilité critique ( p-value en anglais) est définie par 
+
+$$ P(F> F_{obs} \vert H0)$$
+
+--
+
+Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous HO.
+
+--
+
+On va rejeter H0 lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse H0. On ne croit pas à H0.
 
 
-## Déclinaison sur les exemples
+---
+
+## Déclinaison sur l'exemple Fréquence cardiaque
+
+
+```{r anova_FC_F, echo = TRUE, eval =TRUE}
+
+anova(M0,M1)
+
+```
+
+--
+
+
+```{r pvalue_graphique-ex_FC, eval = TRUE}
+Fobs <- anova(M0,M1)$F[2]
+chi_dta %>% filter(x> Fobs) %>% add_row(x=100,y = 0) %>%  add_row(x=Fobs, y =0)  %>% 
+  add_row(x=Fobs, y =df(Fobs, df1 = 4, df= 38)) %>% arrange(x,y)  -> chi_dta_poly
+ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y)) + 
+  annotate("text", x = Fobs- 0.5, y = 0.05, label = "Fobs", col = 'red')+  geom_vline(aes(xintercept = Fobs), col = 'red') +
+  geom_polygon(data = chi_dta_poly,  aes(x=x, y= y), alpha = 0.3) + xlim(c(0, max(chi_dta$x))) 
+```
+---
+
+## Sur l'exemple chauve souris
+
+
+### Pouvez vous répondre à la question 
+
+<a class=question> Y a-t-il un effet du régime alimentaire sur le volume de la partie auditive du cerveau ? </a>
+
+
 
 ---
 template: pause

@@ -1870,6 +1870,7 @@ Sous `\(H_0\)`,
 
 
 ---
+
 template: modcomp
 ## Loi de la statistique de test sous H0 - graphiquement
 
@@ -1877,12 +1878,107 @@ Sous `\(H0\)` la loi de distribution de `\(F\)` est
 
 
 
---- 
-
-Si on a observé `\(Fobs\)`, comment savaoir si--
 
 
-## Déclinaison sur les exemples
+
+---
+
+count: false
+
+&lt;img src="anova_files/figure-html/pvalue_graphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/pvalue_graphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova_files/figure-html/pvalue_graphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-pvalue_graphique-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+template: modcomp
+
+## Proabilité critique
+
+La probabilité critique ( p-value en anglais) est définie par 
+
+$$ P(F&gt; F_{obs} \vert H0)$$
+
+--
+
+Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous HO.
+
+--
+
+On va rejeter H0 lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse H0. On ne croit pas à H0.
+
+
+---
+
+## Déclinaison sur l'exemple Fréquence cardiaque
+
+
+
+```r
+anova(M0,M1)
+```
+
+```
+Analysis of Variance Table
+
+Model 1: freqC ~ 1
+Model 2: freqC ~ Sexe
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1     39 619.77                           
+2     38 619.15  1     0.625 0.0384 0.8458
+```
+
+--
+
+
+&lt;img src="anova_files/figure-html/pvalue_graphique-ex_FC-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+---
+
+## Sur l'exemple chauve souris
+
+
+### Pouvez vous répondre à la question 
+
+&lt;a class=question&gt; Y a-t-il un effet du régime alimentaire sur le volume de la partie auditive du cerveau ? &lt;/a&gt;
+
+
 
 ---
 template: pause
