@@ -990,34 +990,36 @@ On a mis en évidence des différences entre les populations.
 
 ---
 ## Calcul de RSS sur l'exemple 1
- A la main :
+
+A la main :
 
 
 
 ```{r rss}
 freqdata %>% group_by(Sexe) %>% 
-  mutate(m= mean(freqC)) %>% 
-  mutate( Ehat = freqC - m) %>% 
-  mutate( E2hat = Ehat^2) %>% 
-  ungroup() %>% 
-  summarise(RSSM1 =sum(E2hat)) %>% as.numeric()-> 
-  RSSM1
-freqdata %>%  mutate(m= mean(freqC)) %>% 
-  mutate( Ehat = freqC - m) %>% 
-  mutate( E2hat = Ehat^2) %>% 
-  summarise(RSSM1 =sum(E2hat)) %>% as.numeric()-> 
+  mutate(m= mean(freqC)) %>% #BREAK
+  mutate( Ehat = freqC - m) %>% #BREAK 
+  mutate( E2hat = Ehat^2) %>% #BREAK
+  ungroup() %>% #BREAK
+  summarise(RSSM1 =sum(E2hat)) %>% as.numeric()-> #BREAK
+  RSSM1 #BREAK
+freqdata %>%  mutate(m= mean(freqC)) %>% #BREAK
+  mutate( Ehat = freqC - m) %>% #BREAK
+  mutate( E2hat = Ehat^2) %>% #BREAK
+  summarise(RSSM1 =sum(E2hat)) %>% as.numeric()-> #BREAK
   RSSM0
-SSM <- RSSM0 - RSSM1
-SSM
+SSM <- RSSM0 - RSSM1 #BREAK
+SSM #BREAK
 ```
 
 ---
 
-`r chunk_reveal("rss", break_type = "auto")`
+
+`r chunk_reveal("rss", break_type = "user", , display_type="output")`
 
 
 ```{r rss_cache,  eval = TRUE}
-freqdata %>% group_by(Sexe) %>% 
+freqdata %>% group_by(Sexe) %>%
   mutate(m= mean(freqC)) %>% 
   mutate( Ehat = freqC - m) %>% 
   mutate( E2hat = Ehat^2) %>% 
@@ -1316,7 +1318,7 @@ tibble::tibble( y = seq( -4, 4, length.out = 1001)) %>%
   mutate( tj = dt(y, df = df1), nj= dnorm(y, mean = 0, sd = 1) ) -> stat_test
 stat_test %>% filter((y) > abs(tobs)  ) %>% add_row(y = abs(tobs), tj = 0) %>% add_row(y = abs(tobs), tj = dt(abs(tobs), df = df1)) %>% arrange(y,tj) -> poly_droit
 stat_test %>% filter((y) < -abs(tobs)  ) %>% add_row(y = -abs(tobs), tj = 0) %>% add_row(y = -abs(tobs), tj = dt(-abs(tobs), df = df1)) %>% arrange(-y,tj, decreasing = TRUE) -> poly_gauche
-ggplot(data = stat_test) +
+ggplot(data = stat_test) + xlim(-4,4) +
   geom_point(aes(x=tobs, y = 0), col = 'red') + #BREAK
   annotate("text", x = tobs - 0.3, y = 0.02, label = "tobs", col = 'red') + #BREAK
   geom_line(aes(x= y, y = tj)) + #BREAK
@@ -1358,7 +1360,7 @@ summary(M1)
 ```
 
 
---- 
+---
 name: diagnostic 
 # Diagnostic du modèle 
 
@@ -1382,7 +1384,7 @@ $$R^2_{adj} = 1 - \frac{ \frac{RSS}{n-I}}{\frac{RSS_0}{n-1}}$$
 est un indicateur du degré d'ajustement du modèle en pénalisant par le nombre de variables.
 
 ---
-name: diagnostic 
+template: dignostic
 ## Vérification graphique des hypothèses de modélisation
 
 ```{r diagn_grap, eval = TRUE, echo =TRUE}
@@ -1403,7 +1405,7 @@ Une question initiale :  Le volume auditif dépend il de régime alimentaire.
 
   
 ---
-# Bilan su rle modèle d'analyse de la variance à 1 facteur
+# Bilan sur le modèle d'analyse de la variance à 1 facteur
 Le modèle 
 
 - permet d'étudier le lein entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
