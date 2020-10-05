@@ -115,8 +115,8 @@ th, td { padding: 5px; }
 
 .remark-slide-content {
   background-color: #FAFAFA;
-  border-top: 70px solid #d4e7ed;
-  font-size: 18px;
+  border-top: 60px solid #d4e7ed;
+  font-size: 17px;
   font-weight: 300;
   line-height: 1.5;
   padding: 3% 2em 1em 2em
@@ -143,7 +143,7 @@ th, td { padding: 5px; }
 
 h1 {
   font-weight: normal;
-  margin-top: -95px;
+  margin-top: -80px;
   margin-left: -00px;
   color: #F2AD00;
 }
@@ -171,11 +171,11 @@ h3, h4 {
   margin-bottom: -10px;
 }
 .remark-slide-content h1 {
-  font-size: 35px;
+  font-size: 27px;
 }
 
 .remark-slide-content h2 {
-  font-size: 25px;
+  font-size: 23px;
 }
 
 .remark-slide-content h3 {
@@ -235,25 +235,25 @@ hr, .title-slide h2::after, .mline h1::after {
 }
 
 hr, .mline h1::after {
-  margin: 1em 15px 0 15px;
+  margin: 1em 13px 0 15px;
 }
 
 .title-slide h2::after {
-  margin: 10px 15px 35px 0;
+  margin: 10px 13px 35px 0;
 }
 
 .mline h1::after {
-  margin: 10px 15px 0 15px;
+  margin: 10px 13px 0 15px;
 }
 
 .remark-slide-number {
-  font-size: 13pt;
+  font-size: 10pt;
   color: #272822;
   opacity: 1;
 }
 
 .inverse .remark-slide-number {
-  font-size: 13pt;
+  font-size: 11pt;
   color: #FAFAFA;
   opacity: 1;
 }

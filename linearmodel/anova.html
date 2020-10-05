@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 ## à 1 facteur
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
-### 2020/09/11 (updated: 2020-10-02)
+### 2020/09/11 (updated: 2020-10-05)
 
 ---
 
@@ -45,7 +45,6 @@ On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
 ```r
 library(coursesdata)
 data(freqdata)
-freqdata %&gt;% ggplot() + geom_boxplot(aes(x= Sexe, y = freqC))
 ```
 
 &lt;img src="anova_files/figure-html/freqdata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
@@ -90,7 +89,6 @@ name: model
 
 ---
 template: model
-# Le modèle d'analyse de la variance à 1 facteur
 
 ## Graphiquement 
 
@@ -99,7 +97,7 @@ Une visalisation graphique du modèle d'analyse de la variance.
 &lt;br&gt; &lt;br&gt; &lt;br&gt; &lt;br&gt;
 
 
-Comment imagine-t-on le processus qui a conduit à nos données ?
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
 
 
 ---
@@ -172,11 +170,6 @@ count: false
 
 &lt;img src="anova_files/figure-html/anova_versiongraphique_proba_M0_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
----
-count: false
-
-&lt;img src="anova_files/figure-html/anova_versiongraphique_proba_M0_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
 &lt;style&gt;
 .panel1-anova_versiongraphique_proba_M0-user {
   color: black;
@@ -210,11 +203,12 @@ count: false
 count: false
 
 &lt;img src="anova_files/figure-html/anova_versiongraphique_proba2_M0-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+---
+template: model
+count: false
 
---
-&lt;p class="question"&gt; La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?&lt;/p&gt;
+&lt;img src="anova_files/figure-html/anova_versiongraphique_save-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
---
 
 &lt;p class="question"&gt; Au vu de nos données, le modèle M1 est-il plus pertinent que le modèle M0 ?&lt;/p&gt;
 
@@ -279,7 +273,7 @@ template: model
 `$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$`
 avec 
 - `\(i=1,\ldots,I\)` le numéro du groupe,
-- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`, ($\sum_i n_i=n$)
+- `\(k= 1,\ldots, n_i\)` le numéro de l'individu dans le groupe `\(i\)`, ( `\(\sum_i n_i=n\)` )
 - `\(\mu\)` un comportement moyen de référence,
 - `\(\alpha_i\)` un effet différentiel du groupe `\(i\)`par rapport à la référence,
 - `\(\sigma^2\)` la variance commune à tous les groupes.
@@ -616,7 +610,7 @@ template: parametre
 
 ### Estimateur 
 
-L'estimateur de `\(\mu\)` est donc défini par `\(M_1= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.\)`  
+L'estimateur de `\(\mu\)` est donc défini par `\(M= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.\)`  
 
 `$$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$`
 
@@ -624,7 +618,7 @@ L'estimateur de `\(\mu\)` est donc défini par `\(M_1= \frac{1}{n_1}\sum_{k=1}^{
 
 L'estimateur de `\(\alpha_i\)` est donc défini par `\(A_i= \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik} - \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.\)`
 
-`$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_2}\right) \right).$$`
+`$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_1}\right) \right).$$`
 
 
 ---
@@ -633,7 +627,7 @@ template: parametre
 
 ### Ce qu'on doit trouver
 
-`$$\hat{\mu} =\sum_{k=1}^{n_i} y_{1k}, \quad \hat{\alpha}_2 =\sum_{k=1}^{n_i} y_{2k} - \sum_{k=1}^{n_i} y_{1k}$$`
+`$$\hat{\mu} =\frac{1}{20}\sum_{k=1}^{20} y_{1k}, \quad \hat{\alpha}_2 =\frac{1}{20}\sum_{k=1}^{20} y_{2k} - \frac{1}{20}\sum_{k=1}^{20} y_{1k}$$`
 
 
 ```r
@@ -652,7 +646,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;% summarise(m = mean(freqC), n= n())
 
 --
 
-`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.3. 
+`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.25. 
 
 
 ---
@@ -662,7 +656,7 @@ template: parametre
 
 ### Ce qu'on doit trouver
 
-`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.3. 
+`\(\hat{\mu} =\)` 84.3 et `\(\hat{\alpha}_2=\)` 0.25. 
 
 --
 
@@ -671,14 +665,14 @@ template: parametre
 
 
 ```r
-freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
-summary(freq_M1)$coefficients
+M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+summary(M1)$coefficients
 ```
 
 ```
             Estimate Std. Error    t value     Pr(&gt;|t|)
-(Intercept)     84.3  0.8995613 93.7123466 1.452324e-46
-SexeM            0.3  1.2721718  0.2358172 8.148409e-01
+(Intercept)    84.30  0.9025913 93.3977539 1.649393e-46
+SexeM           0.25  1.2764569  0.1958546 8.457675e-01
 ```
 
 ---
@@ -688,8 +682,8 @@ template: parametre
 
 
 ```r
-freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
-summary(freq_M1)
+M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+summary(M1)
 ```
 
 ```
@@ -699,18 +693,18 @@ lm(formula = freqC ~ Sexe, data = freqdata)
 
 Residuals:
    Min     1Q Median     3Q    Max 
--8.600 -2.550 -0.450  2.475  8.700 
+-8.550 -2.737 -0.425  2.513  8.700 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  84.3000     0.8996  93.712   &lt;2e-16 ***
-SexeM         0.3000     1.2722   0.236    0.815    
+(Intercept)  84.3000     0.9026  93.398   &lt;2e-16 ***
+SexeM         0.2500     1.2765   0.196    0.846    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 4.023 on 38 degrees of freedom
-Multiple R-squared:  0.001461,	Adjusted R-squared:  -0.02482 
-F-statistic: 0.05561 on 1 and 38 DF,  p-value: 0.8148
+Residual standard error: 4.037 on 38 degrees of freedom
+Multiple R-squared:  0.001008,	Adjusted R-squared:  -0.02528 
+F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 ```
 
 
@@ -719,7 +713,7 @@ F-statistic: 0.05561 on 1 and 38 DF,  p-value: 0.8148
 template: parametre
 ## Retour sur la méthode d'estimation - Somme des carrés résiduel (RSS)
 
-Naturellement, on a choisi d'estimer  `\(\mu_i\)` par `\(\frac{1}{n_1}\sum_{k=1}^{n_1} y_{ik}.\)` 
+Naturellement, on a choisi d'estimer  `\(\mu_i\)` par `\(\frac{1}{n_i}\sum_{k=1}^{n_1} y_{ik}.\)` 
 
 --
 
@@ -736,6 +730,7 @@ Pour un nouvel individu `\(k_0\)` dans le groupe `\(i\)`, le modèle prédit que
 
 `$$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$` 
 
+`$$RSS = \sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \hat{Y}_{ik})^2.$$` 
 
 
 
@@ -753,15 +748,15 @@ template: parametre
 
 La variabilité totale des erreurs est donnée par 
 
-`$$\sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$`
-C'est la somme de n variables aléaoires normales centrée de variance `\(\sigma^2\)`, donc 
+`$$\sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$`
+C'est la somme de n variables aléaoires normales centrées de variance `\(\sigma^2\)`, donc 
 
 `$$\sum_{i=1}^I \sum_{k=1}^{n_i} \left( \frac{E_{ik}}{\sigma}\right)^2 \sim\chi^2(n).$$`
 --
 
-Mais les `\(\mu_i\)` sont inconnus, on les remplace par leur estimation `\(\hat{\mu}_i.\)`
+Mais les `\(\mu_i\)` sont inconnus, on les remplace par leur estimateurs  `\(M_i.\)`
 
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé `\(I\)` paramètres de moyenne, d'où le `\(n-I\)`.
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimateur, on perd un degré de liberté. Ici on a estimé `\(I\)` paramètres de moyenne, d'où le `\(n-I\)`.
 
 
 
@@ -780,7 +775,7 @@ Alors `\(\mathbb{E}\left( \frac{RSS}{\sigma^2} \right) = n-I,\)` donc  `\(\mathb
 
 ## Estimateur de la variance 
 
-La variable aléatoire)  $$S^2 =\frac{1}{n-I} RSS, $$
+  $$S^2 =\frac{1}{n-I} RSS, $$
 est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
 
 --
@@ -790,26 +785,6 @@ est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
 `$$\hat{\sigma}^2 =\frac{1}{n-I} RSS_{obs}.$$`
 
 
-
----
-template: parametre
-## Estimation du paramètre de variance
- 
-### Pourquoi diviser par n-I au lieu de n ? 
-
-
-Le modèle d'analyse de la variance 
-`$$Y_{ik} =\mu_i +E_{ik}.$$`
-
-
-On aimerait estimer `\(\sigma\)` par  `\(\frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,\)`
-
-mais les `\(\mu_i\)` sont inconnus, on les remplace par leur estimation `\(\hat{\mu}_i.\)`
-
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé `\(I\)` paramètres de moyenne, d'où la nor 
-
-
-
 ---
 
 
@@ -822,58 +797,22 @@ count: false
 .panel1-var_est-user[
 
 ```r
-*freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
-*                                             resM1$m[1],
-*                                             resM1$m[2]),
-*                              Ehat = freqC-yhat,
-*                              Ehat_2 = Ehat^2)
+*freqdata %&gt;%  group_by(Sexe)
 ```
 ]
  
 .panel2-var_est-user[
 
 ```
-   freqC Sport Sexe yhat Ehat Ehat_2
-1     83     1    M 84.6 -1.6   2.56
-2     82     1    F 84.3 -2.3   5.29
-3     77     1    M 84.6 -7.6  57.76
-4     79     1    F 84.3 -5.3  28.09
-5     81     1    M 84.6 -3.6  12.96
-6     83     1    F 84.3 -1.3   1.69
-7     76     1    M 84.6 -8.6  73.96
-8     80     1    F 84.3 -4.3  18.49
-9     80     2    M 84.6 -4.6  21.16
-10    83     2    F 84.3 -1.3   1.69
-11    83     2    M 84.6 -1.6   2.56
-12    81     2    F 84.3 -3.3  10.89
-13    81     2    M 84.6 -3.6  12.96
-14    84     2    F 84.3 -0.3   0.09
-15    80     2    M 84.6 -4.6  21.16
-16    82     2    F 84.3 -2.3   5.29
-17    88     3    M 84.6  3.4  11.56
-18    81     3    F 84.3 -3.3  10.89
-19    87     3    M 84.6  2.4   5.76
-20    83     3    F 84.3 -1.3   1.69
-21    86     3    M 84.6  1.4   1.96
-22    83     3    F 84.3 -1.3   1.69
-23    87     3    M 84.6  2.4   5.76
-24    83     3    F 84.3 -1.3   1.69
-25    85     4    M 84.6  0.4   0.16
-26    85     4    F 84.3  0.7   0.49
-27    84     4    M 84.6 -0.6   0.36
-28    86     4    F 84.3  1.7   2.89
-29    87     4    M 84.6  2.4   5.76
-30    87     4    F 84.3  2.7   7.29
-31    85     4    M 84.6  0.4   0.16
-32    85     4    F 84.3  0.7   0.49
-33    92     5    M 84.6  7.4  54.76
-34    88     5    F 84.3  3.7  13.69
-35    91     5    M 84.6  6.4  40.96
-36    93     5    F 84.3  8.7  75.69
-37    90     5    M 84.6  5.4  29.16
-38    88     5    F 84.3  3.7  13.69
-39    89     5    M 84.6  4.4  19.36
-40    90     5    F 84.3  5.7  32.49
+[90m# A tibble: 40 x 3[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe 
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m
+[90m1[39m    82     1 M    
+[90m2[39m    82     1 F    
+[90m3[39m    77     1 M    
+[90m4[39m    79     1 F    
+[90m# … with 36 more rows[39m
 ```
 ]
 
@@ -884,12 +823,65 @@ count: false
 .panel1-var_est-user[
 
 ```r
-freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
-                                              resM1$m[1],
-                                              resM1$m[2]),
-                               Ehat = freqC-yhat,
-                               Ehat_2 = Ehat^2) %&gt;%
-* summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+freqdata %&gt;%  group_by(Sexe) %&gt;%
+* mutate(yhat =  mean(freqC))
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+[90m# A tibble: 40 x 4[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe   yhat
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6
+[90m2[39m    82     1 F      84.3
+[90m3[39m    77     1 M      84.6
+[90m4[39m    79     1 F      84.3
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+freqdata %&gt;%  group_by(Sexe) %&gt;%
+  mutate(yhat =  mean(freqC)) %&gt;%
+* mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2)
+```
+]
+ 
+.panel2-var_est-user[
+
+```
+[90m# A tibble: 40 x 6[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe   yhat  Ehat Ehat_2
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m  [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m   6.50
+[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m   5.29
+[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m  57.0 
+[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m  28.1 
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-var_est-user[
+
+```r
+freqdata %&gt;%  group_by(Sexe) %&gt;%
+  mutate(yhat =  mean(freqC)) %&gt;%
+  mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2) %&gt;%
+* ungroup %&gt;% summarise(RSSobs=sum(Ehat_2)) %&gt;% as.numeric() -&gt; RSSobs
 *RSSobs
 ```
 ]
@@ -897,8 +889,7 @@ freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
 .panel2-var_est-user[
 
 ```
-  s 
-615 
+[1] 619.15
 ```
 ]
 
@@ -909,12 +900,10 @@ count: false
 .panel1-var_est-user[
 
 ```r
-freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
-                                              resM1$m[1],
-                                              resM1$m[2]),
-                               Ehat = freqC-yhat,
-                               Ehat_2 = Ehat^2) %&gt;%
-  summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+freqdata %&gt;%  group_by(Sexe) %&gt;%
+  mutate(yhat =  mean(freqC)) %&gt;%
+  mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2) %&gt;%
+  ungroup %&gt;% summarise(RSSobs=sum(Ehat_2)) %&gt;% as.numeric() -&gt; RSSobs
 RSSobs
 *sigma2_hat &lt;- RSSobs / (nrow(freqdata) - 2)
 *sigma2_hat
@@ -924,13 +913,11 @@ RSSobs
 .panel2-var_est-user[
 
 ```
-  s 
-615 
+[1] 619.15
 ```
 
 ```
-       s 
-16.18421 
+[1] 16.29342
 ```
 ]
 
@@ -941,12 +928,10 @@ count: false
 .panel1-var_est-user[
 
 ```r
-freqdata %&gt;%  mutate(yhat =  ifelse(Sexe == 'F',
-                                              resM1$m[1],
-                                              resM1$m[2]),
-                               Ehat = freqC-yhat,
-                               Ehat_2 = Ehat^2) %&gt;%
-  summarise(s=sum(Ehat_2)) %&gt;% simplify() -&gt; RSSobs
+freqdata %&gt;%  group_by(Sexe) %&gt;%
+  mutate(yhat =  mean(freqC)) %&gt;%
+  mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2) %&gt;%
+  ungroup %&gt;% summarise(RSSobs=sum(Ehat_2)) %&gt;% as.numeric() -&gt; RSSobs
 RSSobs
 sigma2_hat &lt;- RSSobs / (nrow(freqdata) - 2)
 sigma2_hat
@@ -958,18 +943,15 @@ sigma2_hat
 .panel2-var_est-user[
 
 ```
-  s 
-615 
+[1] 619.15
 ```
 
 ```
-       s 
-16.18421 
+[1] 16.29342
 ```
 
 ```
-      s 
-4.02296 
+[1] 4.036511
 ```
 ]
 
@@ -1009,7 +991,7 @@ template: parametre
 
 ### On doit trouver
 
-`\(\hat{\sigma}=\)` 4.0229604.
+`\(\hat{\sigma}=\)` 4.036511.
 
 
 --
@@ -1019,18 +1001,18 @@ template: parametre
 
 
 ```r
-freq_M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
+M1 &lt;- lm(freqC ~ Sexe, data = freqdata)
 ```
 
 --
 
 
 ```r
-summary(freq_M1)$sigma
+summary(M1)$sigma
 ```
 
 ```
-[1] 4.02296
+[1] 4.036511
 ```
 
 ---
@@ -1040,13 +1022,13 @@ template: parametre
 
 ### On doit trouver
 
-`\(\hat{\sigma}=\)` 4.0229604.
+`\(\hat{\sigma}=\)` 4.036511.
 
 
 
 
 ```r
-summary(freq_M1)
+summary(M1)
 ```
 
 ```
@@ -1056,18 +1038,18 @@ lm(formula = freqC ~ Sexe, data = freqdata)
 
 Residuals:
    Min     1Q Median     3Q    Max 
--8.600 -2.550 -0.450  2.475  8.700 
+-8.550 -2.737 -0.425  2.513  8.700 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  84.3000     0.8996  93.712   &lt;2e-16 ***
-SexeM         0.3000     1.2722   0.236    0.815    
+(Intercept)  84.3000     0.9026  93.398   &lt;2e-16 ***
+SexeM         0.2500     1.2765   0.196    0.846    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 4.023 on 38 degrees of freedom
-Multiple R-squared:  0.001461,	Adjusted R-squared:  -0.02482 
-F-statistic: 0.05561 on 1 and 38 DF,  p-value: 0.8148
+Residual standard error: 4.037 on 38 degrees of freedom
+Multiple R-squared:  0.001008,	Adjusted R-squared:  -0.02528 
+F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 ```
 
 
@@ -1139,15 +1121,18 @@ Le modèle sous forme matricielle s'écrit
 
 --
 
-### Estimation de `\(\theta\)`
+### Estimateur de `\(\theta\)`
 
-`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$`
+`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y.$$`
 --
 
-### Loi de l'estimation de `\(\theta\)`
+### Loi de l'estimateur de `\(\theta\)`
 
 
 `$$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$`
+--
+
+Cette approche très mathématique est utile pour la généralisation, on aura l'occasion d'y revenir !!
 
 ---
 template: parametre
@@ -1155,7 +1140,7 @@ template: parametre
 
 A partir des données de chauve souris, ajuster un modèle  permettant d'expliquer le volume de la partie Auditive (AUD) en fonction du régime.
 
-
+Il ne s'agit pas de refaire les calculs à la main, mais uniquement d'utiliser la fonction `lm`. 
 ### Méfiez vous 
 
 - vérifier les degrés de liberté et le nom des paramètres
@@ -1167,18 +1152,742 @@ A partir des données de chauve souris, ajuster un modèle  permettant d'expliqu
 template: pause
 
 ---
-
+name: modcomp
 # Test du modèle complet
 
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+
+&lt;img src="anova_files/figure-html/freqdata2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+--
+&lt;p class="question"&gt; Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?&lt;/p&gt;
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+
+&lt;p class="question"&gt; Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?&lt;/p&gt;
+
+
+Autrement dit
+
+
+&lt;img src="anova_files/figure-html/freqdata_graphia_anova-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: modcomp
 ## Test de l'existence d'un effet
 
+
+&lt;p class="question"&gt; Le comportement moyen de la variable `\(Y\)` est il différent selon les différentes modalités de la variable explicative ?&lt;/p&gt;
+
+--
+
+Deux modèles possibles
+`$$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$`
+
+&lt;p class="question"&gt; Le modèle M1 est il plus pertinent que le modèle M0?&lt;/p&gt;
+
+
+---
+template: modcomp
+## Mesurer la variabilité expliquée par le modèle M1
+
+--
+
+### Variabilité totale dans les données
+
+`$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2.$$` 
+--
+
+### Variabilité résiduelle dans le modèle M1
+
+`$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$` 
+--
+
+### Variabilité expliquée par le modèle M1
+
+`$$SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$` 
+C'est la quantité de variabilité expliquée par les différence entre les I populations.
+
+--
+
+&lt;p class=care&gt; Si la variabilité expliquée par le modèle `\(M1\)` est grande, on gagne à considérer des ppopulations différentes &lt;p&gt;
+
+On a mis en évidence des différences entre les populations.
+
+
+---
+## Calcul de RSS sur l'exemple 1
+ A la main :
+
+
+
+
+
+--- 
+
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+*freqdata %&gt;% group_by(Sexe)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 3[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe 
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m
+[90m1[39m    82     1 M    
+[90m2[39m    82     1 F    
+[90m3[39m    77     1 M    
+[90m4[39m    79     1 F    
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+* mutate(m= mean(freqC))
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 4[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe      m
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6
+[90m2[39m    82     1 F      84.3
+[90m3[39m    77     1 M      84.6
+[90m4[39m    79     1 F      84.3
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+* mutate( Ehat = freqC - m)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 5[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe      m  Ehat
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m
+[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m
+[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m
+[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+* mutate( E2hat = Ehat^2)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 6[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe      m  Ehat E2hat
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m  6.50
+[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m  5.29
+[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m 57.0 
+[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+* ungroup()
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 6[39m
+  freqC Sport Sexe      m  Ehat E2hat
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m  6.50
+[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m  5.29
+[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m 57.0 
+[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+* summarise(RSSM1 =sum(E2hat))
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 1 x 1[39m
+  RSSM1
+  [3m[90m&lt;dbl&gt;[39m[23m
+[90m1[39m  619.
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+* RSSM1
+```
+]
+ 
+.panel2-rss-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+*freqdata %&gt;%  mutate(m= mean(freqC))
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+   freqC Sport Sexe      m
+1     82     1    M 84.425
+2     82     1    F 84.425
+3     77     1    M 84.425
+4     79     1    F 84.425
+5     81     1    M 84.425
+6     83     1    F 84.425
+7     76     1    M 84.425
+8     80     1    F 84.425
+9     80     2    M 84.425
+10    83     2    F 84.425
+11    83     2    M 84.425
+12    81     2    F 84.425
+13    81     2    M 84.425
+14    84     2    F 84.425
+15    80     2    M 84.425
+16    82     2    F 84.425
+17    88     3    M 84.425
+18    81     3    F 84.425
+19    87     3    M 84.425
+20    83     3    F 84.425
+21    86     3    M 84.425
+22    83     3    F 84.425
+23    87     3    M 84.425
+24    83     3    F 84.425
+25    85     4    M 84.425
+26    85     4    F 84.425
+27    84     4    M 84.425
+28    86     4    F 84.425
+29    87     4    M 84.425
+30    87     4    F 84.425
+31    85     4    M 84.425
+32    85     4    F 84.425
+33    92     5    M 84.425
+34    88     5    F 84.425
+35    91     5    M 84.425
+36    93     5    F 84.425
+37    90     5    M 84.425
+38    88     5    F 84.425
+39    89     5    M 84.425
+40    90     5    F 84.425
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+* mutate( Ehat = freqC - m)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+   freqC Sport Sexe      m   Ehat
+1     82     1    M 84.425 -2.425
+2     82     1    F 84.425 -2.425
+3     77     1    M 84.425 -7.425
+4     79     1    F 84.425 -5.425
+5     81     1    M 84.425 -3.425
+6     83     1    F 84.425 -1.425
+7     76     1    M 84.425 -8.425
+8     80     1    F 84.425 -4.425
+9     80     2    M 84.425 -4.425
+10    83     2    F 84.425 -1.425
+11    83     2    M 84.425 -1.425
+12    81     2    F 84.425 -3.425
+13    81     2    M 84.425 -3.425
+14    84     2    F 84.425 -0.425
+15    80     2    M 84.425 -4.425
+16    82     2    F 84.425 -2.425
+17    88     3    M 84.425  3.575
+18    81     3    F 84.425 -3.425
+19    87     3    M 84.425  2.575
+20    83     3    F 84.425 -1.425
+21    86     3    M 84.425  1.575
+22    83     3    F 84.425 -1.425
+23    87     3    M 84.425  2.575
+24    83     3    F 84.425 -1.425
+25    85     4    M 84.425  0.575
+26    85     4    F 84.425  0.575
+27    84     4    M 84.425 -0.425
+28    86     4    F 84.425  1.575
+29    87     4    M 84.425  2.575
+30    87     4    F 84.425  2.575
+31    85     4    M 84.425  0.575
+32    85     4    F 84.425  0.575
+33    92     5    M 84.425  7.575
+34    88     5    F 84.425  3.575
+35    91     5    M 84.425  6.575
+36    93     5    F 84.425  8.575
+37    90     5    M 84.425  5.575
+38    88     5    F 84.425  3.575
+39    89     5    M 84.425  4.575
+40    90     5    F 84.425  5.575
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+* mutate( E2hat = Ehat^2)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+   freqC Sport Sexe      m   Ehat     E2hat
+1     82     1    M 84.425 -2.425  5.880625
+2     82     1    F 84.425 -2.425  5.880625
+3     77     1    M 84.425 -7.425 55.130625
+4     79     1    F 84.425 -5.425 29.430625
+5     81     1    M 84.425 -3.425 11.730625
+6     83     1    F 84.425 -1.425  2.030625
+7     76     1    M 84.425 -8.425 70.980625
+8     80     1    F 84.425 -4.425 19.580625
+9     80     2    M 84.425 -4.425 19.580625
+10    83     2    F 84.425 -1.425  2.030625
+11    83     2    M 84.425 -1.425  2.030625
+12    81     2    F 84.425 -3.425 11.730625
+13    81     2    M 84.425 -3.425 11.730625
+14    84     2    F 84.425 -0.425  0.180625
+15    80     2    M 84.425 -4.425 19.580625
+16    82     2    F 84.425 -2.425  5.880625
+17    88     3    M 84.425  3.575 12.780625
+18    81     3    F 84.425 -3.425 11.730625
+19    87     3    M 84.425  2.575  6.630625
+20    83     3    F 84.425 -1.425  2.030625
+21    86     3    M 84.425  1.575  2.480625
+22    83     3    F 84.425 -1.425  2.030625
+23    87     3    M 84.425  2.575  6.630625
+24    83     3    F 84.425 -1.425  2.030625
+25    85     4    M 84.425  0.575  0.330625
+26    85     4    F 84.425  0.575  0.330625
+27    84     4    M 84.425 -0.425  0.180625
+28    86     4    F 84.425  1.575  2.480625
+29    87     4    M 84.425  2.575  6.630625
+30    87     4    F 84.425  2.575  6.630625
+31    85     4    M 84.425  0.575  0.330625
+32    85     4    F 84.425  0.575  0.330625
+33    92     5    M 84.425  7.575 57.380625
+34    88     5    F 84.425  3.575 12.780625
+35    91     5    M 84.425  6.575 43.230625
+36    93     5    F 84.425  8.575 73.530625
+37    90     5    M 84.425  5.575 31.080625
+38    88     5    F 84.425  3.575 12.780625
+39    89     5    M 84.425  4.575 20.930625
+40    90     5    F 84.425  5.575 31.080625
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+* summarise(RSSM1 =sum(E2hat))
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+    RSSM1
+1 619.775
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+* RSSM0
+```
+]
+ 
+.panel2-rss-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM0
+*SSM &lt;- as.numeric(RSSM0 - RSSM1)
+```
+]
+ 
+.panel2-rss-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) -&gt;
+  RSSM0
+SSM &lt;- as.numeric(RSSM0 - RSSM1)
+*SSM
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[1] 0.625
+```
+]
+
+&lt;style&gt;
+.panel1-rss-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-rss-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-rss-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+```
+[1] 0.625
+```
+
+---
+## Calcul de RSS sur l'exemple 1
+
+
+
+```r
+M1 &lt;- lm(freqC ~ Sexe, data= freqdata)
+M0 &lt;- lm(freqC ~ 1, data= freqdata)
+anova(M0, M1)
+```
+
+```
+Analysis of Variance Table
+
+Model 1: freqC ~ 1
+Model 2: freqC ~ Sexe
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1     39 619.77                           
+2     38 619.15  1     0.625 0.0384 0.8458
+```
+
+
+
+---
+template: modcomp
+## Quand décider si `\(SS_{M1, obs}\)` est grande ?  
+
+
+--
+C'est le rôle du test statistique.
+
+--
+
+Idée de démarche:
+
+- Décrire quelle gamme de valeurs pourrait prendre SSM dans le cas où il n'y pas de différence entre les groupes 
+- Comparer avec ce qu'on constate sur nos données
+- 
+    - Si c'est comparable, pas de raison de penser qu'il y a des différences entre les groupes,
+    - Si c'est surprenant, les groupes sont vraisemblablement différentes.
+
+--
+
+On veut décrire comment varie `\(SS_{M1, obs}\)` dans la situation où il n"y a pas de différence entre les groupes.
+
+On travaille donc sous l'hypothèse 
+`$$H_0 =\left \lbrace \mbox{Pas de différence entre les groupes }\right\rbrace$$`
+
+--
+
+`$$H_0 =\left \lbrace  \mbox{pour tout }i, \alpha_i =0  \right\rbrace$$`
+
+--
+
+`$$H_0 =\left \lbrace  M1 \mbox{ est équivalent à } M0 \right\rbrace.$$`
+
+---
+template: modcomp
 ## Hypothèses du test
 
-## Déclinaison sur les exemples
+On va donc opposer une hypothèse de travail `\(H_0\)` contre une hypothèse alternative `\(H_1\)`. `\(H_0\)` peut donc prendre différentes formes:
 
+
+`$$\begin{align} 
+H_0 &amp; =\left \lbrace \mbox{Pas de différence entre les groupes }\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{pour tout }i, \alpha_i =0  \right\rbrace\\
+    &amp; =\left \lbrace  M1 \mbox{ est équivalent à } M0 \right\rbrace.
+\end{align}$$`
+
+`\(H_1\)` prend les formes équivalentes suivantes
+
+`$$\begin{align} 
+H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \right\rbrace\\
+    &amp; =\left \lbrace  M1 \mbox{ est préférable à } M0 \right\rbrace.
+\end{align}$$`
+---
 ## Loi de la statistique de test sous H0
 
+
+Il faut être capable de décrire quelles sont les valeurs possibles de `\(SS_{M1, obs}\)`, pour ceci il faut connaitre la loi de la variable aléatoire `\(SS_{M1}\)`.
+
+-
+On peut montrer que sous `\(H_0\)`,  
+
+`$$\frac{SS_{M1}}{\sigma^2} \underset{H_0}{\sim}\chi^2(I-1)$$`  
+
+--
+Mais `\(\sigma^2\)` est inconnu, on a envie de le remplacer par son estimateur `\(RSS / (n-I).\)`
+
+--
+
+
+&lt;p class=question&gt; 
+Sous `\(H_0\)`, 
+`$$F= \frac{\frac{SS_{M1}}{I-1}}{\frac{RSS}{n-I}} \underset{H_0}{\sim}\mathcal{F}(I-1, n-I)$$`  
+&lt;/p&gt;
+
+
+
+
+---
+template: modcomp
+## Loi de la statistique de test sous H0 - graphiquement
+
+Sous `\(H0\)` la loi de distribution de `\(F\)` est 
+
+
+
+--- 
+
+Si on a observé `\(Fobs\)`, comment savaoir si--
+
+
 ## Déclinaison sur les exemples
+
+---
+template: pause
+
+---
 
 # Test sur un paramètre
 
@@ -1186,7 +1895,24 @@ template: pause
 
 ## loi de la statistique de test
 
-## Déclinaisonsur les exemples
+## Déclinaison sur les exemples
+
+---
+# Vérification graphique des hypothèses de modélisation
+
+
+---
+# Démarche complète d'analyse à partir de l'exemple des chauves souris
+
+
+
+
+---
+template: pause
+
+Avant de passer à l'analyse de variance à deux facteurs
+---
+
 
 
     </textarea>

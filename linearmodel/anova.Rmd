@@ -60,13 +60,15 @@ On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
 
 
 ```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
 #remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
 ```
 
-```{r freqdata, eval = TRUE, echo = TRUE, warning = FALSE}
+```{r freqdata, eval = TRUE, echo = c(1,2), warning = FALSE}
 library(coursesdata)
 data(freqdata)
-freqdata %>% ggplot() + geom_boxplot(aes(x= Sexe, y = freqC))
+freqdata %>% ggplot() +  aes(x= Sexe, y = freqC)+  geom_boxplot(aes(fill = Sexe, col = Sexe), alpha = 0.5) + theme(legend.position = 'none')  + 
+  geom_jitter( size=0.8, alpha=0.7, width = 0.15, aes(col = as.factor(Sexe)))
 ```
 
 
@@ -113,7 +115,6 @@ name: model
 
 ---
 template: model
-# Le modèle d'analyse de la variance à 1 facteur
 
 ## Graphiquement 
 
@@ -122,22 +123,22 @@ Une visalisation graphique du modèle d'analyse de la variance.
 <br> <br> <br> <br>
 
 
-Comment imagine-t-on le processus qui a conduit à nos données ?
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
 
 
 ---
 
 ```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
-set.seed(123)
+set.seed(321)
 I <- 3
-mu <- round(5 * rnorm(I))
+mu <- round(1.5 * rnorm(I),2)
 effectif <- runif(n = I, min = 10, max = 30)
 fake_dta <- tibble( groupe = rep(1:I, effectif)) %>% group_by(groupe) %>% 
-  mutate(y = round(rnorm(n(), mean = mu[groupe], sd = 1.5),2), mean = mu[groupe] ) %>% mutate(groupe = as.factor(groupe), ord=0)  
-norm_dta <- tibble( x  = seq( min(mu) -3*1.5, max(mu)+ 3* 1.5, length.out = 100))  %>% 
-  mutate(d1 = dnorm(x, mean = mu[1], sd = 1.5),
-         d2 = dnorm(x, mean = mu[2], sd = 1.5),
-         d3 = dnorm(x, mean = mu[3], sd = 1.5)
+  mutate(y = round(rnorm(n(), mean = mu[groupe], sd = 2),2), mean = mu[groupe] ) %>% mutate(groupe = as.factor(groupe), ord=0)  
+norm_dta <- tibble( x  = seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100))  %>% 
+  mutate(d1 = dnorm(x, mean = mu[1], sd = 2),
+         d2 = dnorm(x, mean = mu[2], sd = 2),
+         d3 = dnorm(x, mean = mu[3], sd = 2)
   ) %>% 
   pivot_longer(cols = starts_with("d"), names_to = 'Groupe', values_to ='density' )%>% 
   mutate(groupe = as.factor(as.numeric(as.factor(Groupe))))
@@ -150,9 +151,9 @@ ggplot() +
   geom_line(data = norm_dta, aes(x= x, y = density, col = groupe)) +
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
   theme(legend.position = 'none') + 
-  labs(col = 'Groupe') +
+  labs(col = 'Groupe') + #BREAK
   geom_vline(data=fake_dta, aes(xintercept = mean, col = groupe), alpha = 0.6) +#BREAK
-  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) 
 
 ```
 
@@ -174,12 +175,11 @@ geom_line(data = norm_dta, aes(x= x, y = density, col = groupe), alpha= 0.1) +
 
 
 ```{r anova_versiongraphiqueM0, eval = TRUE, echo = FALSE}
-set.seed(123)
-mu0 <- mean(round(5 * rnorm(I)))
+
+mu0 <- mean(fake_dta$y)
+fake_dta <- fake_dta %>% mutate(mu0 = mu0)
 sd0 <- sd(fake_dta$y)
-fake_dta_M0 <- tibble( groupe = rep(1:I, effectif)) %>% group_by(groupe) %>% 
-  mutate(y = round(rnorm(n(), mean = mu0, sd = sd0), 2), mean = mu0 ) %>% mutate(groupe = as.factor(groupe), ord=0)  
-norm_dta_M0 <- tibble( x  = seq( min(mu) -3*1.5, max(mu)+ 3* 1.5, length.out = 100))  %>% 
+norm_dta_M0 <- tibble( x  = norm_dta$x)  %>% 
   mutate(d1 = dnorm(x, mean = mu0, sd = sd0),
          d2 = dnorm(x, mean = mu0, sd = sd0),
          d3 = dnorm(x, mean = mu0, sd = sd0)
@@ -196,8 +196,8 @@ ggplot() + ggtitle('Modèle M0') +
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
   theme(legend.position = 'none') + 
   labs(col = 'Groupe') + 
-  geom_vline(data=fake_dta_M0, aes(xintercept = mean, col = groupe), alpha = 0.6) +#BREAK
-  geom_point(data = fake_dta_M0, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = groupe), alpha = 0.6) +#BREAK
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)
 
 ```
 
@@ -210,18 +210,40 @@ count: false
 ggplot() +  
   xlab('y') +
   ggtitle('Modèle M0')  +  
-  geom_point(data = fake_dta_M0, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +  
+  theme(legend.position = 'none') + 
+  labs(col = 'Groupe') + 
+geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe), alpha= 0.1) +  #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = groupe), alpha = 0.1) #BREAK
+```
+---
+template: model
+count: false
+
+```{r anova_versiongraphique_save, eval = TRUE}
+p_M1 <- ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M1') +
+  geom_line(data = norm_dta, aes(x= x, y = density, col = groupe)) +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
+  theme(legend.position = 'none') + 
+  labs(col = 'Groupe') + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mean, col = groupe), alpha = 0.6) +#BREAK
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7) 
+
+p_M0 <-ggplot() +  
+  xlab('y') +
+  ggtitle('Modèle M0')  +  
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +  
   theme(legend.position = 'none') + 
   labs(col = 'Groupe') + 
 geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe), alpha= 0.1) +  
-  geom_vline(data=fake_dta_M0, aes(xintercept = mean, col = groupe), alpha = 0.1) #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = groupe), alpha = 0.1) #BREAK
+ggpubr::ggarrange(p_M1, p_M0, ncol = 2)
 ```
 
---
-<p class="question"> La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?</p>
-
---
 
 <p class="question"> Au vu de nos données, le modèle M1 est-il plus pertinent que le modèle M0 ?</p>
 
@@ -277,7 +299,7 @@ template: model
 $$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu + \alpha_i, \sigma^2),$$
 avec 
 - $i=1,\ldots,I$ le numéro du groupe,
-- $k= 1,\ldots, n_i$ le numéro de l'individu dans le groupe $i$, ($\sum_i n_i=n$)
+- $k= 1,\ldots, n_i$ le numéro de l'individu dans le groupe $i$, ( $\sum_i n_i=n$ )
 - $\mu$ un comportement moyen de référence,
 - $\alpha_i$ un effet différentiel du groupe $i$par rapport à la référence,
 - $\sigma^2$ la variance commune à tous les groupes.
@@ -614,7 +636,7 @@ $$Y_{ik} = \mu + \alpha_i + E_{ik}, \quad E_{ik}\overset{ind}{\sim}\mathcal{N}(0
 
 ### Estimateur 
 
-L'estimateur de $\mu$ est donc défini par $M_1= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$  
+L'estimateur de $\mu$ est donc défini par $M= \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$  
 
 $$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$
 
@@ -622,7 +644,7 @@ $$M \sim\mathcal{N}\left(\mu, \frac{\sigma^2}{n_1}\right).$$
 
 L'estimateur de $\alpha_i$ est donc défini par $A_i= \frac{1}{n_i}\sum_{k=1}^{n_i} Y_{ik} - \frac{1}{n_1}\sum_{k=1}^{n_1} Y_{1k}.$
 
-$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_2}\right) \right).$$
+$$A_i \sim\mathcal{N}\left(\alpha_i, \sigma^2\left(\frac{1}{n_i} + \frac{1}{n_1}\right) \right).$$
 
 
 ---
@@ -631,7 +653,7 @@ template: parametre
 
 ### Ce qu'on doit trouver
 
-$$\hat{\mu} =\sum_{k=1}^{n_i} y_{1k}, \quad \hat{\alpha}_2 =\sum_{k=1}^{n_i} y_{2k} - \sum_{k=1}^{n_i} y_{1k}$$
+$$\hat{\mu} =\frac{1}{20}\sum_{k=1}^{20} y_{1k}, \quad \hat{\alpha}_2 =\frac{1}{20}\sum_{k=1}^{20} y_{2k} - \frac{1}{20}\sum_{k=1}^{20} y_{1k}$$
 
 ```{r estim_par1,  echo = TRUE, eval = TRUE}
 freqdata %>% group_by(Sexe) %>% summarise(m = mean(freqC), n= n())
@@ -661,8 +683,8 @@ $\hat{\mu} =$ `r resM1$m[1]` et $\hat{\alpha}_2=$ `r resM1$m[2] - resM1$m[1]`.
 ### Estimer avec R
 
 ```{r estim_par_lm, echo = TRUE, eval = TRUE}
-freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
-summary(freq_M1)$coefficients
+M1 <- lm(freqC ~ Sexe, data = freqdata)
+summary(M1)$coefficients
 ```
 
 ---
@@ -671,19 +693,19 @@ template: parametre
 ## Estimation des paramètres pour l'exemple 1.
 
 ```{r estim_par_lm_2, echo = TRUE, eval = TRUE}
-freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
-summary(freq_M1)
+M1 <- lm(freqC ~ Sexe, data = freqdata)
+summary(M1)
 ```
 
 ```{r estim_par_lm_3, echo = FALSE, eval = TRUE}
-sigma_hat <- summary(freq_M1)$sigma
+sigma_hat <- summary(M1)$sigma
 ```
 
 ---
 template: parametre
 ## Retour sur la méthode d'estimation - Somme des carrés résiduel (RSS)
 
-Naturellement, on a choisi d'estimer  $\mu_i$ par $\frac{1}{n_1}\sum_{k=1}^{n_1} y_{ik}.$ 
+Naturellement, on a choisi d'estimer  $\mu_i$ par $\frac{1}{n_i}\sum_{k=1}^{n_1} y_{ik}.$ 
 
 --
 
@@ -700,6 +722,7 @@ $RSS_{obs}$ se réécrit dans un cadre général comme
 
 $$RSS_{obs} = \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$ 
 
+$$RSS = \sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \hat{Y}_{ik})^2.$$ 
 
 
 
@@ -717,15 +740,15 @@ $$\frac{RSS}{\sigma^2} \sim \chi^2(n-I).$$
 
 La variabilité totale des erreurs est donnée par 
 
-$$\sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$
-C'est la somme de n variables aléaoires normales centrée de variance $\sigma^2$, donc 
+$$\sum_{i=1}^I \sum_{k=1}^{n_i} (Y_{ik} - \mu_i)^2= \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$$
+C'est la somme de n variables aléaoires normales centrées de variance $\sigma^2$, donc 
 
 $$\sum_{i=1}^I \sum_{k=1}^{n_i} \left( \frac{E_{ik}}{\sigma}\right)^2 \sim\chi^2(n).$$
 --
 
-Mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
+Mais les $\mu_i$ sont inconnus, on les remplace par leur estimateurs  $M_i.$
 
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où le $n-I$.
+Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimateur, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où le $n-I$.
 
 
 
@@ -744,7 +767,7 @@ Alors $\mathbb{E}\left( \frac{RSS}{\sigma^2} \right) = n-I,$ donc  $\mathbb{E}\l
 
 ## Estimateur de la variance 
 
-La variable aléatoire)  $$S^2 =\frac{1}{n-I} RSS, $$
+  $$S^2 =\frac{1}{n-I} RSS, $$
 est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
 
 --
@@ -754,35 +777,13 @@ est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
 $$\hat{\sigma}^2 =\frac{1}{n-I} RSS_{obs}.$$
 
 
-
----
-template: parametre
-## Estimation du paramètre de variance
- 
-### Pourquoi diviser par n-I au lieu de n ? 
-
-
-Le modèle d'analyse de la variance 
-$$Y_{ik} =\mu_i +E_{ik}.$$
-
-
-On aimerait estimer $\sigma$ par  $\frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (y_{ik} - \mu_i)^2= \frac{1}{n} \sum_{i=1}^I \sum_{k=1}^{n_i} (E_{ik})^2,$
-
-mais les $\mu_i$ sont inconnus, on les remplace par leur estimation $\hat{\mu}_i.$
-
-Chaque fois que l'on doit remplacer un paramètre de moyenne par son estimation, on perd un degré de liberté. Ici on a estimé $I$ paramètres de moyenne, d'où la nor 
-
-
-
 ---
 
 ```{r var_est}
-freqdata %>%  mutate(yhat =  ifelse(Sexe == 'F', 
-                                              resM1$m[1], 
-                                              resM1$m[2]), 
-                               Ehat = freqC-yhat, 
-                               Ehat_2 = Ehat^2) %>% #BREAK
-  summarise(s=sum(Ehat_2)) %>% simplify() -> RSSobs 
+freqdata %>%  group_by(Sexe) %>% #BREAK
+  mutate(yhat =  mean(freqC)) %>% #BREAK
+  mutate( Ehat = freqC-yhat,Ehat_2 = Ehat^2) %>% #BREAK
+  ungroup %>% summarise(RSSobs=sum(Ehat_2)) %>% as.numeric() -> RSSobs 
 RSSobs #BREAK
 sigma2_hat <- RSSobs / (nrow(freqdata) - 2)
 sigma2_hat #BREAK
@@ -810,13 +811,13 @@ $\hat{\sigma}=$ `r sigma_hat`.
 
 
 ```{r recal_lm_fit_command, echo = TRUE}
-freq_M1 <- lm(freqC ~ Sexe, data = freqdata)
+M1 <- lm(freqC ~ Sexe, data = freqdata)
 ```
 
 --
 
 ```{r var_est_lm, echo = TRUE, eval = TRUE}
-summary(freq_M1)$sigma
+summary(M1)$sigma
 ```
 
 ---
@@ -831,7 +832,7 @@ $\hat{\sigma}=$ `r sigma_hat`.
 
 
 ```{r var_est_lm2, echo = TRUE, eval = TRUE}
-summary(freq_M1)
+summary(M1)
 ```
 
 
@@ -867,15 +868,18 @@ $$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
 
 --
 
-### Estimation de $\theta$
+### Estimateur de $\theta$
 
-$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y.$$
 --
 
-### Loi de l'estimation de $\theta$
+### Loi de l'estimateur de $\theta$
 
 
 $$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+--
+
+Cette approche très mathématique est utile pour la généralisation, on aura l'occasion d'y revenir !!
 
 ---
 template: parametre
@@ -883,7 +887,7 @@ template: parametre
 
 A partir des données de chauve souris, ajuster un modèle  permettant d'expliquer le volume de la partie Auditive (AUD) en fonction du régime.
 
-
+Il ne s'agit pas de refaire les calculs à la main, mais uniquement d'utiliser la fonction `lm`. 
 ### Méfiez vous 
 
 - vérifier les degrés de liberté et le nom des paramètres
@@ -895,18 +899,252 @@ A partir des données de chauve souris, ajuster un modèle  permettant d'expliqu
 template: pause
 
 ---
-
+name: modcomp
 # Test du modèle complet
 
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+
+```{r freqdata2, ref.label='freqdata', eval = TRUE, warning = FALSE, results ='markup'}
+```
+
+
+--
+<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+
+<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
+
+
+Autrement dit
+
+
+```{r freqdata_graphia_anova, eval = TRUE, warning = FALSE, results ='markup'}
+freq_p_M <- ggplot(data = freqdata) + geom_point(aes(x=freqC, y =0, col = Sexe), alpha = 0.5)
+
+freq_p_M1 <- freq_p_M +   stat_function(fun = dnorm, n = 101, args = list(mean = resM1$m[1], sd = sigma_hat ), col =  "#FF0000") +
+  stat_function(fun = dnorm, n = 101, args = list(mean = resM1$m[2], sd = sigma_hat ), col =  "#00A08A") +
+  geom_vline(aes(xintercept = resM1$m[1] ), col =  "#FF0000") +
+  geom_vline(aes(xintercept = resM1$m[2] ), col =  "#00A08A") 
+M0 <- lm(freqC~1, data = freqdata)
+freq_p_M0 <- freq_p_M +   stat_function(fun = dnorm, n = 101, args = list(mean = coef(M0), sd = summary(M0)$sigma ), col =  "#FF0000") +
+ stat_function(fun = dnorm, n = 101, args = list(mean = coef(M0), sd = summary(M0)$sigma ),  col =  "#00A08A") +
+  geom_vline(aes(xintercept =  coef(M0)), col= "#FF0000") +
+  geom_vline(aes(xintercept =  coef(M0) ), col =  "#00A08A")  + theme(legend.position =  'bottom' )
+ggpubr::ggarrange(freq_p_M1, freq_p_M0, common.legend = TRUE)
+```
+
+
+---
+template: modcomp
 ## Test de l'existence d'un effet
 
+
+<p class="question"> Le comportement moyen de la variable $Y$ est il différent selon les différentes modalités de la variable explicative ?</p>
+
+--
+
+Deux modèles possibles
+$$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$
+
+<p class="question"> Le modèle M1 est il plus pertinent que le modèle M0?</p>
+
+
+---
+template: modcomp
+## Mesurer la variabilité expliquée par le modèle M1
+
+--
+
+### Variabilité totale dans les données
+
+$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2.$$ 
+--
+
+### Variabilité résiduelle dans le modèle M1
+
+$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$ 
+--
+
+### Variabilité expliquée par le modèle M1
+
+$$SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$ 
+C'est la quantité de variabilité expliquée par les différence entre les I populations.
+
+--
+
+<p class=care> Si la variabilité expliquée par le modèle $M1$ est grande, on gagne à considérer des ppopulations différentes <p>
+
+On a mis en évidence des différences entre les populations.
+
+
+---
+## Calcul de RSS sur l'exemple 1
+ A la main :
+
+
+
+```{r rss}
+freqdata %>% group_by(Sexe) %>% 
+  mutate(m= mean(freqC)) %>% 
+  mutate( Ehat = freqC - m) %>% 
+  mutate( E2hat = Ehat^2) %>% 
+  ungroup() %>% 
+  summarise(RSSM1 =sum(E2hat)) -> 
+  RSSM1
+freqdata %>%  mutate(m= mean(freqC)) %>% 
+  mutate( Ehat = freqC - m) %>% 
+  mutate( E2hat = Ehat^2) %>% 
+  summarise(RSSM1 =sum(E2hat)) -> 
+  RSSM0
+SSM <- as.numeric(RSSM0 - RSSM1)
+SSM
+```
+
+--- 
+
+`r chunk_reveal("rss", break_type = "auto")`
+
+
+```{r rss_cache,  eval = TRUE}
+freqdata %>% group_by(Sexe) %>% 
+  mutate(m= mean(freqC)) %>% 
+  mutate( Ehat = freqC - m) %>% 
+  mutate( E2hat = Ehat^2) %>% 
+  ungroup() %>% 
+  summarise(RSSM1 =sum(E2hat)) -> 
+  RSSM1
+freqdata %>%  mutate(m= mean(freqC)) %>% 
+  mutate( Ehat = freqC - m) %>% 
+  mutate( E2hat = Ehat^2) %>% 
+  summarise(RSSM1 =sum(E2hat)) -> 
+  RSSM0
+SSM <- as.numeric(RSSM0 - RSSM1)
+SSM
+```
+
+---
+## Calcul de RSS sur l'exemple 1
+
+
+```{r SCM,  echo = TRUE, eval = TRUE, highlight = 1:2}
+M1 <- lm(freqC ~ Sexe, data= freqdata)
+M0 <- lm(freqC ~ 1, data= freqdata)
+anova(M0, M1)
+```
+
+
+
+---
+template: modcomp
+## Quand décider si $SS_{M1, obs}$ est grande ?  
+
+
+--
+C'est le rôle du test statistique.
+
+--
+
+Idée de démarche:
+
+- Décrire quelle gamme de valeurs pourrait prendre SSM dans le cas où il n'y pas de différence entre les groupes 
+- Comparer avec ce qu'on constate sur nos données
+- 
+    - Si c'est comparable, pas de raison de penser qu'il y a des différences entre les groupes,
+    - Si c'est surprenant, les groupes sont vraisemblablement différentes.
+
+--
+
+On veut décrire comment varie $SS_{M1, obs}$ dans la situation où il n"y a pas de différence entre les groupes.
+
+On travaille donc sous l'hypothèse 
+$$H_0 =\left \lbrace \mbox{Pas de différence entre les groupes }\right\rbrace$$
+
+--
+
+$$H_0 =\left \lbrace  \mbox{pour tout }i, \alpha_i =0  \right\rbrace$$
+
+--
+
+$$H_0 =\left \lbrace  M1 \mbox{ est équivalent à } M0 \right\rbrace.$$
+
+---
+template: modcomp
 ## Hypothèses du test
 
-## Déclinaison sur les exemples
+On va donc opposer une hypothèse de travail $H_0$ contre une hypothèse alternative $H_1$. $H_0$ peut donc prendre différentes formes:
 
+
+$$\begin{align} 
+H_0 & =\left \lbrace \mbox{Pas de différence entre les groupes }\right\rbrace\\
+    & =\left \lbrace  \mbox{pour tout }i, \alpha_i =0  \right\rbrace\\
+    & =\left \lbrace  M1 \mbox{ est équivalent à } M0 \right\rbrace.
+\end{align}$$
+
+$H_1$ prend les formes équivalentes suivantes
+
+$$\begin{align} 
+H_1 & =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
+    & =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \right\rbrace\\
+    & =\left \lbrace  M1 \mbox{ est préférable à } M0 \right\rbrace.
+\end{align}$$
+---
 ## Loi de la statistique de test sous H0
 
+
+Il faut être capable de décrire quelles sont les valeurs possibles de $SS_{M1, obs}$, pour ceci il faut connaitre la loi de la variable aléatoire $SS_{M1}$.
+
+-
+On peut montrer que sous $H_0$,  
+
+$$\frac{SS_{M1}}{\sigma^2} \underset{H_0}{\sim}\chi^2(I-1)$$  
+
+--
+Mais $\sigma^2$ est inconnu, on a envie de le remplacer par son estimateur $RSS / (n-I).$
+
+--
+
+
+<p class=question> 
+Sous $H_0$, 
+$$F= \frac{\frac{SS_{M1}}{I-1}}{\frac{RSS}{n-I}} \underset{H_0}{\sim}\mathcal{F}(I-1, n-I)$$  
+</p>
+
+
+
+
+---
+template: modcomp
+## Loi de la statistique de test sous H0 - graphiquement
+
+Sous $H0$ la loi de distribution de $F$ est 
+
+```{r , eval = TRUE}
+tibble(x = seq(0, 3, length.out = 501)) %>% 
+  mutate(y = df(x, df1 = 4, df= 38)) -> chi_dta
+```
+
+--- 
+
+Si on a observé $Fobs$, comment savaoir si--
+
+
 ## Déclinaison sur les exemples
+
+---
+template: pause
+
+---
 
 # Test sur un paramètre
 
@@ -914,6 +1152,26 @@ template: pause
 
 ## loi de la statistique de test
 
-## Déclinaisonsur les exemples
+## Déclinaison sur les exemples
+
+---
+# Vérification graphique des hypothèses de modélisation
+
+
+---
+# Démarche complète d'analyse à partir de l'exemple des chauves souris
+
+
+```{r ggplot_back}
+ggplot <- function(...) ggplot2::ggplot(...)
+
+```
+
+---
+template: pause
+
+Avant de passer à l'analyse de variance à deux facteurs
+---
+
 
 
