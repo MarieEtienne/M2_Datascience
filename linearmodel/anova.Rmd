@@ -215,7 +215,7 @@ ggplot() +
   theme(legend.position = 'none') + 
   labs(col = 'Groupe') + 
 geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe), alpha= 0.1) +  #BREAK
-  geom_vline(data=fake_dta_M0, aes(xintercept = mu0, col = groupe), alpha = 0.1) #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = groupe), alpha = 0.1) #BREAK
 ```
 ---
 template: model
@@ -235,12 +235,12 @@ p_M1 <- ggplot() +
 p_M0 <-ggplot() +  
   xlab('y') +
   ggtitle('Modèle M0')  +  
-  geom_point(data = fake_dta_M0, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
+  geom_point(data = fake_dta, aes(x = y, col = groupe, y=ord), size = 2, alpha = 0.7)  +
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +  
   theme(legend.position = 'none') + 
   labs(col = 'Groupe') + 
 geom_line(data = norm_dta_M0, aes(x= x, y = density, col = groupe), alpha= 0.1) +  
-  geom_vline(data=fake_dta_M0, aes(xintercept = mean, col = groupe), alpha = 0.1) #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = groupe), alpha = 0.1) #BREAK
 ggpubr::ggarrange(p_M1, p_M0, ncol = 2)
 ```
 
