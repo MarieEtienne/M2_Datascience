@@ -962,7 +962,7 @@ $$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$
 
 ---
 template: modcomp
-## Mesurer la partie de variabilité expliquée par le modèle
+## Mesurer la variabilité expliquée par le modèle M1
 
 --
 
@@ -1007,7 +1007,7 @@ freqdata %>%  mutate(m= mean(freqC)) %>%
   mutate( E2hat = Ehat^2) %>% 
   summarise(RSSM1 =sum(E2hat)) -> 
   RSSM0
-SSM <- RSSM0 - RSSM1
+SSM <- as.numeric(RSSM0 - RSSM1)
 SSM
 ```
 
@@ -1029,7 +1029,7 @@ freqdata %>%  mutate(m= mean(freqC)) %>%
   mutate( E2hat = Ehat^2) %>% 
   summarise(RSSM1 =sum(E2hat)) -> 
   RSSM0
-SSM <- RSSM0 - RSSM1
+SSM <- as.numeric(RSSM0 - RSSM1)
 SSM
 ```
 
@@ -1057,11 +1057,11 @@ C'est le rôle du test statistique.
 
 Idée de démarche:
 
-- Décrire quelle gamme de valeurs pourrait prendre SSM dans le cas où il n'y pas de différence entre les population 
+- Décrire quelle gamme de valeurs pourrait prendre SSM dans le cas où il n'y pas de différence entre les groupes 
 - Comparer avec ce qu'on constate sur nos données
 - 
-    - Si c'est comparable, pas de raison de penser qu'il y a des population différentes,
-    - Si c'est surprenant, les populations sont vraisemblablement différentes.
+    - Si c'est comparable, pas de raison de penser qu'il y a des différences entre les groupes,
+    - Si c'est surprenant, les groupes sont vraisemblablement différentes.
 
 --
 
@@ -1162,6 +1162,10 @@ template: pause
 # Démarche complète d'analyse à partir de l'exemple des chauves souris
 
 
+```{r ggplot_back}
+ggplot <- function(...) ggplot2::ggplot(...)
+
+```
 
 ---
 template: pause
