@@ -468,7 +468,7 @@ count: false
 ## Metropolitan French departments
 
 ```{r plot_data_dpt1}
-dpt_complete %>% ggplot() + 
+dpt_complete %>% ggplot2::ggplot() + 
   geom_sf(aes(fill = p2017)) 
 ```
 
