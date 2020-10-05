@@ -1229,7 +1229,8 @@ On a mis en évidence des différences entre les populations.
 
 ---
 ## Calcul de RSS sur l'exemple 1
- A la main :
+
+A la main :
 
 
 
@@ -1237,44 +1238,9 @@ On a mis en évidence des différences entre les populations.
 
 ---
 
+
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-*freqdata %&gt;% group_by(Sexe)
-```
-]
- 
-.panel2-rss-auto[
-
-```
-[90m# A tibble: 40 x 3[39m
-[90m# Groups:   Sexe [2][39m
-  freqC Sport Sexe 
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m
-[90m1[39m    82     1 M    
-[90m2[39m    82     1 F    
-[90m3[39m    77     1 M    
-[90m4[39m    79     1 F    
-[90m# … with 36 more rows[39m
-```
-]
-
----
-count: false
- 
-
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-* mutate(m= mean(freqC))
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 4[39m
@@ -1287,22 +1253,10 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 [90m4[39m    79     1 F      84.3
 [90m# … with 36 more rows[39m
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-* mutate( Ehat = freqC - m)
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 5[39m
@@ -1315,23 +1269,10 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m
 [90m# … with 36 more rows[39m
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-* mutate( E2hat = Ehat^2)
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1344,24 +1285,10 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
 [90m# … with 36 more rows[39m
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-* ungroup()
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1373,71 +1300,23 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
 [90m# … with 36 more rows[39m
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-* summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [1] 619.15
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
 
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-* RSSM1
-```
-]
- 
-.panel2-rss-auto[
-
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-*freqdata %&gt;%  mutate(m= mean(freqC))
-```
-]
- 
-.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m
@@ -1482,28 +1361,10 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 39    89     5    M 84.425
 40    90     5    F 84.425
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-* mutate( Ehat = freqC - m)
-```
-]
- 
-.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m   Ehat
@@ -1548,29 +1409,10 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 39    89     5    M 84.425  4.575
 40    90     5    F 84.425  5.575
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-* mutate( E2hat = Ehat^2)
-```
-]
- 
-.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m   Ehat     E2hat
@@ -1615,138 +1457,46 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 39    89     5    M 84.425  4.575 20.930625
 40    90     5    F 84.425  5.575 31.080625
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-* summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [1] 619.775
 ```
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
 
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-* RSSM0
-```
-]
- 
-.panel2-rss-auto[
-
-]
 
 ---
 count: false
- 
 
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM0
-*SSM &lt;- RSSM0 - RSSM1
-```
-]
- 
-.panel2-rss-auto[
-
-]
-
----
-count: false
- 
-
-.panel1-rss-auto[
-
-```r
-freqdata %&gt;% group_by(Sexe) %&gt;%
-  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  ungroup() %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM1
-freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
-  mutate( Ehat = freqC - m) %&gt;%
-  mutate( E2hat = Ehat^2) %&gt;%
-  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
-  RSSM0
-SSM &lt;- RSSM0 - RSSM1
-*SSM
-```
-]
- 
-.panel2-rss-auto[
 
 ```
 [1] 0.625
 ```
-]
 
 &lt;style&gt;
-.panel1-rss-auto {
+.panel1-rss-user {
   color: black;
-  width: 38.6060606060606%;
+  width: 99%;
   hight: 32%;
   float: left;
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-rss-auto {
+.panel2-rss-user {
   color: black;
-  width: 59.3939393939394%;
+  width: NA%;
   hight: 32%;
   float: left;
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-rss-auto {
+.panel3-rss-user {
   color: black;
   width: NA%;
   hight: 33%;
@@ -2205,7 +1955,7 @@ F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 ```
 
 
---- 
+---
 name: diagnostic 
 # Diagnostic du modèle 
 
@@ -2229,7 +1979,7 @@ Ce coefficient augmente systématiquement avec le nombre de paramètres dans le 
 est un indicateur du degré d'ajustement du modèle en pénalisant par le nombre de variables.
 
 ---
-name: diagnostic 
+template: dignostic
 ## Vérification graphique des hypothèses de modélisation
 
 
@@ -2253,7 +2003,7 @@ Une question initiale :  Le volume auditif dépend il de régime alimentaire.
 
   
 ---
-# Bilan su rle modèle d'analyse de la variance à 1 facteur
+# Bilan sur le modèle d'analyse de la variance à 1 facteur
 Le modèle 
 
 - permet d'étudier le lein entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
