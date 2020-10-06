@@ -1,5 +1,5 @@
 directory <- 'linearmodel'
-filenames <- list.files(directory, pattern = '2.Rmd',
+filenames <- list.files(directory, pattern = 'prov.Rmd',
                           full.names = TRUE)
 
 system(glue::glue( 'cp resources/mpe_pres.css {directory}/.'))
