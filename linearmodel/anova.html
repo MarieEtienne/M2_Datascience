@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 ## à 1 facteur
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
-### 2020/09/11 (updated: 2020-10-05)
+### 2020/09/11 (updated: 2020-10-06)
 
 ---
 
@@ -1055,7 +1055,7 @@ F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 
 ---
 template: parametre
-## Visualisation graphique des paramètres estimées
+## Visualisation graphique des paramètres estimés
 
 
 
@@ -1183,6 +1183,10 @@ Autrement dit
 
 &lt;img src="anova_files/figure-html/freqdata_graphia_anova-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
+---
+template: modcomp
+
+&lt;img src="anova_files/figure-html/rappel_anova_versiongraphique_save-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: modcomp
@@ -1194,7 +1198,7 @@ template: modcomp
 --
 
 Deux modèles possibles
-`$$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$`
+`$$M1 : Y_{ik} = \mu  + \alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$`
 
 &lt;p class="question"&gt; Le modèle M1 est il plus pertinent que le modèle M0?&lt;/p&gt;
 
@@ -1207,17 +1211,17 @@ template: modcomp
 
 ### Variabilité totale dans les données
 
-`$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2.$$` 
+`$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik}^{(0)})^2.$$` 
 --
 
 ### Variabilité résiduelle dans le modèle M1
 
-`$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$` 
+`$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - (\hat{\mu} +\hat{\alpha}_i))^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - \hat{y}_{ik}^{(1)})^2.$$` 
 --
 
 ### Variabilité expliquée par le modèle M1
 
-`$$SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$` 
+`$$SCM = SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$` 
 C'est la quantité de variabilité expliquée par les différence entre les I populations.
 
 --
@@ -1228,6 +1232,7 @@ On a mis en évidence des différences entre les populations.
 
 
 ---
+template: modcomp
 ## Calcul de RSS sur l'exemple 1
 
 A la main :
@@ -1240,7 +1245,17 @@ A la main :
 
 
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+*freqdata %&gt;% group_by(Sexe) %&gt;%
+* mutate(m= mean(freqC))
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [90m# A tibble: 40 x 4[39m
@@ -1253,10 +1268,22 @@ count: false
 [90m4[39m    79     1 F      84.3
 [90m# … with 36 more rows[39m
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+* mutate( Ehat = freqC - m)
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [90m# A tibble: 40 x 5[39m
@@ -1269,10 +1296,23 @@ count: false
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m
 [90m# … with 36 more rows[39m
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+* mutate( E2hat = Ehat^2)
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1285,10 +1325,24 @@ count: false
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
 [90m# … with 36 more rows[39m
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+* ungroup()
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1300,23 +1354,71 @@ count: false
 [90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
 [90m# … with 36 more rows[39m
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+* summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [1] 619.15
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
 
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+* RSSM1
+```
+]
+ 
+.panel2-rss-user[
+
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+*freqdata %&gt;%  mutate(m= mean(freqC))
+```
+]
+ 
+.panel2-rss-user[
 
 ```
    freqC Sport Sexe      m
@@ -1361,10 +1463,28 @@ count: false
 39    89     5    M 84.425
 40    90     5    F 84.425
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+* mutate( Ehat = freqC - m)
+```
+]
+ 
+.panel2-rss-user[
 
 ```
    freqC Sport Sexe      m   Ehat
@@ -1409,10 +1529,29 @@ count: false
 39    89     5    M 84.425  4.575
 40    90     5    F 84.425  5.575
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+* mutate( E2hat = Ehat^2)
+```
+]
+ 
+.panel2-rss-user[
 
 ```
    freqC Sport Sexe      m   Ehat     E2hat
@@ -1457,32 +1596,98 @@ count: false
 39    89     5    M 84.425  4.575 20.930625
 40    90     5    F 84.425  5.575 31.080625
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+* summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [1] 619.775
 ```
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
 
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+* RSSM0
+*SSM &lt;- RSSM0 - RSSM1
+```
+]
+ 
+.panel2-rss-user[
+
+]
 
 ---
 count: false
+ 
 
+.panel1-rss-user[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM0
+SSM &lt;- RSSM0 - RSSM1
+*SSM
+```
+]
+ 
+.panel2-rss-user[
 
 ```
 [1] 0.625
 ```
+]
 
 &lt;style&gt;
 .panel1-rss-user {
   color: black;
-  width: 99%;
+  width: 38.6060606060606%;
   hight: 32%;
   float: left;
   padding-left: 1%;
@@ -1490,7 +1695,7 @@ count: false
 }
 .panel2-rss-user {
   color: black;
-  width: NA%;
+  width: 59.3939393939394%;
   hight: 32%;
   float: left;
   padding-left: 1%;
@@ -1515,6 +1720,7 @@ count: false
 ```
 
 ---
+template: modcomp
 ## Calcul de RSS sur l'exemple 1
 
 
@@ -1590,8 +1796,10 @@ H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\righ
     &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \right\rbrace\\
     &amp; =\left \lbrace  M1 \mbox{ est préférable à } M0 \right\rbrace.
 \end{align}$$`
+
 ---
-## Loi de la statistique de test sous H0
+template: modcomp
+## Loi de la statistique de test sous `\(H_0\)`
 
 
 Il faut être capable de décrire quelles sont les valeurs possibles de `\(SS_{M1, obs}\)`, pour ceci il faut connaitre la loi de la variable aléatoire `\(SS_{M1}\)`.
@@ -1616,11 +1824,10 @@ Sous `\(H_0\)`,
 
 
 ---
-
 template: modcomp
-## Loi de la statistique de test sous H0 - graphiquement
+## Loi de la statistique de test sous `\(H_0\)` - graphiquement
 
-Sous `\(H0\)` la loi de distribution de `\(F\)` est 
+Sous `\(H_0\)` la loi de distribution de `\(F\)` est 
 
 
 
@@ -1673,26 +1880,25 @@ count: false
 
 
 ---
-
 template: modcomp
 
 ## Proabilité critique
 
 La probabilité critique ( p-value en anglais) est définie par 
 
-$$ P(F&gt; F_{obs} \vert H0)$$
+$$ \mathbb{P}(F&gt; F_{obs} \vert H_0)$$
 
 --
 
-Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous HO.
+Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous `\(H_0\)`.
 
 --
 
-On va rejeter H0 lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse H0. On ne croit pas à H0.
+On va rejeter `\(H_0\)` lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse `\(H_0\)`. On ne croit pas à `\(H_0\)`.
 
 
 ---
-
+template: modcomp
 ## Déclinaison sur l'exemple Fréquence cardiaque
 
 
@@ -1716,7 +1922,7 @@ Model 2: freqC ~ Sexe
 
 &lt;img src="anova_files/figure-html/pvalue_graphique-ex_FC-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 ---
-
+template: modcomp
 ## Sur l'exemple chauve souris
 
 
@@ -1955,6 +2161,7 @@ F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 ```
 
 
+
 ---
 name: diagnostic 
 # Diagnostic du modèle 
@@ -1972,14 +2179,14 @@ Le pourcentage de variablité capturé par le modèle.
 
 Ce coefficient augmente systématiquement avec le nombre de paramètres dans le modèle.
 
--- 
+--
 ## Le coefficient de détermination ajusté
 
 `$$R^2_{adj} = 1 - \frac{ \frac{RSS}{n-I}}{\frac{RSS_0}{n-1}}$$`
 est un indicateur du degré d'ajustement du modèle en pénalisant par le nombre de variables.
 
 ---
-template: dignostic
+template: diagnostic
 ## Vérification graphique des hypothèses de modélisation
 
 
@@ -2004,18 +2211,24 @@ Une question initiale :  Le volume auditif dépend il de régime alimentaire.
   
 ---
 # Bilan sur le modèle d'analyse de la variance à 1 facteur
-Le modèle 
 
-- permet d'étudier le lein entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
--  s'écrit sous forme
+
+### But 
+Etudier le lien entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
+
+## Le modèle 
 `$$Y_{ik} = \mu + \alpha_i + E_{ik}$$`
 avec `\(\mu\)` le comportement de référence et `\(\alpha_i\)` l'effet différentiel du groupe `\(i\)`  par rapport à la référence. 
-- doit être précisé par une contrainte. R par défaut choisit la contrainte `\(\alpha_1=0\)`, ce qui place le groupe 1 comme groupe de référence.
-- s'écrit sous la forme générqiue `\(Y = X\theta +E\)`
 
-Il est possible de  
-- comparer des modèles ( pour tester l'effet du facteur),
-- tester si un paramètre vaut une valeur donnée (par défaut R teste systématiquement si un paramètre vaut 0)
+La référence est définie par la contrainte choisie. R par défaut choisit la contrainte `\(\alpha_1=0\)`, ce qui place le groupe 1 comme groupe de référence.
+
+Le modèle d'analyse de la variance à un facteur est un modèle linéaire et peut se mettre sous la forme générique 
+`$$Y = X\theta +E$$`
+
+## Tests
+Pour comparer des modèles ( pour tester un potentiel effet du facteur),
+
+Sur un  paramètre  pvaut une valeur donnée (par défaut R teste systématiquement si un paramètre vaut 0)
 - on doit vérifier que les hypothèses de modélisation ne sont pas trop fausses.
 
 
