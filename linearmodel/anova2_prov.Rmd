@@ -1,0 +1,205 @@
+---
+title: Analyse de la variance
+subtitle: à 2 facteurs
+author: Marie-Pierre Etienne
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/marieetienne
+csl: ../resources/apa-no-doi-no-issue.csl
+output:
+  xaringan::moon_reader:
+    css: [  'metropolis',  'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../resources/collapseoutput.js'
+    includes:
+      after_body: '../resources/insert-logo.html'
+fontsize: 10pt
+params:
+  child_path: ''
+  setup_path: ../resources/
+---
+
+
+
+```{r setup, include=FALSE, eval = TRUE}
+source(paste0(params$setup_path, "knitr_setup.R"))
+with_sol <- TRUE ## in order to control the output
+with_course <- TRUE
+library('flipbookr')
+library(RefManageR)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+```
+
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./lm.bib", check = FALSE)
+```
+
+name: intro
+# Introduction
+
+---
+template: intro
+## Un exemple jouet à but pédagogique
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
+```{r freqdata, eval = TRUE, echo = c(1,2), warning = FALSE}
+library(coursesdata)
+data(freqdata)
+freqdata %>% ggplot() +  aes(x= as.factor(Sport), y = freqC)+  geom_boxplot(aes( fill = Sexe, col = Sexe), alpha = 0.5) + theme(legend.position = 'none')  + xlab('Sport') 
+```
+
+
+--
+<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
+
+---
+template: intro
+## Cas d'étude Chauve souris
+
+- Des espèces avec différents régimes alimentaires.
+- L'écho localisation (capacité auditive) est un sens essentiel pour les insectivores.
+
+`r Citet(myBib, "hutcheon2002comparative")` ont recensé pour 63 espèces de chauves souris l'espèce, le régime alimentaire, le clade (groupe dans l'arbre phylogénétique), différentes variables morphologiques dont le volume du cerveau dédié à l'audition (AUD)
+
+```{r batsdata, eval = TRUE, echo = FALSE}
+data(bats)
+bats %>% ggplot() + aes(x= as.factor(Diet), y = AUD) +geom_boxplot(aes(col = as.factor(Diet), fill = as.factor(Diet)), alpha = 0.5) + 
+  geom_jitter(size=0.8, alpha=0.7, width = 0.15, aes(col = as.factor(Diet))) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + theme(legend.position = 'none') + xlab('Diet')
+```
+
+--
+<p class="question"> Le volume de la partie auditive du cerveau est il lié au régime alimentaire ?</p>
+
+---
+template: intro
+## Cadre général du modèle d'analyse de la variance à 1 facteur
+On étudie le lien entre  
+- variable quantitative notée $Y$ (la fréquence cardiaque, volume de cerveau),
+- et une variable qualitative (un facteur) pourvant prendre $I$ modalités (I=2 pour l'exemple 1 et I=4 dans l'exemple 2). 
+
+
+Les données peuvent être visualisées à l'aide d'un boxplot.
+
+
+--
+<p class="question"> La variable d'intérêt Y  est-elle en moyenne différente selon les différentes modalités ?</p>
+
+
+
+---
+name: model
+# Le modèle d'analyse de la variance à 1 facteur
+
+---
+template: model
+
+## Graphiquement 
+
+Une visalisation graphique du modèle d'analyse de la variance.
+
+<br> <br> <br> <br>
+
+
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
+
+
+---
+
+```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
+set.seed(222)
+I <- 2
+J <- 3
+mu <- round(4  * rnorm(I*J),2)
+effectif <- sample(10:30, size =  I*J, replace = TRUE)
+fake_dta <- tibble( fact1 = rep(rep(1:I, each=J), effectif),
+                    fact2 = rep(rep(1:J, I), effectif)) %>%
+  group_by(fact1, fact2) %>% 
+  mutate(group =(fact1-1)*J + fact2,
+         m = mu[group],
+         y = round(rnorm(n(), mean = m, sd = 2),2) ) %>%
+  mutate(fact1 = as.character(fact1), 
+         fact2 = as.character(fact2), 
+         ord=0)  
+
+names(mu) <- paste('mu', rep(1:I, each=J), rep(1:J,I), sep ='_')
+
+norm_dta <- map_df(.x = mu, .f = function(m){
+  dnorm(seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100),
+        mean = m, sd = 2)},
+  .id = 'Groupe') %>% 
+  mutate(x  = seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100))  %>%
+  pivot_longer(cols = starts_with("mu"), names_to = 'Groupe', values_to ='density' )%>% 
+  mutate(fact1= str_remove(stringr::str_extract(Groupe, pattern = '[:digit:]_'), pattern = '_'),
+         fact2= str_remove(stringr::str_extract(Groupe, pattern = '_[:digit:]$'), pattern = '_')) 
+```
+
+
+```{r anova_versiongraphique_anova2}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
+  theme(legend.position = 'none')+
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+`r chunk_reveal("anova_versiongraphique_anova2", break_type = "user", display_type="output")`
+
+---
+count:false
+
+```{r anova_versiongraphique_anova2_fade, eval = TRUE, echo = FALSE}
+
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ), alpha =0.3)  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1), alpha = 0.3) + #BREAK
+  theme(legend.position = 'none')+
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+
+
+```{r anova_versiongraphique_M0}
+mu0 <- mean(fake_dta$y)
+sd0 <- sd(fake_dta$y)
+norm_dta_M0 <- norm_dta %>%
+  select(x, fact1, fact2) %>%
+  mutate(mu0= mu0, sd = sd0, 
+         density = dnorm(x, mean=mu0, sd=sd0))
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M0') +
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
+  theme(legend.position = 'none')+
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+
