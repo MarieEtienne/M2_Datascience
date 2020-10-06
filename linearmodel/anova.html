@@ -1055,7 +1055,7 @@ F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
 
 ---
 template: parametre
-## Visualisation graphique des paramètres estimés
+## Visualisation graphique des paramètres estimées
 
 
 
@@ -1183,10 +1183,6 @@ Autrement dit
 
 &lt;img src="anova_files/figure-html/freqdata_graphia_anova-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
----
-template: modcomp
-
-&lt;img src="anova_files/figure-html/rappel_anova_versiongraphique_save-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: modcomp
@@ -1198,7 +1194,7 @@ template: modcomp
 --
 
 Deux modèles possibles
-`$$M1 : Y_{ik} = \mu  + \alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$`
+`$$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$`
 
 &lt;p class="question"&gt; Le modèle M1 est il plus pertinent que le modèle M0?&lt;/p&gt;
 
@@ -1211,17 +1207,17 @@ template: modcomp
 
 ### Variabilité totale dans les données
 
-`$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik}^{(0)})^2.$$` 
+`$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2.$$` 
 --
 
 ### Variabilité résiduelle dans le modèle M1
 
-`$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - (\hat{\mu} +\hat{\alpha}_i))^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - \hat{y}_{ik}^{(1)})^2.$$` 
+`$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$` 
 --
 
 ### Variabilité expliquée par le modèle M1
 
-`$$SCM = SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$` 
+`$$SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$` 
 C'est la quantité de variabilité expliquée par les différence entre les I populations.
 
 --
@@ -1232,10 +1228,8 @@ On a mis en évidence des différences entre les populations.
 
 
 ---
-template: modcomp
 ## Calcul de RSS sur l'exemple 1
-
-A la main :
+ A la main :
 
 
 
@@ -1243,19 +1237,44 @@ A la main :
 
 ---
 
-
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
-*freqdata %&gt;% group_by(Sexe) %&gt;%
+*freqdata %&gt;% group_by(Sexe)
+```
+]
+ 
+.panel2-rss-auto[
+
+```
+[90m# A tibble: 40 x 3[39m
+[90m# Groups:   Sexe [2][39m
+  freqC Sport Sexe 
+  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m
+[90m1[39m    82     1 M    
+[90m2[39m    82     1 F    
+[90m3[39m    77     1 M    
+[90m4[39m    79     1 F    
+[90m# … with 36 more rows[39m
+```
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
 * mutate(m= mean(freqC))
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 4[39m
@@ -1274,7 +1293,7 @@ count: false
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1283,7 +1302,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 5[39m
@@ -1302,7 +1321,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1312,7 +1331,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1331,7 +1350,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1342,7 +1361,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [90m# A tibble: 40 x 6[39m
@@ -1360,7 +1379,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1372,7 +1391,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [1] 619.15
@@ -1383,7 +1402,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1396,7 +1415,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ]
 
@@ -1404,7 +1423,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1418,7 +1437,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m
@@ -1469,7 +1488,7 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1484,7 +1503,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m   Ehat
@@ -1535,7 +1554,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1551,7 +1570,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
    freqC Sport Sexe      m   Ehat     E2hat
@@ -1602,7 +1621,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1619,7 +1638,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [1] 619.775
@@ -1630,7 +1649,7 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1645,11 +1664,10 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
   mutate( E2hat = Ehat^2) %&gt;%
   summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
 * RSSM0
-*SSM &lt;- RSSM0 - RSSM1
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ]
 
@@ -1657,7 +1675,34 @@ freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
 count: false
  
 
-.panel1-rss-user[
+.panel1-rss-auto[
+
+```r
+freqdata %&gt;% group_by(Sexe) %&gt;%
+  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  ungroup() %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM1
+freqdata %&gt;%  mutate(m= mean(freqC)) %&gt;%
+  mutate( Ehat = freqC - m) %&gt;%
+  mutate( E2hat = Ehat^2) %&gt;%
+  summarise(RSSM1 =sum(E2hat)) %&gt;% as.numeric()-&gt;
+  RSSM0
+*SSM &lt;- RSSM0 - RSSM1
+```
+]
+ 
+.panel2-rss-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-rss-auto[
 
 ```r
 freqdata %&gt;% group_by(Sexe) %&gt;%
@@ -1677,7 +1722,7 @@ SSM &lt;- RSSM0 - RSSM1
 ```
 ]
  
-.panel2-rss-user[
+.panel2-rss-auto[
 
 ```
 [1] 0.625
@@ -1685,7 +1730,7 @@ SSM &lt;- RSSM0 - RSSM1
 ]
 
 &lt;style&gt;
-.panel1-rss-user {
+.panel1-rss-auto {
   color: black;
   width: 38.6060606060606%;
   hight: 32%;
@@ -1693,7 +1738,7 @@ SSM &lt;- RSSM0 - RSSM1
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-rss-user {
+.panel2-rss-auto {
   color: black;
   width: 59.3939393939394%;
   hight: 32%;
@@ -1701,7 +1746,7 @@ SSM &lt;- RSSM0 - RSSM1
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-rss-user {
+.panel3-rss-auto {
   color: black;
   width: NA%;
   hight: 33%;
@@ -1720,7 +1765,6 @@ SSM &lt;- RSSM0 - RSSM1
 ```
 
 ---
-template: modcomp
 ## Calcul de RSS sur l'exemple 1
 
 
@@ -1796,10 +1840,8 @@ H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\righ
     &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \right\rbrace\\
     &amp; =\left \lbrace  M1 \mbox{ est préférable à } M0 \right\rbrace.
 \end{align}$$`
-
 ---
-template: modcomp
-## Loi de la statistique de test sous `\(H_0\)`
+## Loi de la statistique de test sous H0
 
 
 Il faut être capable de décrire quelles sont les valeurs possibles de `\(SS_{M1, obs}\)`, pour ceci il faut connaitre la loi de la variable aléatoire `\(SS_{M1}\)`.
@@ -1824,10 +1866,11 @@ Sous `\(H_0\)`,
 
 
 ---
-template: modcomp
-## Loi de la statistique de test sous `\(H_0\)` - graphiquement
 
-Sous `\(H_0\)` la loi de distribution de `\(F\)` est 
+template: modcomp
+## Loi de la statistique de test sous H0 - graphiquement
+
+Sous `\(H0\)` la loi de distribution de `\(F\)` est 
 
 
 
@@ -1880,25 +1923,26 @@ count: false
 
 
 ---
+
 template: modcomp
 
 ## Proabilité critique
 
 La probabilité critique ( p-value en anglais) est définie par 
 
-$$ \mathbb{P}(F&gt; F_{obs} \vert H_0)$$
+$$ P(F&gt; F_{obs} \vert H0)$$
 
 --
 
-Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous `\(H_0\)`.
+Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous HO.
 
 --
 
-On va rejeter `\(H_0\)` lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse `\(H_0\)`. On ne croit pas à `\(H_0\)`.
+On va rejeter H0 lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse H0. On ne croit pas à H0.
 
 
 ---
-template: modcomp
+
 ## Déclinaison sur l'exemple Fréquence cardiaque
 
 
@@ -1922,7 +1966,7 @@ Model 2: freqC ~ Sexe
 
 &lt;img src="anova_files/figure-html/pvalue_graphique-ex_FC-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 ---
-template: modcomp
+
 ## Sur l'exemple chauve souris
 
 
@@ -2006,7 +2050,7 @@ $$ \sqrt{n_1}\, \frac{M}{S}\sim \mathcal{T}(n-I). $$
 template: test_param
 ## Loi de la statistique de test
 
-$$ Y = X\theta +E$$
+$$ Y = X\theta +.E$$
 
 ### Plus généralement
 
@@ -2014,9 +2058,7 @@ On a vu que l'estimateur `\(T\)` de `\(\theta\)` avait pour loi
 
 $$ T\sim \mathcal{N}(\theta, \sigma^2 (X X^\intercal)^{-1})$$
 
-Si on s'intéresse au `\(\mbox{j}^{eme}\)` terme du vecteur `\(\theta\)`  ( `\(\theta_j\)` ):
-
-sous l'hypothèse `\(H_0:\left\lbrace \theta_j = 0\right\rbrace,\)` 
+Si on s'intéresse au j$^{eme}$ du vecteur `\(\theta\)`, `\(\theta_j\)`, sous l'hypothèse `\(H_0:\left\lbrace \theta_j = 0\right\rbrace,\)` 
 
 $$ T_j\sim \mathcal{N}(0, \sigma^2  c_j), $$
 où `\(c_j\)` est une constante connue qui dépend de la matrice `\(X\)` (cette constante valait `\(1/n_1\)` dans le cas particulier de `\(\mu\)`.)
@@ -2028,90 +2070,11 @@ template: test_param
 ## Loi de la statistique de test
 
 
-### Hypothèses de test
+### Pour tester 
 
-`$$H_0 = \left \lbrace \theta_j = 0 \right\rbrace\quad \mbox{contre} \quad H_1 = \left \lbrace \theta_j \ne 0 \right\rbrace.$$`
-
-### Loi de la statistique de  test sous `\(H_0\)`
-
-$$  \frac{T_j}{\sqrt{c_j} S}\sim \mathcal{T}(n-I). $$
-
-### Définition de la p-value
+`$$H_0 = \left \lbrace \theta_j = 0 \right\rbrace$$`
 
 
-
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_04_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_05_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_06_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_07_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_08_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count: false
-
-&lt;img src="anova_files/figure-html/fig_pvalue_stu_ex_user_09_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
-&lt;style&gt;
-.panel1-fig_pvalue_stu_ex-user {
-  color: black;
-  width: 99%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-fig_pvalue_stu_ex-user {
-  color: black;
-  width: NA%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-fig_pvalue_stu_ex-user {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
 
 
 
@@ -2121,125 +2084,30 @@ template: test_param
 
 ## Déclinaison sur les exemples
 
-### test `\(\mu = 0\)` .
-
 
 
 --
 
-- `\(\hat{\sigma}=\)` 4.037.
-- `\(\sqrt{c_j}\hat{\sigma}=\)` 0.903,
-- `\(t_{j,obs}=\)` 93.398,
-- p-value= 0,
-
---
-
-
-```r
-summary(M1)
-```
-
-```
-
-Call:
-lm(formula = freqC ~ Sexe, data = freqdata)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--8.550 -2.737 -0.425  2.513  8.700 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  84.3000     0.9026  93.398   &lt;2e-16 ***
-SexeM         0.2500     1.2765   0.196    0.846    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Residual standard error: 4.037 on 38 degrees of freedom
-Multiple R-squared:  0.001008,	Adjusted R-squared:  -0.02528 
-F-statistic: 0.03836 on 1 and 38 DF,  p-value: 0.8458
-```
-
+- `\(\hat{\sigma}=\)` 4.036511.
+- `\(\sqrt{c_j}\hat{\sigma}=\)` 0.9025913,
+- `\(t_{j,obs}=\)` 93.3977539,
+- `\(p-value=\)` 1.649393\times 10^{-46},
 
 
 ---
-name: diagnostic 
-# Diagnostic du modèle 
-
----
-template: dignostic
-## Le coefficient de détermination
-
-
-`$$R^2 = 1 - \frac{ RSS}{RSS_0} =  \frac{SS_{M1}}{RSS_0}$$`
-
-Le pourcentage de variablité capturé par le modèle. 
-
---
-
-Ce coefficient augmente systématiquement avec le nombre de paramètres dans le modèle.
-
---
-## Le coefficient de détermination ajusté
-
-`$$R^2_{adj} = 1 - \frac{ \frac{RSS}{n-I}}{\frac{RSS_0}{n-1}}$$`
-est un indicateur du degré d'ajustement du modèle en pénalisant par le nombre de variables.
-
----
-template: diagnostic
-## Vérification graphique des hypothèses de modélisation
-
-
-```r
-library(ggfortify)
-autoplot(M1)
-```
-
-&lt;img src="anova_files/figure-html/diagn_grap-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
+# Vérification graphique des hypothèses de modélisation
 
 
 ---
 # Démarche complète d'analyse à partir de l'exemple des chauves souris
 
-Une question initiale :  Le volume auditif dépend il de régime alimentaire. 
-- Représenter les données en fonction des questions qu'on se pose.
-- Ecrire le modèle 
-- Traduire la question en 1 ou plusieurs tests statistiques
-- Apporter une réponse concrète
 
-  
----
-# Bilan sur le modèle d'analyse de la variance à 1 facteur
-
-
-### But 
-Etudier le lien entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
-
-## Le modèle 
-`$$Y_{ik} = \mu + \alpha_i + E_{ik}$$`
-avec `\(\mu\)` le comportement de référence et `\(\alpha_i\)` l'effet différentiel du groupe `\(i\)`  par rapport à la référence. 
-
-La référence est définie par la contrainte choisie. R par défaut choisit la contrainte `\(\alpha_1=0\)`, ce qui place le groupe 1 comme groupe de référence.
-
-Le modèle d'analyse de la variance à un facteur est un modèle linéaire et peut se mettre sous la forme générique 
-`$$Y = X\theta +E$$`
-
-## Tests
-Pour comparer des modèles ( pour tester un potentiel effet du facteur),
-
-Sur un  paramètre  pvaut une valeur donnée (par défaut R teste systématiquement si un paramètre vaut 0)
-- on doit vérifier que les hypothèses de modélisation ne sont pas trop fausses.
-
-
-
-  
 
 
 ---
 template: pause
 
-Avant de passer à l'analyse de variance à deux facteurs ...
+Avant de passer à l'analyse de variance à deux facteurs
 ---
 
 
