@@ -838,7 +838,7 @@ summary(M1)
 
 ---
 template: parametre
-## Visualisation graphique des paramètres estimées
+## Visualisation graphique des paramètres estimés
 
 ```{r anova_visu_par}
 freqdata %>% mutate(ord = 0) %>% ggplot() + xlab('freqC') + ylab('Density') + geom_point(aes(x=freqC, col = Sexe, y = ord), alpha = 0.5) +  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + #BREAK
@@ -944,6 +944,11 @@ freq_p_M0 <- freq_p_M +   stat_function(fun = dnorm, n = 101, args = list(mean =
 ggpubr::ggarrange(freq_p_M1, freq_p_M0, common.legend = TRUE)
 ```
 
+---
+template: modcomp
+
+```{r rappel_anova_versiongraphique_save, ref.label='anova_versiongraphique_save', eval = TRUE}
+```
 
 ---
 template: modcomp
@@ -955,7 +960,7 @@ template: modcomp
 --
 
 Deux modèles possibles
-$$M1 : Y_{ik} = \mu =\alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$
+$$M1 : Y_{ik} = \mu  + \alpha_i + E_{ik},\quad  M0: Y_{ik} = \mu  + E_{ik}$$
 
 <p class="question"> Le modèle M1 est il plus pertinent que le modèle M0?</p>
 
@@ -968,17 +973,17 @@ template: modcomp
 
 ### Variabilité totale dans les données
 
-$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2.$$ 
+$$RSS_{0, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \bar{y})^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik}^{(0)})^2.$$ 
 --
 
 ### Variabilité résiduelle dans le modèle M1
 
-$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i} (y_{ik} - \hat{y}_{ik})^2.$$ 
+$$RSS_{1, obs} = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - (\hat{\mu} +\hat{\alpha}_i))^2 = \sum_{i=1}^{I} \sum_{k=1}^{n_i}  ( y_{ik} - \hat{y}_{ik}^{(1)})^2.$$ 
 --
 
 ### Variabilité expliquée par le modèle M1
 
-$$SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$ 
+$$SCM = SS_{M1,obs} =  RSS_{0, obs} - RSS_{1, obs}.$$ 
 C'est la quantité de variabilité expliquée par les différence entre les I populations.
 
 --
@@ -989,6 +994,7 @@ On a mis en évidence des différences entre les populations.
 
 
 ---
+template: modcomp
 ## Calcul de RSS sur l'exemple 1
 
 A la main :
@@ -1015,7 +1021,7 @@ SSM #BREAK
 ---
 
 
-`r chunk_reveal("rss", break_type = "user", , display_type="output")`
+`r chunk_reveal("rss", break_type = "user")`
 
 
 ```{r rss_cache,  eval = TRUE}
@@ -1036,6 +1042,7 @@ SSM
 ```
 
 ---
+template: modcomp
 ## Calcul de RSS sur l'exemple 1
 
 
@@ -1100,8 +1107,10 @@ H_1 & =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rb
     & =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \right\rbrace\\
     & =\left \lbrace  M1 \mbox{ est préférable à } M0 \right\rbrace.
 \end{align}$$
+
 ---
-## Loi de la statistique de test sous H0
+template: modcomp
+## Loi de la statistique de test sous $H_0$
 
 
 Il faut être capable de décrire quelles sont les valeurs possibles de $SS_{M1, obs}$, pour ceci il faut connaitre la loi de la variable aléatoire $SS_{M1}$.
@@ -1126,11 +1135,10 @@ $$F= \frac{\frac{SS_{M1}}{I-1}}{\frac{RSS}{n-I}} \underset{H_0}{\sim}\mathcal{F}
 
 
 ---
-
 template: modcomp
-## Loi de la statistique de test sous H0 - graphiquement
+## Loi de la statistique de test sous $H_0$ - graphiquement
 
-Sous $H0$ la loi de distribution de $F$ est 
+Sous $H_0$ la loi de distribution de $F$ est 
 
 ```{r p_value, eval = TRUE}
 tibble(x = seq(0, 10, length.out = 2001)) %>% 
@@ -1153,26 +1161,25 @@ ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y))
 `r chunk_reveal("pvalue_graphique", break_type = "user", display_type="output")`
 
 ---
-
 template: modcomp
 
 ## Proabilité critique
 
 La probabilité critique ( p-value en anglais) est définie par 
 
-$$ P(F> F_{obs} \vert H0)$$
+$$ \mathbb{P}(F> F_{obs} \vert H_0)$$
 
 --
 
-Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous HO.
+Grossièrement dit, c'est la,probabilité d'observer Fobs ou des valeurs encore plus extrèmes sous $H_0$.
 
 --
 
-On va rejeter H0 lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse H0. On ne croit pas à H0.
+On va rejeter $H_0$ lorsque la probabilité critique est faible (typiquement inférieure à 5%). La valeur de la statistique de test observée est peu compatible avec l'hypothèse $H_0$. On ne croit pas à $H_0$.
 
 
 ---
-
+template: modcomp
 ## Déclinaison sur l'exemple Fréquence cardiaque
 
 
@@ -1194,7 +1201,7 @@ ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y))
   geom_polygon(data = chi_dta_poly,  aes(x=x, y= y), alpha = 0.3) + xlim(c(0, max(chi_dta$x))) 
 ```
 ---
-
+template: modcomp
 ## Sur l'exemple chauve souris
 
 
@@ -1360,6 +1367,7 @@ summary(M1)
 ```
 
 
+
 ---
 name: diagnostic 
 # Diagnostic du modèle 
@@ -1377,14 +1385,14 @@ Le pourcentage de variablité capturé par le modèle.
 
 Ce coefficient augmente systématiquement avec le nombre de paramètres dans le modèle.
 
--- 
+--
 ## Le coefficient de détermination ajusté
 
 $$R^2_{adj} = 1 - \frac{ \frac{RSS}{n-I}}{\frac{RSS_0}{n-1}}$$
 est un indicateur du degré d'ajustement du modèle en pénalisant par le nombre de variables.
 
 ---
-template: dignostic
+template: diagnostic
 ## Vérification graphique des hypothèses de modélisation
 
 ```{r diagn_grap, eval = TRUE, echo =TRUE}
@@ -1406,18 +1414,24 @@ Une question initiale :  Le volume auditif dépend il de régime alimentaire.
   
 ---
 # Bilan sur le modèle d'analyse de la variance à 1 facteur
-Le modèle 
 
-- permet d'étudier le lein entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
--  s'écrit sous forme
+
+### But 
+Etudier le lien entre une variable quantitative (la fréquence cardiaque) et un facteur (le Sexe).
+
+## Le modèle 
 $$Y_{ik} = \mu + \alpha_i + E_{ik}$$
 avec $\mu$ le comportement de référence et $\alpha_i$ l'effet différentiel du groupe $i$  par rapport à la référence. 
-- doit être précisé par une contrainte. R par défaut choisit la contrainte $\alpha_1=0$, ce qui place le groupe 1 comme groupe de référence.
-- s'écrit sous la forme générqiue $Y = X\theta +E$
 
-Il est possible de  
-- comparer des modèles ( pour tester l'effet du facteur),
-- tester si un paramètre vaut une valeur donnée (par défaut R teste systématiquement si un paramètre vaut 0)
+La référence est définie par la contrainte choisie. R par défaut choisit la contrainte $\alpha_1=0$, ce qui place le groupe 1 comme groupe de référence.
+
+Le modèle d'analyse de la variance à un facteur est un modèle linéaire et peut se mettre sous la forme générique 
+$$Y = X\theta +E$$
+
+## Tests
+Pour comparer des modèles ( pour tester un potentiel effet du facteur),
+
+Sur un  paramètre  pvaut une valeur donnée (par défaut R teste systématiquement si un paramètre vaut 0)
 - on doit vérifier que les hypothèses de modélisation ne sont pas trop fausses.
 
 
