@@ -183,9 +183,9 @@ ggplot() +
 ```
 
 
+---
 
-
-```{r anova_versiongraphique_M0}
+```{r anova_versiongraphique_M0, eval = TRUE}
 mu0 <- mean(fake_dta$y)
 sd0 <- sd(fake_dta$y)
 norm_dta_M0 <- norm_dta %>%
