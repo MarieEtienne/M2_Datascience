@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg4622"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="SS_V2.svg"
+   inkscape:export-filename="/home/metienne/git/courses/linearmodel/RSS_V2.png"
+   inkscape:export-xdpi="21"
+   inkscape:export-ydpi="21">
+  <defs
+     id="defs4616" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="-92.857143"
+     inkscape:cy="560"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1315"
+     inkscape:window-height="713"
+     inkscape:window-x="51"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4619">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <path
+       style="opacity:0.36100003;fill:#3ce6b4;fill-opacity:1;stroke:#3ceab4;stroke-width:1.15229785;stroke-miterlimit:4;stroke-dasharray:1.15229786, 2.30459577;stroke-dashoffset:0;stroke-opacity:1"
+       d="M -490 268.31055 A 152.781 168.49528 0 0 0 -642.78125 436.80469 A 152.781 168.49528 0 0 0 -525.28906 600.55078 A 152.78101 168.49528 0 0 0 -525.63867 608.23438 A 152.78101 168.49528 0 0 0 -372.85742 776.72852 A 152.78101 168.49528 0 0 0 -220.07617 608.23438 A 152.78101 168.49528 0 0 0 -222.21484 580.36523 A 152.78101 168.49528 0 0 0 -150.07617 437.37695 A 152.78101 168.49528 0 0 0 -302.85742 268.88086 A 152.78101 168.49528 0 0 0 -396.16992 304.08203 A 152.781 168.49528 0 0 0 -490 268.31055 z "
+       transform="scale(0.26458333)"
+       id="path5167" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.61458302px;line-height:100%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-148.54465"
+       y="85.711311"
+       id="text5346"><tspan
+         sodipodi:role="line"
+         id="tspan5344"
+         x="-148.54465"
+         y="85.711311"
+         style="stroke-width:0.26458332px">Fact1</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.61458302px;line-height:100%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-74.083336"
+       y="83.821426"
+       id="text5350"><tspan
+         sodipodi:role="line"
+         id="tspan5348"
+         x="-74.083336"
+         y="83.821426"
+         style="stroke-width:0.26458332px">Fact2</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:6.61458302px;line-height:100%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-102.43154"
+       y="191.92262"
+       id="text5354"><tspan
+         sodipodi:role="line"
+         id="tspan5352"
+         x="-102.43154"
+         y="191.92262"
+         style="stroke-width:0.26458332px">Int</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2" />
+</svg>
