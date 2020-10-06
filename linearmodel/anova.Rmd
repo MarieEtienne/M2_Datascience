@@ -452,7 +452,6 @@ $${\bf{Y}} = \overset{}{\begin{pmatrix}
 Y_{11}\\
 Y_{12}\\
 Y_{13}\\
-\vdots\\
 Y_{1n_1}\\
 Y_{21}\\
 Y_{22}\\
@@ -870,13 +869,13 @@ $$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
 
 ### Estimateur de $\theta$
 
-$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y.$$
+$$T = (X^\intercal X )^{-1} X^\intercal Y.$$
 --
 
 ### Loi de l'estimateur de $\theta$
 
 
-$$T = (X^\intercal X )^{-1} X^\intercal Y \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
 --
 
 Cette approche très mathématique est utile pour la généralisation, on aura l'occasion d'y revenir !!
