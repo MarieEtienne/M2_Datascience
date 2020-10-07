@@ -259,7 +259,7 @@ avec
 - `\(i=1,\ldots,2\)` le niveau du facteur Sexe,
 - `\(j=1,\ldots,5\)` le niveau du facteur Sport,
 - `\(k= 1,\ldots, 4\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
-- `\(4\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(20=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
+- `\(4\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(n= 40=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
 - `\(\mu_{ij}\)` le comportement moyen du groupe `\((i,j)\)`,
 - `\(\sigma^2\)` la variance commune à tous les groupes.
 
@@ -353,10 +353,10 @@ template: model
 Par défaut dans R :
 `\(\alpha_1=0,\)`  `\(\beta_1=0,\)` et `\(\gamma_{1j}=0\)` pour tous les `\(j\)` et `\(\gamma_{i1}=0\)` pour tous les `\(i\)`.
 
-Ce qui correspond à `\(1 + 1 + J + (I-1)\)` contraintes. 
+Ce qui correspond à `\(1 + 1 + J + (I-1)=I  + J +1\)` contraintes. 
 
 #### Nombre de paramètres 
-- On a donc `\(1 + J + J + IJ\)` paramètres donc `\(1 + 1 + J + (I-1)\)` sont contraints, il reste 
+- On a donc `\(1 + I + J + IJ\)` paramètres dont `\(I  + J +1\)` sont contraints, il reste donc
 `\(IJ\)` à estimer pour le comportement moyen
 - 1 paramètre de variance `\(\sigma^2\)`.
 
@@ -605,6 +605,13 @@ attr(,"contrasts")$Sport_Fact
 [1] "contr.treatment"
 ```
 
+---
+class: inverse
+name: pause
+# Pause
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
 
 ---
 name: parametre
@@ -641,13 +648,16 @@ Le modèle sous forme matricielle s'écrit
 template: parametre
 ## Le paramètre de variance
 
+La somme des carrés résiduelles s'écrit sous la forme 
 
-## Estimateur de la variance 
+`$$RSS = || Y- X \hat{\theta} ||^2$$`
+
+### Estimateur de la variance 
 
   $$S^2 =\frac{1}{DF_{res}} RSS, $$
 est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
 
-Dans le cas du modèle d'analyse de la variance à 2 facteurs `\(DF_res=n-IJ\)` (n observations et IJ paramètres de moyennes à estimer)
+Dans le cas du modèle d'analyse de la variance à 2 facteurs `\(DF_res=n-IJ\)` (n observations et IJ paramètres de moyennes à estimer, le nombre de composantes dans le vecteur `\(\theta\)`)
 
 --
 
@@ -732,6 +742,233 @@ template: modcomp
 
 
 
+---
+template: modcomp
+## Hypothèses du test
+
+On va donc opposer une hypothèse de travail `\(H_0\)` contre une hypothèse alternative `\(H_1\)`. `\(H_0\)` peut donc prendre différentes formes:
+
+
+`$$\begin{align} 
+H_0 &amp; =\left \lbrace \mbox{Pas de différence entre les différents groupes }\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{pour tout }i, \alpha_i =0, \mbox{pour tout }j,\beta_j=0  \mbox{ et pour tout }(i,j),\gamma_{ij}=0   \right\rbrace\\
+    &amp; =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
+\end{align}$$`
+
+`\(H_1\)` prend les formes équivalentes suivantes
+
+`$$\begin{align} 
+H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \mbox{ ou un }j, \beta_j \ne 0 \mbox{ ou un } (i,j), \gamma_{ij} \ne 0  \right\rbrace\\
+    &amp; =\left \lbrace  M_{comp} \mbox{ est préférable à } M0 \right\rbrace.
+\end{align}$$`
+
+--
+
+Sous `\(H_0\)`, 
+`$$F= \frac{\frac{SS_{M_{comp}}}{IJ-1}}{\frac{RSS}{n-IJ}} \underset{H_0}{\sim}\mathcal{F}(IJ-1, n-IJ)$$`  
+
+---
+template: modcomp
+## Loi de la statistique de test sous `\(H_0\)` - graphiquement
+
+Sous `\(H_0\)` la loi de distribution de `\(F\)` est 
+
+
+
+
+
+
+---
+
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-pvalue_graphique-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+name: variance_decomposition
+# Decomposition de SSM
+
+---
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+
+&lt;img src="./RSS1.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS2.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS3.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+&lt;br&gt;
+
+&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS5.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: variance_decomposition
+## Mathématiquement
+
+On veut décomposer la variabilité attrbuée au modèle selon les différentes sources.
+
+Considérons les différents modèles possibles
+
+`$$\begin{align}
+M_0\ :\ Y_{ijk} &amp;= \mu + E_{ik}\\
+M_{1}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + E_{ik}\\
+M_{2}\ :\ Y_{ijk} &amp;= \mu + \beta_j + E_{ik}\\
+M_{12}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j + E_{ik}\\
+M_{comp}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j +\gamma_{ij} + E_{ik}\\
+\end{align}$$`
+
+--
+
+&lt;a class = question&gt; Comment mesurer l'effet des différents facteurs&lt;/a&gt; 
+
+--
+
+Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
+
+---
+template: variance_decomposition
+## Réduction de varaibilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+\end{align}$$`
+--
+
+
+&lt;img src="./RSS4_Ralpha.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de varaibilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+\end{align}$$`
+
+
+
+&lt;img src="./RSS4_Rbeta.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de varaibilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+\end{align}$$`
+
+
+
+&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
