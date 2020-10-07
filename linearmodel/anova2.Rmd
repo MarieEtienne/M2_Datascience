@@ -201,13 +201,18 @@ ggplot() +
 
 ---
 
-```{r anova_versiongraphique_M0, eval = FALSE}
+
+```{r anova_M0_prep, eval=TRUE}
 mu0 <- mean(fake_dta$y)
 sd0 <- sd(fake_dta$y)
 norm_dta_M0 <- norm_dta %>%
   select(x, fact1, fact2) %>%
   mutate(mu0= mu0, sd = sd0, 
          density = dnorm(x, mean=mu0, sd=sd0))
+```
+
+```{r anova_versiongraphique_M0}
+
 ggplot() + 
   xlab('y') +
   ggtitle('Modèle M0') +
@@ -540,6 +545,38 @@ name: pause
 
 <br><br><br><br>
 <p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
+
+---
+name: modcomp
+# Test du modèle complet
+
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
+
+
+
+```{r freqdata2, ref.label='sport', eval = TRUE, warning = FALSE, results ='markup'}
+```
+
+
+--
+<p class="question"> Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?</p>
+
+
+---
+template: modcomp
+## Sous forme de comparaison de modèle
+
+
+```{r compare_model_graph2, ref.label='compare_model_graph', eval = TRUE, echo = FALSE, results='markup'}
+```
+
+--
+<p class="question"> Le modèle Mcomp est il plus pertinent que le modèle M0 ?</p>
 
 
 
