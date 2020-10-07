@@ -99,7 +99,7 @@ blockquote {
   border-bottom: 1px solid #666;
 }
 .remark-slide table thead th { border-bottom: 1px solid #ddd; }
-th, td { padding: 5px; }
+th, td { padding: 2px; }
 .remark-slide thead, .remark-slide tfoot, .remark-slide tr:nth-child(even) { background: #eee }
 
 @page { margin: 0; }
