@@ -756,11 +756,11 @@ Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
 
 ---
 template: variance_decomposition
-## Réduction de varaibilité
+## Réduction de variabilité
 
 $$\begin{align}
 SSM & = RSS_0 - RSS_{comp}\\
-SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + {RSS_1 - RSS_{12}} +{RSS_{12} - RSS_{comp}} \\
 \end{align}$$
 --
 
@@ -773,11 +773,11 @@ knitr::include_graphics('./RSS4_Ralpha.png')
 ---
 count: false
 template: variance_decomposition
-## Réduction de varaibilité
+## Réduction de variabilité
 
 $$\begin{align}
 SSM & = RSS_0 - RSS_{comp}\\
-SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + {RSS_{12} - RSS_{comp}} \\
 \end{align}$$
 
 
@@ -791,7 +791,7 @@ knitr::include_graphics('./RSS4_Rbeta.png')
 ---
 count: false
 template: variance_decomposition
-## Réduction de varaibilité
+## Réduction de variabilité
 
 $$\begin{align}
 SSM & = RSS_0 - RSS_{comp}\\
@@ -803,3 +803,225 @@ SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 -
 ```{r var_tot, eval =TRUE, out.width = "55%"}
 knitr::include_graphics('./RSS4.png')
 ```
+
+
+
+---
+template: variance_decomposition
+## Test de type 1
+
+
+ <table style="width:100%">
+  <tr>
+    <th>Source</th>
+    <th>H0</th>
+    <th>SS</th>
+    <th>Df</th>
+    <th>F</th>
+  </tr>
+  <tr>
+    <th> Fact1 </th>
+    <th> M0 et M1 sont équivalents </th>
+    <th> $R(\alpha\vert \mu)$ </th>
+    <th> $I-1$ </th>
+    <th> $$\frac{\frac{R(\alpha\vert \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Fact2 </th>
+    <th> M1 et M12 sont équivalents </th>
+    <th> $R(\beta\vert\alpha, \mu)$ </th>
+    <th> $J-1$ </th>
+    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Inter </th>
+    <th> M12 et Mcomp sont équivalents </th>
+    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
+    <th> $(J-1)(J-1)$ </th>
+    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+</table> 
+
+
+
+
+---
+template: variance_decomposition
+## Tests de type 1
+
+Rôle asymétrique des facteurs (l'ordre des facteurs importe).
+
+--
+
+## Tests de type 2
+
+But : symétriser le rôle des différents facteurs
+
+```{r var_tot_2, eval =TRUE, out.width = "45%"}
+knitr::include_graphics('./RSS5.png')
+```
+
+
+---
+template: variance_decomposition
+## Test de type 2
+
+ <table style="width:100%">
+  <tr>
+    <th>Source</th>
+    <th>H0</th>
+    <th>SS</th>
+    <th>Df</th>
+    <th>F</th>
+  </tr>
+  <tr>
+    <th> Fact1 </th>
+    <th> M0 et M1 sont équivalents </th>
+    <th> $R(\alpha\vert \beta, \mu)$ </th>
+    <th> $I-1$ </th>
+    <th> $$\frac{\frac{R(\alpha\vert\beta, \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Fact2 </th>
+    <th> M1 et M12 sont équivalents </th>
+    <th> $R(\beta\vert\alpha, \mu)$ </th>
+    <th> $J-1$ </th>
+    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Inter </th>
+    <th> M12 et Mcomp sont équivalents </th>
+    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
+    <th> $(J-1)(J-1)$ </th>
+    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+</table> 
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+### Type 1
+```{r freq_comp, eval = TRUE, echo =TRUE}
+MComp <- lm(freqC ~ Sexe + Sport_Fact +Sexe:Sport_Fact, data = freqdata)
+anova(MComp)
+```
+
+--
+### Type 2
+
+```{r freq_comp2, eval = TRUE, echo =TRUE}
+library(car)
+Anova(MComp, type = 2)
+```
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+Il s'agit du cas particulier $n_{ij}$ sont tous égaux. Le plan d'expérience est dit **équilibré**.
+
+--
+
+
+```{r var_eq, eval =TRUE, out.width = "45%"}
+knitr::include_graphics('./RSS3_eq.png')
+```
+
+
+---
+template: variance_decomposition
+## Fréquence cardiaque, plan d'expérience déséquilibré
+
+```{r freq_des, eval = TRUE, echo = c(2,4,5)}
+freqdata_des <- read.table('https://marieetienne.github.io/datasets/FreqCardiaqueDes1.txt', sep =" ", header =TRUE) %>% 
+  mutate(Sport_Fact = as.factor(Sport))
+table(freqdata_des$Sexe, freqdata_des$Sport)
+MComp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata_des)
+anova(MComp)
+Anova(MComp, type = 2)
+```
+
+
+
+---
+template: variance_decomposition
+## Exercice
+
+Indiquer dans chaque portion du schéma ci-dessous, le somme des carrés représentés. 
+
+
+```{r var_tot_ex, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS3.png')
+```
+
+---
+template: pause
+
+---
+name: comp_moyenne
+# Comparaison des différents groupes
+---
+template: comp_moyenne
+
+## Question 
+
+<a class=question> Quels sont les niveaux de pratiques sportives correspondant à des fréquences cardiaques différentes ?</a>
+
+--
+
+Calcul des moyennes par sexe
+
+```{r mean_sexe, eval = TRUE}
+freqdata_des %>% group_by(Sexe) %>%  summarise(m =mean(freqC)) 
+```
+
+--
+<a style=care> Attention : </a> comparaison de femmes sportives avec des hommes sédentaires
+
+table(freqdata_des$Sexe, freqdata_des$Sport)
+
+
+---
+template: comp_moyenne
+
+## Comparaison des différents groupes
+La moyenne au sein du groupe $i$ pour le facteur est 1 est donnée par :
+$$Y_{i..} = \frac{1}{n_{i+}}\sum_{j=1}^J \sum_{k=1}^{n_ij}Y_{ijk},$$
+avec $n_{i+}=\sum_j n_{ij},$ le nombre total d'observations pour le niveau $i$. 
+
+Alors $$\mathbb{E}(Y_{i..} )= \mu + \alpha_i  + \frac{1}{n_{i+}}\sum_{j=1}^J  n_{ij} (\beta_j  +\gamma_{ij}).$$
+
+--
+Sur notre exemple
+Alors $$\mathbb{E}(Y_{1..} )= \mu  + \alpha_1 + \frac{1}{n_{i+}} \left( 6 (\beta_1 + \gamma_{11}) + 3 (\beta_2 + \gamma_{12})  + 5 (\beta_3 + \gamma_{13}) + 3 (\beta_4 + \gamma_{14})+ 2 (\beta_5 + \gamma_{15})\right).$$
+
+$$\mathbb{E}(Y_{2..} )= \mu  + \alpha_2 + \frac{1}{n_{i+}} \left( 3 (\beta_1 + \gamma_{21}) + 2 (\beta_2 + \gamma_{22})  + 6 (\beta_3 + \gamma_{23}) + 5 (\beta_4 + \gamma_{24})+ 5 (\beta_5 + \gamma_{25})\right).$$
+
+--
+
+Les effets potentiels de la pratique sportive n'interviennent pas de la même manière dans les deux moyennes.
+
+
+---
+template: comp_moyenne
+## Moyennes ajustées
+
+C'est la moyenne qu'on observerait dans un plan d'expérience équilibrée
+
+$$\tilde{\mu}_{i.} = \mu + \alpha_i + \frac{1}{J}\sum_{j=1}^J (\beta_j +\gamma_{ij}).$$
+
+*On redresse artificiellement le plan d'expérience*
+
+--
+En pratique
+
+```{r moy_ajustees, eval= TRUE, echo =TRUE}
+library(emmeans)
+m_ajust_sexe <- emmeans(Mcomp, "Sexe")
+pairs(m_ajust_sexe)
+```
+
+
+---
+template: pause
