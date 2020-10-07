@@ -1,0 +1,582 @@
+---
+title: Analyse de la variance
+subtitle: à 2 facteurs
+author: Marie-Pierre Etienne
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/marieetienne
+csl: ../resources/apa-no-doi-no-issue.csl
+output:
+  xaringan::moon_reader:
+    css: [  'metropolis',  'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../resources/collapseoutput.js'
+    includes:
+      after_body: '../resources/insert-logo.html'
+fontsize: 10pt
+params:
+  child_path: ''
+  setup_path: ../resources/
+---
+
+
+
+```{r setup, include=FALSE, eval = TRUE}
+source(paste0(params$setup_path, "knitr_setup.R"))
+with_sol <- TRUE ## in order to control the output
+with_course <- TRUE
+library('flipbookr')
+library(RefManageR)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+```
+
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./lm.bib", check = FALSE)
+```
+
+
+name: intro
+# Introduction
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
+```{r freqdata, eval = TRUE, echo = c(1,2), warning = FALSE}
+library(coursesdata)
+data(freqdata)
+freqdata %>% ggplot() +  aes(x= Sexe, y = freqC)+  geom_boxplot(aes(fill = Sexe, col = Sexe), alpha = 0.5) + theme(legend.position = 'none')  + 
+  geom_jitter( size=0.8, alpha=0.7, width = 0.15, aes(col = as.factor(Sexe)))
+freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
+```
+
+
+--
+<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
+
+Nous avions vu dans le cours sur l'analyse de la variance à 1 facteur qu'il n'y avait pas de différence entre homme et femmes.
+
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+En plus du sexe, le jeu de données contient des informations sur le niveau de pratique sportive
+
+```{r sport, eval = TRUE}
+freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
+freqdata %>% ggplot() + aes(y = freqC, x = Sport_Fact, fill = Sexe) + geom_boxplot() + xlab('Sport')
+```
+--
+<p class=question> Y a t il un effet du sexe ou du sport sur la fréquence cardiaque ? </p>
+<p class=question> Y a t il un effet du sexe  sur la fréquence cardiaque ? </p>
+<p class=question> Y a t il un effet du sport sur la fréquence cardiaque ? </p>
+
+---
+template: intro
+## Cadre général du modèle d'analyse de la variance à 2 facteurs
+
+On étudie le lien entre  
+- une variable quantitative notée $Y$ (la fréquence cardiaque),
+- et deux variables facteurs pouvant prendre respectivement $I$ modalités (I=2 pour le Sexe)  et J modalités (J=5 pour le Sport)
+
+Les données peuvent être visualisées à l'aide d'un boxplot.
+
+
+--
+<p class="question"> Y a t il un effet de l'un au moins des facteurs ?</p>
+<p class="question"> Y a t il un effet du facteur 1 ?</p>
+<p class="question"> Y a t il un effet du facteur 2 ?</p>
+
+
+---
+name: model
+# Le modèle d'analyse de la variance à 2 facteurs
+
+---
+template: model
+
+## Graphiquement 
+
+Une visualisation graphique du modèle d'analyse de la variance.
+
+<br> <br> <br> <br>
+
+
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
+
+
+
+
+---
+
+```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
+set.seed(222)
+I <- 2
+J <- 3
+mu <- round(4  * rnorm(I*J),2)
+effectif <- sample(10:30, size =  I*J, replace = TRUE)
+fake_dta <- tibble( fact1 = rep(rep(1:I, each=J), effectif),
+                    fact2 = rep(rep(1:J, I), effectif)) %>%
+  group_by(fact1, fact2) %>% 
+  mutate(group =(fact1-1)*J + fact2,
+         m = mu[group],
+         y = round(rnorm(n(), mean = m, sd = 2),2) ) %>%
+  mutate(fact1 = as.character(fact1), 
+         fact2 = as.character(fact2), 
+         ord=0)  
+
+names(mu) <- paste('mu', rep(1:I, each=J), rep(1:J,I), sep ='_')
+
+norm_dta <- map_df(.x = mu, .f = function(m){
+  dnorm(seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100),
+        mean = m, sd = 2)},
+  .id = 'Groupe') %>% 
+  mutate(x  = seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100))  %>%
+  pivot_longer(cols = starts_with("mu"), names_to = 'Groupe', values_to ='density' )%>% 
+  mutate(fact1= str_remove(stringr::str_extract(Groupe, pattern = '[:digit:]_'), pattern = '_'),
+         fact2= str_remove(stringr::str_extract(Groupe, pattern = '_[:digit:]$'), pattern = '_')) 
+```
+
+
+```{r anova_versiongraphique_anova2}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+```{r anova_versiongraphique_anova2_save, eval = TRUE}
+pMcomp <- ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+`r chunk_reveal("anova_versiongraphique_anova2", break_type = "user", display_type="output")`
+
+---
+count:false
+
+```{r anova_versiongraphique_anova2_fade, eval = TRUE, echo = FALSE}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ), alpha =0.3)  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1), alpha = 0.3) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+---
+
+
+```{r anova_M0_prep, eval=TRUE}
+mu0 <- mean(fake_dta$y)
+sd0 <- sd(fake_dta$y)
+norm_dta_M0 <- norm_dta %>%
+  select(x, fact1, fact2) %>%
+  mutate(mu0= mu0, sd = sd0, 
+         density = dnorm(x, mean=mu0, sd=sd0))
+```
+
+```{r anova_versiongraphique_M0}
+
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M0') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+`r chunk_reveal("anova_versiongraphique_M0", break_type = "user", display_type="output")`
+
+```{r anova_versiongraphique_M0_save, eval = TRUE}
+pM0 <- ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M0') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+---
+template: model
+
+Lequel de ces mécanismes est le plus crédible au vu des donées ?
+
+```{r compare_model_graph, eval = TRUE, echo = FALSE}
+ggpubr::ggarrange(pMcomp, pM0, nrow = 1, common.legend = TRUE)
+```
+
+
+---
+template: model
+
+## Version régulière du modèle Mcomp
+
+$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,I$ le niveau du facteur 1,
+- $j=1,\ldots,J$ le niveau du facteur 2,
+- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $n_{ij}$ le nombre d'individus dans le groupe $(i,j)$ et $n=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
+- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
+- $\sigma^2$ la variance commune à tous les groupes.
+
+### Une écriture équivalente 
+
+$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_{ij}, \sigma^2).$$
+
+
+### Nombre de paramètres du modèle
+
+- $I*J$ paramètres de moyenne  $(\mu_{11}, \mu_{12}, \ldots,  \mu_{1J}, \ldots \mu_{IJ})$; 
+- 1 paramètre de variance $\sigma^2$
+
+---
+template: model
+
+## Version régulière du modèle Mcomp sur l'exemple 1
+
+$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,2$ le niveau du facteur Sexe,
+- $j=1,\ldots,5$ le niveau du facteur Sport,
+- $k= 1,\ldots, 4$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $4$ le nombre d'individus dans le groupe $(i,j)$ et $20=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
+- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
+- $\sigma^2$ la variance commune à tous les groupes.
+
+
+
+$I=2, J= 5$ et  la convention $i=1$ pour les femmes et $i=2$ pour les hommes.
+
+
+### Nombre de paramètres
+- 10 paramètres de moyenne
+- 1 paramètre de variance
+
+---
+template: model
+## Version singulière du modèle du modèle Mcomp
+
+$$Y_{ijk} = \mu + \alpha_i +\beta_j +\gamma_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,I$ le niveau du facteur 1,
+- $j=1,\ldots,J$ le niveau du facteur 2,
+- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $\mu$  le comportement moyen de référence
+- $\alpha_i$  l'effet différentiel du niveau $i$ 
+- $\beta_j$  l'effet différentiel du niveau $j$ 
+- $\gamma_{ij}$  l'effet différentiel de la rencontre des niveaux $(i,j),$
+- $\sigma^2$ la variance commune à tous les groupes.
+
+
+### Nombre de paramètres du modèle
+
+- $1 + I + J + I*J$ paramètres de moyenne  
+- 1 paramètre de variance $\sigma^2$
+
+--
+
+#### La version dans les logiciels et qui permet de séparer les effets des différens facteurs.
+
+
+
+---
+template: model
+## Lien entre les deux versions du même modèle
+
+ <table style="width:100%">
+  <tr>
+    <th>Groupe</th>
+    <th>V. régulière</th>
+    <th>V. singulière</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td> $\mu_{11}$ </td>
+    <td> $\mu +\alpha_1 + \beta_1 + \gamma_{11}$ </td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td> $\mu_{12}$ </td>
+    <td> $\mu +\alpha_1 + \beta_2 + \gamma_{12}$ </td>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+    <tr>
+    <td>I</td>
+    <td> $\mu_{IJ}$ </td>
+    <td> $\mu +\alpha_I +\beta_J +\gamma_{IJ}$ </td>
+  </tr>
+</table> 
+
+--
+
+<a class=care> Problème </a>  Le problème est identique au modèle d'analyse de la variance, le modèle sous cette forme est  <a style="font-weight:400;"> indéterminé</a>.
+
+--
+
+#### Solution : ajouter des contraintes
+Par défaut dans R :
+$\alpha_1=0,$  $\beta_1=0,$ et $\gamma_{1j}=0$ pour tous les $j$ et $\gamma_{i1}=0$ pour tous les $i$.
+
+Ce qui correspond à $1 + 1 + J + (I-1)$ contraintes. 
+
+#### Nombre de paramètres 
+- On a donc $1 + J + J + IJ$ paramètres donc $1 + 1 + J + (I-1)$ sont contraints, il reste 
+$IJ$ à estimer pour le comportement moyen
+- 1 paramètre de variance $\sigma^2$.
+
+
+
+---
+template: model
+## Que signifient ces contraintes (à partir de l'exemple)
+
+Le groupe $(1,1)$, c'est à dire les femmes très sportives ont un comportement moyen dans le modèle égal à $\mu +\alpha_1 +\beta_1 + \gamma_{11},$ ce qui vaut $\mu$ étant données les contraintes.
+
+--
+
+Le groupe $(1,j)$ désigne les femmes à la pratique sportive identifiée $j$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_1 +\beta_j +\gamma_{1j}$, soit étant données les contraintes $\mu +\beta_j.$ $\beta_j$ est donc l'effet différentiel du sport $j$ par rapport au sport $1$  <a class=care> pour les femmes</a>.
+
+--
+
+Le groupe $(i,1)$ désigne les individus de sexe $i$  à la pratique sportive identifiée $1$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_i +\beta_1 +\gamma_{i1}$, soit étant données les contraintes $\mu +\alpha_i.$ $\alpha_i$ est donc l'effet différentiel du sexe $i$  par rapport au sexe de référence $1$   <a class=care> pour les sportifs de niveau 1</a>.
+
+--
+
+Les termes $\gamma_{ij}$ sont difficiles à interpréter et seront discuter en TP.
+
+
+
+---
+template: model
+## Sous forme matricielle
+ $$\bf{Y = X\theta + E}$$
+### Forme régulière 
+
+$$Y=\begin{pmatrix}
+Y_{111}\\
+Y_{112}\\
+\vdots\\
+Y_{11n_{11}}\\
+Y_{121}\\
+\vdots\\
+Y_{12n_{12}}\\
+\vdots\\
+Y_{ijk}\\
+\vdots\\
+Y_{IJn_{IJ}}\end{pmatrix},
+ \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_{11} & \mu_{12} & \ldots & \ldots &\mu_{IJ}\end{matrix}}}{\begin{pmatrix}
+1 & 0 & 0 & \ldots 0\\
+1 & 0 & 0 & \ldots 0\\
+\vdots\\
+1 & 0 & 0 & \ldots 0\\
+0 & 1 & 0 & \ldots 0 \\
+\vdots\\
+0 & 1 & 0 & \ldots 0 \\
+\vdots\\
+0 & \ldots  & 1 & \ldots 0 \\\vdots\\
+0 & 0 & 0 & \ldots 1 \end{pmatrix}},\quad
+{\bf{\theta}} =\begin{pmatrix}
+\mu_{11}\\
+\mu_{12}\\
+\vdots\\
+\mu_{1J}\\
+\mu_{21}\\
+\vdots\\
+\mu_{IJ}\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{111}\\
+E_{112}\\
+\vdots\\
+E_{11n_{11}}\\
+E_{121}\\
+\vdots\\
+E_{12n_{12}}\\
+\vdots\\
+E_{IJn_{IJ}}\end{pmatrix}}$$
+---
+template: model
+
+## Sous forme matricielle
+ $$\bf{Y = X\theta + E}$$
+### Forme singulière
+
+<p class=question> Ecrire le modèle en version singulière sous forme matricielle en intégrant les contraintes.</p>
+
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+
+
+```{r m_comp_false, eval = TRUE, echo = TRUE, out.width="100%"}
+Mcomp <- lm(freqC ~ Sexe + Sport + Sexe:Sport, data = freqdata)
+model.matrix(Mcomp)
+```
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+*Attention, il manque une colonne*
+
+```{r m_comp, eval = TRUE, echo = TRUE}
+Mcomp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
+model.matrix(Mcomp)
+```
+
+
+---
+name: parametre
+# Estimation des paramètres
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version matricielle
+
+
+Le modèle sous forme matricielle s'écrit
+
+$$\bf{Y = X\theta + E}.$$
+--
+
+### Estimation de $\theta$
+
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+
+--
+
+### Estimateur de $\theta$
+
+$$T = (X^\intercal X )^{-1} X^\intercal Y.$$
+--
+
+### Loi de l'estimateur de $\theta$
+
+
+$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+
+---
+template: parametre
+## Le paramètre de variance
+
+
+## Estimateur de la variance 
+
+  $$S^2 =\frac{1}{DF_{res}} RSS, $$
+est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
+
+Dans le cas du modèle d'analyse de la variance à 2 facteurs $DF_res=n-IJ$ (n observations et IJ paramètres de moyennes à estimer)
+
+--
+
+## Estimation de $\sigma^2$
+
+$$\hat{\sigma}^2 =\frac{1}{n-IJ} RSS_{obs}.$$
+---
+template: parametre
+## sur l'exemple de la fréquence cardiaque
+
+```{r param_m_comp, eval = TRUE, echo = TRUE}
+summary(Mcomp)
+```
+
+---
+class: inverse
+name: pause
+# Pause
+
+<br><br><br><br>
+<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
+
+---
+name: modcomp
+# Test du modèle complet
+
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
+
+
+
+```{r freqdata2, ref.label='sport', eval = TRUE, warning = FALSE, results ='markup'}
+```
+
+
+--
+<p class="question"> Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?</p>
+
+
+---
+template: modcomp
+## Sous forme de comparaison de modèle
+
+
+```{r compare_model_graph2, ref.label='compare_model_graph', eval = TRUE, echo = FALSE, results='markup'}
+```
+
+--
+<p class="question"> Le modèle Mcomp est il plus pertinent que le modèle M0 ?</p>
+
+
+
