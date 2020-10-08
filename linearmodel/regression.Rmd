@@ -1,6 +1,6 @@
 ---
-title: Analyse de la variance
-subtitle: à 2 facteurs
+title: Régression linéaire 
+subtitle: simple et multiple
 author: Marie-Pierre Etienne
 date: '2020/09/11 (updated: `r Sys.Date()`)'
 institute: https://github.com/marieetienne
@@ -55,66 +55,43 @@ name: intro
 
 ---
 template: intro
-## Notre exemple de fréquence cardiaque
+## Etude de la pollution au SO2
 
-On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
-
+On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la viille
 
 ```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
 ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
 #remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
 ```
 
-```{r freqdata, eval = TRUE, echo = c(1,2), warning = FALSE}
+```{r usfata, eval = TRUE, echo = c(1,2), warning = FALSE}
 library(coursesdata)
-data(freqdata)
-freqdata %>% ggplot() +  aes(x= Sexe, y = freqC)+  geom_boxplot(aes(fill = Sexe, col = Sexe), alpha = 0.5) + theme(legend.position = 'none')  + 
-  geom_jitter( size=0.8, alpha=0.7, width = 0.15, aes(col = as.factor(Sexe)))
-freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
+data(usdata)
+usdata %>% ggplot() +  aes(x= pop, y = SO2)+  geom_point()
 ```
 
 
 --
-<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
-
-Nous avions vu dans le cours sur l'analyse de la variance à 1 facteur qu'il n'y avait pas de différence entre homme et femmes.
+<p class="question"> La taille d'une ville est elle lidée à la pollution en SO2 ?</p>
 
 
 ---
 template: intro
-## Notre exemple de fréquence cardiaque
-
-En plus du sexe, le jeu de données contient des informations sur le niveau de pratique sportive
-
-```{r sport, eval = TRUE}
-freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
-freqdata %>% ggplot() + aes(y = freqC, x = Sport_Fact, fill = Sexe) + geom_boxplot() + xlab('Sport')
-```
---
-<p class=question> Y a t il un effet du sexe ou du sport sur la fréquence cardiaque ? </p>
-<p class=question> Y a t il un effet du sexe  sur la fréquence cardiaque ? </p>
-<p class=question> Y a t il un effet du sport sur la fréquence cardiaque ? </p>
-
----
-template: intro
-## Cadre général du modèle d'analyse de la variance à 2 facteurs
+## Cadre général du modèle de régression simple
 
 On étudie le lien entre  
 - une variable quantitative notée $Y$ (la fréquence cardiaque),
-- et deux variables facteurs pouvant prendre respectivement $I$ modalités (I=2 pour le Sexe)  et J modalités (J=5 pour le Sport)
+- et une variable quantitative $x$.
 
-Les données peuvent être visualisées à l'aide d'un boxplot.
+Les données peuvent être visualisées à l'aide d'un nuage de points.
 
 
 --
-<p class="question"> Y a t il un effet de l'un au moins des facteurs ?</p>
-<p class="question"> Y a t il un effet du facteur 1 ?</p>
-<p class="question"> Y a t il un effet du facteur 2 ?</p>
-
+<p class="question"> La variable x a-t-elle un effet sur la variable Y ?</p>
 
 ---
 name: model
-# Le modèle d'analyse de la variance à 2 facteurs
+# Le modèle de régression simple
 
 ---
 template: model
@@ -133,105 +110,68 @@ Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
 
 ---
 
-```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
+```{r reg_versiongraphique_prep, eval = TRUE, echo = FALSE}
 set.seed(222)
-I <- 2
-J <- 3
-mu <- round(4  * rnorm(I*J),2)
-effectif <- sample(10:30, size =  I*J, replace = TRUE)
-fake_dta <- tibble( fact1 = rep(rep(1:I, each=J), effectif),
-                    fact2 = rep(rep(1:J, I), effectif)) %>%
-  group_by(fact1, fact2) %>% 
-  mutate(group =(fact1-1)*J + fact2,
-         m = mu[group],
-         y = round(rnorm(n(), mean = m, sd = 2),2) ) %>%
-  mutate(fact1 = as.character(fact1), 
-         fact2 = as.character(fact2), 
-         ord=0)  
+n <- 20
+x <- rnorm(n, mean= 10, sd = 2)
+beta0 <- 1
+beta1 <- 0.5
+sigma <- 1
+fake_dta <- tibble(x= x, y = rnorm(n, mean = beta0 + beta1*x, sd =sigma))  
 
-names(mu) <- paste('mu', rep(1:I, each=J), rep(1:J,I), sep ='_')
+x0 <- 8
+norm_dta <- tibble::tibble(y = rnorm(1000, mean=beta0 + beta1*x0, sd= sigma), x= x0 + dnorm(x = y- beta0 - beta1*x0, mean= 0,  sd=0.5))
 
-norm_dta <- map_df(.x = mu, .f = function(m){
-  dnorm(seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100),
-        mean = m, sd = 2)},
-  .id = 'Groupe') %>% 
-  mutate(x  = seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100))  %>%
-  pivot_longer(cols = starts_with("mu"), names_to = 'Groupe', values_to ='density' )%>% 
-  mutate(fact1= str_remove(stringr::str_extract(Groupe, pattern = '[:digit:]_'), pattern = '_'),
-         fact2= str_remove(stringr::str_extract(Groupe, pattern = '_[:digit:]$'), pattern = '_')) 
+norm_dta0 <- tibble::tibble(y = rnorm(1000, mean=mean(fake_dta$y), sd= sigma), x= x0 + dnorm(x = y - mean(fake_dta$y), mean= 0,  sd=0.5))
 ```
 
 
-```{r anova_versiongraphique_anova2}
-ggplot() + 
-  xlab('y') +
+```{r reg_versiongraphique}
+ggplot(data=fake_dta) + 
+  ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
   ggtitle('Modèle Mcomp') +
-  theme(legend.position = 'bottom')  + 
-  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
-  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
-  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+  geom_abline(slope = beta1, intercept = beta0) + #BREAK
+  geom_point(x=8, y=beta0+beta1*8, col = 'red', size=2) + #BREAK
+  geom_point(data=norm_dta, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
+  geom_point(aes(x=x, y=y)) 
 ```
 
-```{r anova_versiongraphique_anova2_save, eval = TRUE}
-pMcomp <- ggplot() + 
-  xlab('y') +
-  ggtitle('Modèle Mcomp') +
-  theme(legend.position = 'bottom')  + 
-  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
-  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
-  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
-```
-
-
-`r chunk_reveal("anova_versiongraphique_anova2", break_type = "user", display_type="output")`
-
----
-count:false
-
-```{r anova_versiongraphique_anova2_fade, eval = TRUE, echo = FALSE}
-ggplot() + 
-  xlab('y') +
-  ggtitle('Modèle Mcomp') +
-  theme(legend.position = 'bottom')  + 
-  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ), alpha =0.3)  + #BREAK
-  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1), alpha = 0.3) + #BREAK
-  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
-```
-
+`r chunk_reveal("reg_versiongraphique", break_type = "user", display_type="output")`
 
 ---
 
 
-```{r anova_M0_prep, eval=TRUE}
-mu0 <- mean(fake_dta$y)
-sd0 <- sd(fake_dta$y)
-norm_dta_M0 <- norm_dta %>%
-  select(x, fact1, fact2) %>%
-  mutate(mu0= mu0, sd = sd0, 
-         density = dnorm(x, mean=mu0, sd=sd0))
+```{r reg_versiongraphique_M0}
+ggplot(data=fake_dta) + 
+  ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
+  ggtitle('Modèle nul') +
+  geom_abline(slope = 0, intercept = mean(fake_dta$y)) + #BREAK
+  geom_point(x=8, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
+  geom_point(data=norm_dta0, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
+  geom_point(aes(x=x, y=y)) 
 ```
 
-```{r anova_versiongraphique_M0}
 
-ggplot() + 
-  xlab('y') +
-  ggtitle('Modèle M0') +
-  theme(legend.position = 'bottom')  + 
-  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
-  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
-  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
-```
+`r chunk_reveal("reg_versiongraphique_M0", break_type = "user", display_type="output")`
 
-`r chunk_reveal("anova_versiongraphique_M0", break_type = "user", display_type="output")`
 
-```{r anova_versiongraphique_M0_save, eval = TRUE}
-pM0 <- ggplot() + 
-  xlab('y') +
-  ggtitle('Modèle M0') +
-  theme(legend.position = 'bottom')  + 
-  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
-  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
-  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+
+
+```{r anova_versiongraphique_save, eval = TRUE}
+pM0 <- ggplot(data=fake_dta) + 
+  ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
+  ggtitle('Modèle nul') +
+  geom_abline(slope = 0, intercept = mean(fake_dta$y)) + #BREAK
+  geom_point(x=8, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
+  geom_point(data=norm_dta0, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
+  geom_point(aes(x=x, y=y)) 
+pMcomp <- ggplot(data=fake_dta) + 
+  ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
+  ggtitle('Modèle Mcomp') +
+  geom_abline(slope = beta1, intercept = beta0) + #BREAK
+  geom_point(x=8, y=beta0+beta1*8, col = 'red', size=2) + #BREAK
+  geom_point(data=norm_dta, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
+  geom_point(aes(x=x, y=y)) 
 ```
 
 
@@ -244,162 +184,47 @@ Lequel de ces mécanismes est le plus crédible au vu des donées ?
 ggpubr::ggarrange(pMcomp, pM0, nrow = 1, common.legend = TRUE)
 ```
 
-
 ---
 template: model
 
-## Version régulière du modèle Mcomp
+## Le modèle de régression simple 
 
-$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+$$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
 avec 
-- $i=1,\ldots,I$ le niveau du facteur 1,
-- $j=1,\ldots,J$ le niveau du facteur 2,
-- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
-- $n_{ij}$ le nombre d'individus dans le groupe $(i,j)$ et $n=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
-- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
-- $\sigma^2$ la variance commune à tous les groupes.
+- $x_k$ la valeur de la variable explicative pour l'observation $k$, 
+- $k=1,\ldots,n$ le numéro d'individus, $n$ le nombre total d'individus,
+- $\beta_0$ l'ordonnée à l'origine, 
+- $\beta_1$ la pente de la droite, mesure de l'effet de la variable $x$
+
+- $\sigma^2$ la variance.
 
 ### Une écriture équivalente 
 
-$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_{ij}, \sigma^2).$$
+$$Y_{k} \overset{ind}{\sim}\mathcal{N}(\beta_0+\beta_1 x_k, \sigma^2).$$
 
 
 ### Nombre de paramètres du modèle
 
-- $I*J$ paramètres de moyenne  $(\mu_{11}, \mu_{12}, \ldots,  \mu_{1J}, \ldots \mu_{IJ})$; 
+- $2$ paramètres de moyenne  $(\beta_0, \beta_1)$; 
 - 1 paramètre de variance $\sigma^2$
 
 ---
 template: model
 
-## Version régulière du modèle Mcomp sur l'exemple 1
+## Le modèle de régression simple sur l'exemple de la pollution.
 
-$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+$$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
 avec 
-- $i=1,\ldots,2$ le niveau du facteur Sexe,
-- $j=1,\ldots,5$ le niveau du facteur Sport,
-- $k= 1,\ldots, 4$ le numéro de l'individu dans le groupe $(i,j)$, 
-- $4$ le nombre d'individus dans le groupe $(i,j)$ et $n= 40=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
-- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
-- $\sigma^2$ la variance commune à tous les groupes.
+- $x_k$ la population dans la ville $k$, 
+- $k=1,\ldots,n$ le numéro de la ville, $n=41$,
+- $\beta_0$ l'ordonnée à l'origine, 
+- $\beta_1$ la pente de la droite, mesure de l'effet de la population sur la pollution.
 
+- $\sigma^2$ la variance.
 
-
-$I=2, J= 5$ et  la convention $i=1$ pour les femmes et $i=2$ pour les hommes.
-
-
-### Nombre de paramètres
-- 10 paramètres de moyenne
+### Nombre de paramètres du modèle
+- 2 paramètres de moyennes
 - 1 paramètre de variance
-
----
-template: model
-## Version singulière du modèle du modèle Mcomp
-
-$$Y_{ijk} = \mu + \alpha_i +\beta_j +\gamma_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
-avec 
-- $i=1,\ldots,I$ le niveau du facteur 1,
-- $j=1,\ldots,J$ le niveau du facteur 2,
-- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
-- $\mu$  le comportement moyen de référence
-- $\alpha_i$  l'effet différentiel du niveau $i$ 
-- $\beta_j$  l'effet différentiel du niveau $j$ 
-- $\gamma_{ij}$  l'effet différentiel de la rencontre des niveaux $(i,j),$
-- $\sigma^2$ la variance commune à tous les groupes.
-
-
-### Nombre de paramètres du modèle
-
-- $1 + I + J + I*J$ paramètres de moyenne  
-- 1 paramètre de variance $\sigma^2$
-
---
-
-#### La version dans les logiciels et qui permet de séparer les effets des différens facteurs.
-
-
-
----
-template: model
-## Lien entre les deux versions du même modèle
-
- <table style="width:100%">
-  <tr>
-    <th>Groupe</th>
-    <th>V. régulière</th>
-    <th>V. singulière</th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td> $\mu_{11}$ </td>
-    <td> $\mu +\alpha_1 + \beta_1 + \gamma_{11}$ </td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td> $\mu_{12}$ </td>
-    <td> $\mu +\alpha_1 + \beta_2 + \gamma_{12}$ </td>
-  </tr>
-    <tr>
-    <td> </td>
-    <td>  </td>
-    <td>   </td>
-  </tr>
-  </tr>
-    <tr>
-    <td> </td>
-    <td>  </td>
-    <td>   </td>
-  </tr>
-  </tr>
-    <tr>
-    <td> </td>
-    <td>  </td>
-    <td>   </td>
-  </tr>
-    <tr>
-    <td>I</td>
-    <td> $\mu_{IJ}$ </td>
-    <td> $\mu +\alpha_I +\beta_J +\gamma_{IJ}$ </td>
-  </tr>
-</table> 
-
---
-
-<a class=care> Problème </a>  Le problème est identique au modèle d'analyse de la variance, le modèle sous cette forme est  <a style="font-weight:400;"> indéterminé</a>.
-
---
-
-#### Solution : ajouter des contraintes
-Par défaut dans R :
-$\alpha_1=0,$  $\beta_1=0,$ et $\gamma_{1j}=0$ pour tous les $j$ et $\gamma_{i1}=0$ pour tous les $i$.
-
-Ce qui correspond à $1 + 1 + J + (I-1)=I  + J +1$ contraintes. 
-
-#### Nombre de paramètres 
-- On a donc $1 + I + J + IJ$ paramètres dont $I  + J +1$ sont contraints, il reste donc
-$IJ$ à estimer pour le comportement moyen
-- 1 paramètre de variance $\sigma^2$.
-
-
-
----
-template: model
-## Que signifient ces contraintes (à partir de l'exemple)
-
-Le groupe $(1,1)$, c'est à dire les femmes très sportives ont un comportement moyen dans le modèle égal à $\mu +\alpha_1 +\beta_1 + \gamma_{11},$ ce qui vaut $\mu$ étant données les contraintes.
-
---
-
-Le groupe $(1,j)$ désigne les femmes à la pratique sportive identifiée $j$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_1 +\beta_j +\gamma_{1j}$, soit étant données les contraintes $\mu +\beta_j.$ $\beta_j$ est donc l'effet différentiel du sport $j$ par rapport au sport $1$  <a class=care> pour les femmes</a>.
-
---
-
-Le groupe $(i,1)$ désigne les individus de sexe $i$  à la pratique sportive identifiée $1$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_i +\beta_1 +\gamma_{i1}$, soit étant données les contraintes $\mu +\alpha_i.$ $\alpha_i$ est donc l'effet différentiel du sexe $i$  par rapport au sexe de référence $1$   <a class=care> pour les sportifs de niveau 1</a>.
-
---
-
-Les termes $\gamma_{ij}$ sont difficiles à interpréter et seront discuter en TP.
-
 
 
 ---
@@ -409,86 +234,53 @@ template: model
 ### Forme régulière 
 
 $$Y=\begin{pmatrix}
-Y_{111}\\
-Y_{112}\\
+Y_{1}\\
+Y_{2}\\
 \vdots\\
-Y_{11n_{11}}\\
-Y_{121}\\
+Y_{k}\\
 \vdots\\
-Y_{12n_{12}}\\
-\vdots\\
-Y_{ijk}\\
-\vdots\\
-Y_{IJn_{IJ}}\end{pmatrix},
+Y_{n}\end{pmatrix},
  \quad
-{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_{11} & \mu_{12} & \ldots & \ldots &\mu_{IJ}\end{matrix}}}{\begin{pmatrix}
-1 & 0 & 0 & \ldots 0\\
-1 & 0 & 0 & \ldots 0\\
-\vdots\\
-1 & 0 & 0 & \ldots 0\\
-0 & 1 & 0 & \ldots 0 \\
-\vdots\\
-0 & 1 & 0 & \ldots 0 \\
-\vdots\\
-0 & \ldots  & 1 & \ldots 0 \\\vdots\\
-0 & 0 & 0 & \ldots 1 \end{pmatrix}},\quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\beta_0  & \beta_1\end{matrix}}}{\begin{pmatrix}
+1 & x_1\\
+1 & x_2\\
+\vdots & \vdots\\
+1 & x_k\\
+ \vdots & \vdots\\
+1 & x_n\\
+ \end{pmatrix}},\quad
 {\bf{\theta}} =\begin{pmatrix}
-\mu_{11}\\
-\mu_{12}\\
+\beta_0\\
+\beta_1\\
+\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{1}\\
+E_{2}\\
 \vdots\\
-\mu_{1J}\\
-\mu_{21}\\
+E_{k}\\
 \vdots\\
-\mu_{IJ}\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
-E_{111}\\
-E_{112}\\
-\vdots\\
-E_{11n_{11}}\\
-E_{121}\\
-\vdots\\
-E_{12n_{12}}\\
-\vdots\\
-E_{IJn_{IJ}}\end{pmatrix}}$$
+E_{n}\\
+\end{pmatrix}}$$
 ---
 template: model
 
-## Sous forme matricielle
- $$\bf{Y = X\theta + E}$$
-### Forme singulière
+## Exercice
 
-<p class=question> Ecrire le modèle en version singulière sous forme matricielle en intégrant les contraintes.</p>
+<p class=question> Détailler le modèle sous forme matricielle pour l'exemple de la pollution (écrire les 3 premières lignes de la matrice $X$ )</p>
+
+--
+Attention, la réponse est dans la slide qui suit !
 
 
 ---
 template: model
 
-## sur l'exemple de la fréquence cardiaque
+## Correction 
 
 
 ```{r m_comp_false, eval = TRUE, echo = TRUE, out.width="100%"}
-Mcomp <- lm(freqC ~ Sexe + Sport + Sexe:Sport, data = freqdata)
-model.matrix(Mcomp)
+Mcomp <- lm(SO2 ~ pop , data = usdata)
+model.matrix(Mcomp) %>% head(n = 3)
 ```
-
----
-template: model
-
-## sur l'exemple de la fréquence cardiaque
-*Attention, il manque une colonne*
-
-```{r m_comp, eval = TRUE, echo = TRUE}
-Mcomp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
-model.matrix(Mcomp)
-```
-
----
-class: inverse
-name: pause
-# Pause
-
-<br><br><br><br>
-<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
-
 ---
 name: parametre
 # Estimation des paramètres
@@ -533,28 +325,190 @@ $$RSS = || Y- X \hat{\theta} ||^2$$
   $$S^2 =\frac{1}{DF_{res}} RSS, $$
 est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
 
-Dans le cas du modèle d'analyse de la variance à 2 facteurs $DF_res=n-IJ$ (n observations et IJ paramètres de moyennes à estimer, le nombre de composantes dans le vecteur $\theta$)
+Dans le cas du modèle de régression simple  $DF_{res}=n-2$ (n observations et 2 paramètres de moyennes à estimer, le nombre de composantes dans le vecteur $\theta$)
 
 --
 
 ## Estimation de $\sigma^2$
 
-$$\hat{\sigma}^2 =\frac{1}{n-IJ} RSS_{obs}.$$
+$$\hat{\sigma}^2 =\frac{1}{n-2} RSS_{obs}.$$
 ---
 template: parametre
-## sur l'exemple de la fréquence cardiaque
+## Vérifier l'estimation sur l'exemple de la pollution
 
-```{r param_m_comp, eval = TRUE, echo = TRUE}
-summary(Mcomp)
+
+```{r estimation, eval = TRUE, echo = TRUE}
+X <- model.matrix(Mcomp)
+XXprimemoinsUn <- solve(t(X)%*%X)
+XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
+summary(Mcomp)$coefficients
+```
+--
+Loi de l'estimateur
+
+```{r loi_estim,  eval = TRUE, echo = TRUE}
+summary(Mcomp)$sigma^2 * XXprimemoinsUn 
+sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
 ```
 
----
-class: inverse
-name: pause
-# Pause
 
-<br><br><br><br>
-<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
+---
+template: model
+
+## Le modèle de régression multiple
+
+Plusieurs variables sont potentiellement liées à la pollution enSO2
+
+
+- temp : Average temperature in Fahrenheit
+- manuf : No. of companies employing more than 20 employees
+- pop : Population in thousands
+- wind : Average annual wind speed in miles/hour
+- precip : annual precipitation height in inches
+- days : No. of days of precipitation
+
+
+<a class=question> Quelles sont les variables liées à la pollution en SO2 ? </a>
+
+---
+template: model
+
+## Le modèle de régression multiple 
+
+$$Y_{k} = \beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p}  +  E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $x_{k}^{l}$ la valeur de la variable explicative $l$ pour l'observation $k$, 
+- $k=1,\ldots,n$ le numéro d'individus, $n$ le nombre total d'individus,
+- $\beta_0$ l'ordonnée à l'origine, 
+- $\beta_l$ l'effet de la variable $X^{l}$ sur la variable à expliquer,
+- $\sigma^2$ la variance.
+
+### Une écriture équivalente 
+
+$$Y_{k} \overset{ind}{\sim}\mathcal{N}\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$
+
+
+### Nombre de paramètres du modèle
+
+- $l+1$ paramètres de moyenne  $(\beta_0, \beta_1, \ldots, \beta_l)$; 
+- 1 paramètre de variance $\sigma^2$
+
+---
+template: model
+## Sous forme matricielle
+ $$\bf{Y = X\theta + E}$$
+### Forme régulière 
+
+$$Y=\begin{pmatrix}
+Y_{1}\\
+Y_{2}\\
+\vdots\\
+Y_{k}\\
+\vdots\\
+Y_{n}\end{pmatrix},
+ \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\beta_0  && \beta_1&& \beta_2&&\ldots &&\beta_l\end{matrix}}}{\begin{pmatrix}
+1 & x_1^{1} & x_1^{2} & \ldots &x_1^{l}\\
+1 & x_2^{1} & x_2^{2} & \ldots &x_2^{l}\\
+\vdots & \vdots& \vdots && \vdots\\
+1 & x_k^{1} & x_k^{2} & \ldots &x_k^{l}\\
+ \vdots & \vdots& \vdots && \vdots\\
+1 & x_n^{1} & x_n^{2} & \ldots &x_n^{l}\\
+ \end{pmatrix}},\quad
+{\bf{\theta}} =\begin{pmatrix}
+\beta_0\\
+\beta_1\\
+\beta_2\\
+\vdots\\
+\beta_l\\
+\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{1}\\
+E_{2}\\
+\vdots\\
+E_{k}\\
+\vdots\\
+E_{n}\\
+\end{pmatrix}}$$
+
+---
+template: model
+
+## Sur l'exemple de la pollution
+
+
+```{r m_comp_mult, eval = TRUE, echo = TRUE, out.width="100%"}
+Mcomp <- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
+model.matrix(Mcomp) %>% head(n = 3)
+```
+---
+name: parametre
+# Estimation des paramètres
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version matricielle
+
+
+Le modèle sous forme matricielle s'écrit
+
+$$\bf{Y = X\theta + E}.$$
+--
+
+### Estimation de $\theta$
+
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+
+--
+
+### Estimateur de $\theta$
+
+$$T = (X^\intercal X )^{-1} X^\intercal Y.$$
+--
+
+### Loi de l'estimateur de $\theta$
+
+
+$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+
+---
+template: parametre
+## Le paramètre de variance
+
+La somme des carrés résiduelles s'écrit sous la forme 
+
+$$RSS = || Y- X \hat{\theta} ||^2$$
+
+### Estimateur de la variance 
+
+  $$S^2 =\frac{1}{DF_{res}} RSS, $$
+est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
+
+Dans le cas du modèle de régression simple  $DF_{res}=n-l-1$ (n observations et 2 paramètres de moyennes à estimer, le nombre de composantes dans le vecteur $\theta$)
+
+--
+
+## Estimation de $\sigma^2$
+
+$$\hat{\sigma}^2 =\frac{1}{n-l-1} RSS_{obs}.$$
+---
+template: parametre
+## Vérifier l'estimation sur l'exemple de la pollution
+
+
+```{r estimation_mult, eval = TRUE, echo = TRUE}
+X <- model.matrix(Mcomp)
+XXprimemoinsUn <- solve(t(X)%*%X)
+XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
+summary(Mcomp)$coefficients
+```
+--
+Loi de l'estimateur
+
+```{r loi_estim_mult,  eval = TRUE, echo = TRUE}
+sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
+```
+
 
 ---
 name: modcomp
@@ -563,19 +517,14 @@ name: modcomp
 
 ---
 template: modcomp
-## Rappel exemple fréquence cardiaque (exemple 1)
+## Pollution 
 
-On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
-
-
-
-```{r freqdata2, ref.label='sport', eval = TRUE, warning = FALSE, results ='markup'}
-```
+<p class="question"> La pollution en SO2 dans les villes américaines est elles liées à l'une au moins des variables caractérisiques des villes ?</p>
 
 
---
-<p class="question"> Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?</p>
+-- 
 
+On va à la pêche ....
 
 ---
 template: modcomp
@@ -598,23 +547,24 @@ On va donc opposer une hypothèse de travail $H_0$ contre une hypothèse alterna
 
 
 $$\begin{align} 
-H_0 & =\left \lbrace \mbox{Pas de différence entre les différents groupes }\right\rbrace\\
-    & =\left \lbrace  \mbox{pour tout }i, \alpha_i =0, \mbox{pour tout }j,\beta_j=0  \mbox{ et pour tout }(i,j),\gamma_{ij}=0   \right\rbrace\\
+H_0 & =\left \lbrace \mbox{Auncune variable n'est liée à la pollution en SO2}\right\rbrace\\
+    & =\left \lbrace  \mbox{pour tout p\geq 1, \beta_p =0   \right\rbrace\\
     & =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
 \end{align}$$
+
 
 $H_1$ prend les formes équivalentes suivantes
 
 $$\begin{align} 
-H_1 & =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
-    & =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \mbox{ ou un }j, \beta_j \ne 0 \mbox{ ou un } (i,j), \gamma_{ij} \ne 0  \right\rbrace\\
+H_1 & =\left \lbrace \mbox{Au moins 1 variable est liée à la pollution en SO2}\right\rbrace\\
+    & =\left \lbrace  \mbox{Il existe un } p, \beta_p \ne 0  \right\rbrace\\
     & =\left \lbrace  M_{comp} \mbox{ est préférable à } M0 \right\rbrace.
 \end{align}$$
 
 --
 
 Sous $H_0$, 
-$$F= \frac{\frac{SS_{M_{comp}}}{IJ-1}}{\frac{RSS}{n-IJ}} \underset{H_0}{\sim}\mathcal{F}(IJ-1, n-IJ)$$  
+$$F= \frac{\frac{SS_{M_{comp}}}{l}}{\frac{RSS}{n-l-1}} \underset{H_0}{\sim}\mathcal{F}(l, n-l-1)$$  
 
 ---
 template: modcomp
@@ -1068,5 +1018,3 @@ plot(m_ajust_sport)
 ```
 
 
----
-template: pause
