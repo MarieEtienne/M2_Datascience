@@ -278,8 +278,8 @@ template: model
 
 
 ```{r m_comp_false, eval = TRUE, echo = TRUE, out.width="100%"}
-Mcomp <- lm(SO2 ~ pop , data = usdata)
-model.matrix(Mcomp) %>% head(n = 3)
+Mpop <- lm(SO2 ~ pop , data = usdata)
+model.matrix(Mpop) %>% head(n = 3)
 ```
 ---
 name: parametre
@@ -338,17 +338,45 @@ template: parametre
 
 
 ```{r estimation, eval = TRUE, echo = TRUE}
-X <- model.matrix(Mcomp)
+X <- model.matrix(Mpop)
 XXprimemoinsUn <- solve(t(X)%*%X)
 XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
-summary(Mcomp)$coefficients
+summary(Mpop)$coefficients
 ```
 --
 Loi de l'estimateur
 
 ```{r loi_estim,  eval = TRUE, echo = TRUE}
-summary(Mcomp)$sigma^2 * XXprimemoinsUn 
-sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
+summary(Mpop)$sigma^2 * XXprimemoinsUn 
+sqrt(diag(summary(Mpop)$sigma^2 * XXprimemoinsUn ))
+```
+---
+name: prediction
+# Prediction avec un modèle de régression simple
+---
+template:  prediction
+Il est fréquent d'utiliser un modèle de régression pour prédire. 
+
+## Prédiction de la valeur moyenne pour un $x$ particulier
+
+- **Valeur moyenne attendue** pour $y$ pour un $x$ donné: $\beta_0+\beta_1 x.$
+
+- **Valeur moyenne prédite** pour $y$ pour un $x$ donné: $\hat{\beta}_0+\hat{\beta}_1 x.$
+
+```{r pred, eval = TRUE}
+predict(Mpop, newdata=data.frame(pop=333))
+```
+
+- **Intervalle de confiance pour la valeur moyenne prédite** pour $y$ pour un $x$ donné: $\hat{\beta}_0+\hat{\beta}_1 x.$
+
+```{r pred_IC, eval = TRUE}
+predict(Mpop, newdata=data.frame(pop=333), interval = 'confidence')
+```
+
+## Prédiction de la valeur possible $x$ particulier
+
+```{r pred_x, eval = TRUE}
+predict(Mpop, newdata=data.frame(pop=333), interval = 'prediction')
 ```
 
 
@@ -357,7 +385,7 @@ template: model
 
 ## Le modèle de régression multiple
 
-Plusieurs variables sont potentiellement liées à la pollution enSO2
+Plusieurs variables sont potentiellement liées à la pollution en SO2
 
 
 - temp : Average temperature in Fahrenheit
@@ -369,6 +397,9 @@ Plusieurs variables sont potentiellement liées à la pollution enSO2
 
 
 <a class=question> Quelles sont les variables liées à la pollution en SO2 ? </a>
+
+
+
 
 ---
 template: model
@@ -437,7 +468,8 @@ template: model
 
 
 ```{r m_comp_mult, eval = TRUE, echo = TRUE, out.width="100%"}
-Mcomp <- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
+Mcomp <- lm(SO2 ~ temp + manuf + pop + wind + precip + days, data = usdata) 
+#Mcomp <- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
 model.matrix(Mcomp) %>% head(n = 3)
 ```
 ---
@@ -522,7 +554,7 @@ template: modcomp
 <p class="question"> La pollution en SO2 dans les villes américaines est elles liées à l'une au moins des variables caractérisiques des villes ?</p>
 
 
--- 
+--
 
 On va à la pêche ....
 
@@ -548,7 +580,7 @@ On va donc opposer une hypothèse de travail $H_0$ contre une hypothèse alterna
 
 $$\begin{align} 
 H_0 & =\left \lbrace \mbox{Auncune variable n'est liée à la pollution en SO2}\right\rbrace\\
-    & =\left \lbrace  \mbox{pour tout p\geq 1, \beta_p =0   \right\rbrace\\
+    & =\left \lbrace  \mbox{pour tout }p\geq 1, \beta_p =0   \right\rbrace\\
     & =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
 \end{align}$$
 
@@ -593,428 +625,112 @@ ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y))
 `r chunk_reveal("pvalue_graphique", break_type = "user", display_type="output")`
 
 ---
-name: variance_decomposition
-# Decomposition de SSM
+name: test_variable
+# Test de l'effet des variables
 
 ---
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
+template: test_variable
 
-<br>
+## Test sur les paramètres
 
-- $RSS_0$ est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à $RSS$.
+Tester la nullité du paramètre $\beta_l$ revient à tester si la variable $x^{l}$ et la variable $Y$ sont liées.
 
 
-<br>
+--
+
+Ce test est similaire  au test de comparaison entre le modèle complet et le modèle complet privé de la variable $x^{l}$.
 
 
-```{r var_1, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS1.png')
+---
+count: false
+template: test_variable
+
+## Equivalence des tests sur l'exemple de la pollution
+
+
+```{r car, echo=FALSE, eval=TRUE}
+library(car)
+```
+
+```{r pol_mult, eval = TRUE}
+summary(Mcomp)$coefficients
+Mcomp_l <- lm(SO2 ~  temp + manuf +  wind + precip + days, data = usdata) 
+anova(Mcomp_l, Mcomp)
+```
+
+## Lien entr les statistiques  de tests
+
+```{r stu2, eval = TRUE, echo =TRUE}
+res <- summary(Mcomp)$coefficients
+res[,"t value"]^2
 ```
 
 ---
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-<br>
-
-- $RSS_0$ est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à $RSS$.
+template: test_variable
+## Vigilance sur l'interprétation des tests
 
 
-<br>
+```{r test_inter, eval =TRUE}
+summary(Mcomp)$coefficients
+```
 
-```{r var_2, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS2.png')
+--
+```{r ggpairs, eval = TRUE}
+GGally::ggpairs(usdata, columns = 2:8)
 ```
 
 ---
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
+#Diagnostics
 
-<br>
-
-- $RSS_0$ est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à $RSS$.
-
-
-<br>
-
-```{r var_3, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS3.png')
-```
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-<br>
-
-- $RSS_0$ est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à $RSS$.
-
-<br>
-
-```{r var_4, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS4.png')
-```
-
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-<br>
-
-- $RSS_0$ est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à $RSS$.
-
-
-<br>
-
-```{r var_5, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS5.png')
+```{r diag, eval = TRUE, echo = TRUE, out.width='70%', cache = FALSE}
+library(ggfortify)
+autoplot(Mcomp)
 ```
 
 
 ---
-template: variance_decomposition
+# Levier
+
 ## Mathématiquement
 
-On veut décomposer la variabilité attribuée au modèle selon les différentes sources.
-
-Considérons les différents modèles possibles
-
-$$\begin{align}
-M_0\ :\ Y_{ijk} &= \mu + E_{ijk}\\
-M_{1}\ :\ Y_{ijk} &= \mu + \alpha_i + E_{ijk}\\
-M_{2}\ :\ Y_{ijk} &= \mu + \beta_j + E_{ijk}\\
-M_{12}\ :\ Y_{ijk} &= \mu + \alpha_i + \beta_j + E_{ijk}\\
-M_{comp}\ :\ Y_{ijk} &= \mu + \alpha_i + \beta_j +\gamma_{ij} + E_{ijk}\\
-\end{align}$$
-
---
-
-<a class = question> Comment mesurer l'effet des différents facteurs</a> 
-
---
-
-Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
+Formellement:  le levier pour l'observatio $i$ est
+$$(X (X^\intercal X)^{-1}X^\intercal)_{ii}$$
 
 ---
-template: variance_decomposition
-## Réduction de variabilité
 
-$$\begin{align}
-SSM & = RSS_0 - RSS_{comp}\\
-SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + {RSS_1 - RSS_{12}} +{RSS_{12} - RSS_{comp}} \\
-\end{align}$$
---
+```{r levier1}
 
+usdata <- usdata %>% mutate(grand = as.factor(ifelse(pop > 2500, 'g', 'p')))
+usdata_sans_chicago <- usdata %>% filter(pop < 2500)
 
-```{r var_ralpha, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS4_Ralpha.png')
+usdata %>% ggplot() + aes(x=pop, y=SO2) + geom_point(aes(col = grand)) + theme(legend.position = 'none') + geom_smooth(method= 'lm', se = FALSE,col= "#FF0000") + #BREAK
+  geom_smooth(data=usdata_sans_chicago, aes(x=pop, y=SO2), method= 'lm', se = FALSE,col= "#00A08A")
+
 ```
 
 
----
-count: false
-template: variance_decomposition
-## Réduction de variabilité
-
-$$\begin{align}
-SSM & = RSS_0 - RSS_{comp}\\
-SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + {RSS_{12} - RSS_{comp}} \\
-\end{align}$$
-
-
-
-```{r var_beta, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS4_Rbeta.png')
-```
-
+`r chunk_reveal("levier1", break_type = "user", display_type="output")`
 
 
 ---
-count: false
-template: variance_decomposition
-## Réduction de variabilité
+# Construire le modèle d'analyse de la covariance
 
-$$\begin{align}
-SSM & = RSS_0 - RSS_{comp}\\
-SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
-\end{align}$$
+A partir des données bats:
 
+Les différentes espèces de chauve souris ont des tailles de cerveau très variables, ce qui conduit à des volumes variables de la partie auditive.
 
+Quel modèle pouvez vous proposer pour étudier l’influence du régime sur la part du cerveau dédiée à l’audition, compte tenu de la taille total du cerveau ? 
 
-```{r var_tot, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS4.png')
-```
-
-
-
----
-template: variance_decomposition
-## Test de type 1
-
-
- <table style="width:100%">
-  <tr>
-    <th>Source</th>
-    <th>H0</th>
-    <th>SS</th>
-    <th>Df</th>
-    <th>F</th>
-  </tr>
-  <tr>
-    <th> Fact1 </th>
-    <th> M0 et M1 sont équivalents </th>
-    <th> $R(\alpha\vert \mu)$ </th>
-    <th> $I-1$ </th>
-    <th> $$\frac{\frac{R(\alpha\vert \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-<tr>
-    <th> Fact2 </th>
-    <th> M1 et M12 sont équivalents </th>
-    <th> $R(\beta\vert\alpha, \mu)$ </th>
-    <th> $J-1$ </th>
-    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-<tr>
-    <th> Inter </th>
-    <th> M12 et Mcomp sont équivalents </th>
-    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
-    <th> $(J-1)(J-1)$ </th>
-    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-</table> 
+Quel test pourrait permettre d’étudier cette influence ?
 
 
 
 
 ---
-template: variance_decomposition
-## Tests de type 1
+# Pause
 
-Rôle asymétrique des facteurs (l'ordre des facteurs importe).
+<br><br><br><br>
+<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!
 
---
-
-## Tests de type 2
-
-But : symétriser le rôle des différents facteurs
-
-```{r var_tot_2, eval =TRUE, out.width = "45%"}
-knitr::include_graphics('./RSS5.png')
-```
-
-
----
-template: variance_decomposition
-## Test de type 2
-
- <table style="width:100%">
-  <tr>
-    <th>Source</th>
-    <th>H0</th>
-    <th>SS</th>
-    <th>Df</th>
-    <th>F</th>
-  </tr>
-  <tr>
-    <th> Fact1 </th>
-    <th> M2 et M12 sont équivalents </th>
-    <th> $R(\alpha\vert \beta, \mu)$ </th>
-    <th> $I-1$ </th>
-    <th> $$\frac{\frac{R(\alpha\vert\beta, \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-<tr>
-    <th> Fact2 </th>
-    <th> M1 et M12 sont équivalents </th>
-    <th> $R(\beta\vert\alpha, \mu)$ </th>
-    <th> $J-1$ </th>
-    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-<tr>
-    <th> Inter </th>
-    <th> M12 et Mcomp sont équivalents </th>
-    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
-    <th> $(J-1)(J-1)$ </th>
-    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
-</tr>
-</table> 
-
----
-template: variance_decomposition
-## L'exemple des fréquence cardiaque
-
-### Type 1
-```{r freq_comp, eval = TRUE, echo =TRUE}
-MComp <- lm(freqC ~ Sexe + Sport_Fact +Sexe:Sport_Fact, data = freqdata)
-anova(MComp)
-```
-
---
-### Type 2
-
-```{r freq_comp2, eval = TRUE, echo =TRUE}
-library(car)
-Anova(MComp, type = 2)
-```
-
----
-template: variance_decomposition
-## L'exemple des fréquence cardiaque
-
-Il s'agit du cas particulier $n_{ij}$ sont tous égaux. Le plan d'expérience est dit **équilibré**.
-
---
-
-
-```{r var_eq, eval =TRUE, out.width = "45%"}
-knitr::include_graphics('./RSS3_eq.png')
-```
-
-
----
-template: variance_decomposition
-## Fréquence cardiaque, plan d'expérience déséquilibré
-
-```{r freq_des, eval = TRUE, echo = c(2,4,5)}
-freqdata_des <- read.table('https://marieetienne.github.io/datasets/FreqCardiaqueDes1.txt', sep =" ", header =TRUE) %>% 
-  mutate(Sport_Fact = as.factor(Sport))
-table(freqdata_des$Sexe, freqdata_des$Sport)
-MComp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata_des)
-anova(MComp)
-Anova(MComp, type = 2)
-```
-
-
-
----
-template: variance_decomposition
-## Exercice
-
-Indiquer dans chaque portion du schéma ci-dessous, le somme des carrés représentés. 
-
-
-```{r var_tot_ex, eval =TRUE, out.width = "55%"}
-knitr::include_graphics('./RSS3.png')
-```
-
----
-template: pause
-
----
-name: comp_moyenne
-# Comparaison des différents groupes
----
-template: comp_moyenne
-
-## Question 
-
-<a class=question> Quels sont les niveaux de pratiques sportives correspondant à des fréquences cardiaques différentes ?</a>
-
---
-
-Calcul des moyennes par niveau de pratique sportive
-
-```{r mean_sexe, eval = TRUE}
-freqdata_des %>% group_by(Sport) %>%  summarise(m =mean(freqC)) 
-```
-
-
-Calcul des moyennes par sexe
-
-```{r mean_sport, eval = TRUE}
-freqdata_des %>% group_by(Sexe) %>%  summarise(m =mean(freqC)) 
-```
-
-
---
-<a style=care> Attention : </a> comparaison de femmes sportives avec des hommes sédentaires
-
-Plan d'expérience
-
-```{r plan_xp, eval = TRUE}
-table(freqdata_des$Sexe, freqdata_des$Sport)
-```
-
-
-
----
-template: comp_moyenne
-
-La moyenne au sein du groupe $i$ pour le facteur est 1 est donnée par :
-$$Y_{i..} = \frac{1}{n_{i+}}\sum_{j=1}^J \sum_{k=1}^{n_ij}Y_{ijk},$$
-avec $n_{i+}=\sum_j n_{ij},$ le nombre total d'observations pour le niveau $i$. 
-
-Alors $$\mathbb{E}(Y_{i..} )= \mu + \alpha_i  + \frac{1}{n_{i+}}\sum_{j=1}^J  n_{ij} (\beta_j  +\gamma_{ij}).$$
-
---
-Sur notre exemple
-$$\mathbb{E}(Y_{1..} )= \mu  + \alpha_1 + \frac{1}{n_{i+}} \left( 6 (\beta_1 + \gamma_{11}) + 3 (\beta_2 + \gamma_{12})  + 5 (\beta_3 + \gamma_{13}) + 3 (\beta_4 + \gamma_{14})+ 2 (\beta_5 + \gamma_{15})\right).$$
-
-$$\mathbb{E}(Y_{2..} )= \mu  + \alpha_2 + \frac{1}{n_{i+}} \left( 3 (\beta_1 + \gamma_{21}) + 2 (\beta_2 + \gamma_{22})  + 6 (\beta_3 + \gamma_{23}) + 5 (\beta_4 + \gamma_{24})+ 5 (\beta_5 + \gamma_{25})\right).$$
-
---
-
-$$\begin{align}
-\mathbb{E}(Y_{1..} - Y_{2..} )= & \alpha_1- \alpha_2 + \frac{1}{n_{i+}} \left( 3 \beta_1  + 6\gamma_{11}  - 3\gamma_{21} +\beta_2 + 3\gamma_{12}  - 2\gamma_{22} - \beta_3 +5\gamma_{13}  - 6\gamma_{23}\right. \\
-& \left. -2\beta_4 + 3 \gamma_{14}  -  5\gamma_{24} -3 \beta_5 + 2 \gamma_{15} -5 \gamma_{25} \right).
-\end{align}$$
-
-Les effets potentiels de la pratique sportive n'interviennent pas de la même manière dans les deux moyennes.
-
-
----
-template: comp_moyenne
-## Moyennes ajustées
-
-C'est la moyenne qu'on observerait dans un plan d'expérience équilibré
-
-$$\tilde{\mu}_{i.} = \mu + \alpha_i + \frac{1}{J}\sum_{j=1}^J (\beta_j +\gamma_{ij}).$$
-$$\tilde{\mu}_{.j} = \mu + \beta_j + \frac{1}{I}\sum_{i=1}^I (\alpha_i +\gamma_{ij}).$$
-
-
-*On redresse artificiellement le plan d'expérience*
---
-
-$$\tilde{\mu}_{1.}-\tilde{\mu}_{2.} =  \alpha_1  -\alpha_{2}+ \frac{1}{J}\sum_{j=1}^J (\gamma_{1j} -\gamma_{2j}).$$
-
----
-template: comp_moyenne
-
-## Moyennes ajustées pour le sexe
-
-```{r moy_ajustees, eval= TRUE, echo =TRUE}
-library(emmeans)
-m_ajust_sexe <- emmeans(MComp, "Sexe")
-pairs(m_ajust_sexe)
-plot(m_ajust_sexe)
-```
-
-
----
-
-template: comp_moyenne
-## Moyennes ajustées pour le sport
-
-```{r moy_ajustees_sport, eval= TRUE, echo =TRUE}
-m_ajust_sport <- emmeans(MComp, "Sport_Fact")
-summary(pairs(m_ajust_sport))
-```
-
----
-
-template: comp_moyenne
-## Moyennes ajustées pour le sport
-
-```{r ajuste_sport_graph, eval = TRUE}
-plot(m_ajust_sport)
-```
-
+Correction en TP </p> 
 

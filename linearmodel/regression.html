@@ -304,8 +304,8 @@ template: model
 
 
 ```r
-Mcomp &lt;- lm(SO2 ~ pop , data = usdata)
-model.matrix(Mcomp) %&gt;% head(n = 3)
+Mpop &lt;- lm(SO2 ~ pop , data = usdata)
+model.matrix(Mpop) %&gt;% head(n = 3)
 ```
 
 ```
@@ -372,7 +372,7 @@ template: parametre
 
 
 ```r
-X &lt;- model.matrix(Mcomp)
+X &lt;- model.matrix(Mpop)
 XXprimemoinsUn &lt;- solve(t(X)%*%X)
 XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
 ```
@@ -384,7 +384,7 @@ pop          0.02001359
 ```
 
 ```r
-summary(Mcomp)$coefficients
+summary(Mpop)$coefficients
 ```
 
 ```
@@ -397,7 +397,7 @@ Loi de l'estimateur
 
 
 ```r
-summary(Mcomp)$sigma^2 * XXprimemoinsUn 
+summary(Mpop)$sigma^2 * XXprimemoinsUn 
 ```
 
 ```
@@ -407,12 +407,46 @@ pop         -0.01938582  3.185262e-05
 ```
 
 ```r
-sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
+sqrt(diag(summary(Mpop)$sigma^2 * XXprimemoinsUn ))
 ```
 
 ```
 (Intercept)         pop 
 4.713843676 0.005643813 
+```
+---
+name: prediction
+# Prediction avec un modèle de régression simple
+---
+template:  prediction
+Il est fréquent d'utiliser un modèle de régression pour prédire. 
+
+## Prédiction de la valeur moyenne pour un `\(x\)` particulier
+
+- **Valeur moyenne attendue** pour `\(y\)` pour un `\(x\)` donné: `\(\beta_0+\beta_1 x.\)`
+
+- **Valeur moyenne prédite** pour `\(y\)` pour un `\(x\)` donné: `\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
+
+
+```
+       1 
+24.53284 
+```
+
+- **Intervalle de confiance pour la valeur moyenne prédite** pour `\(y\)` pour un `\(x\)` donné: `\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
+
+
+```
+       fit      lwr      upr
+1 24.53284 17.28453 31.78115
+```
+
+## Prédiction de la valeur possible `\(x\)` particulier
+
+
+```
+       fit       lwr      upr
+1 24.53284 -17.90225 66.96793
 ```
 
 
@@ -421,7 +455,7 @@ template: model
 
 ## Le modèle de régression multiple
 
-Plusieurs variables sont potentiellement liées à la pollution enSO2
+Plusieurs variables sont potentiellement liées à la pollution en SO2
 
 
 - temp : Average temperature in Fahrenheit
@@ -433,6 +467,9 @@ Plusieurs variables sont potentiellement liées à la pollution enSO2
 
 
 &lt;a class=question&gt; Quelles sont les variables liées à la pollution en SO2 ? &lt;/a&gt;
+
+
+
 
 ---
 template: model
@@ -502,7 +539,8 @@ template: model
 
 
 ```r
-Mcomp &lt;- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
+Mcomp &lt;- lm(SO2 ~ temp + manuf + pop + wind + precip + days, data = usdata) 
+#Mcomp &lt;- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
 model.matrix(Mcomp) %&gt;% head(n = 3)
 ```
 
@@ -628,7 +666,7 @@ template: modcomp
 &lt;p class="question"&gt; La pollution en SO2 dans les villes américaines est elles liées à l'une au moins des variables caractérisiques des villes ?&lt;/p&gt;
 
 
--- 
+--
 
 On va à la pêche ....
 
@@ -653,7 +691,7 @@ On va donc opposer une hypothèse de travail `\(H_0\)` contre une hypothèse alt
 
 `$$\begin{align} 
 H_0 &amp; =\left \lbrace \mbox{Auncune variable n'est liée à la pollution en SO2}\right\rbrace\\
-    &amp; =\left \lbrace  \mbox{pour tout p\geq 1, \beta_p =0   \right\rbrace\\
+    &amp; =\left \lbrace  \mbox{pour tout }p\geq 1, \beta_p =0   \right\rbrace\\
     &amp; =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
 \end{align}$$`
 
@@ -728,519 +766,175 @@ count: false
 
 
 ---
-name: variance_decomposition
-# Decomposition de SSM
+name: test_variable
+# Test de l'effet des variables
 
 ---
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
+template: test_variable
 
-&lt;br&gt;
+## Test sur les paramètres
 
-- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à `\(RSS\)`.
+Tester la nullité du paramètre `\(\beta_l\)` revient à tester si la variable `\(x^{l}\)` et la variable `\(Y\)` sont liées.
 
 
-&lt;br&gt;
+--
 
-
-&lt;img src="./RSS1.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-&lt;br&gt;
-
-- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à `\(RSS\)`.
-
-
-&lt;br&gt;
-
-&lt;img src="./RSS2.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-&lt;br&gt;
-
-- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à `\(RSS\)`.
-
-
-&lt;br&gt;
-
-&lt;img src="./RSS3.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-&lt;br&gt;
-
-- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à `\(RSS\)`.
-
-&lt;br&gt;
-
-&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-count:false
-template: variance_decomposition
-## Visualisation graphique de la décomposition de la variance
-
-&lt;br&gt;
-
-- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
-- La partie rouge correspond à `\(RSS\)`.
-
-
-&lt;br&gt;
-
-&lt;img src="./RSS5.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+Ce test est similaire  au test de comparaison entre le modèle complet et le modèle complet privé de la variable `\(x^{l}\)`.
 
 
 ---
-template: variance_decomposition
+count: false
+template: test_variable
+
+## Equivalence des tests sur l'exemple de la pollution
+
+
+
+
+
+```
+                Estimate  Std. Error   t value     Pr(&gt;|t|)
+(Intercept) 111.72848064 47.31810073  2.361221 0.0240867374
+temp         -1.26794109  0.62117952 -2.041183 0.0490557189
+manuf         0.06491817  0.01574825  4.122245 0.0002277862
+pop          -0.03927674  0.01513274 -2.595482 0.0138461970
+wind         -3.18136579  1.81501910 -1.752800 0.0886503978
+precip        0.51235896  0.36275507  1.412410 0.1669175999
+days         -0.05205019  0.16201386 -0.321270 0.7499724652
+```
+
+```
+Analysis of Variance Table
+
+Model 1: SO2 ~ temp + manuf + wind + precip + days
+Model 2: SO2 ~ temp + manuf + pop + wind + precip + days
+  Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+1     35 8726.3                              
+2     34 7283.3  1    1443.1 6.7365 0.01385 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+## Lien entr les statistiques  de tests
+
+
+```r
+res &lt;- summary(Mcomp)$coefficients
+res[,"t value"]^2
+```
+
+```
+(Intercept)        temp       manuf         pop        wind      precip 
+  5.5753634   4.1664282  16.9929075   6.7365251   3.0723084   1.9949026 
+       days 
+  0.1032144 
+```
+
+---
+template: test_variable
+## Vigilance sur l'interprétation des tests
+
+
+
+```
+                Estimate  Std. Error   t value     Pr(&gt;|t|)
+(Intercept) 111.72848064 47.31810073  2.361221 0.0240867374
+temp         -1.26794109  0.62117952 -2.041183 0.0490557189
+manuf         0.06491817  0.01574825  4.122245 0.0002277862
+pop          -0.03927674  0.01513274 -2.595482 0.0138461970
+wind         -3.18136579  1.81501910 -1.752800 0.0886503978
+precip        0.51235896  0.36275507  1.412410 0.1669175999
+days         -0.05205019  0.16201386 -0.321270 0.7499724652
+```
+
+--
+&lt;img src="regression_files/figure-html/ggpairs-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+#Diagnostics
+
+
+```r
+library(ggfortify)
+autoplot(Mcomp)
+```
+
+&lt;img src="regression_files/figure-html/diag-1.png" width="70%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Levier
+
 ## Mathématiquement
 
-On veut décomposer la variabilité attribuée au modèle selon les différentes sources.
-
-Considérons les différents modèles possibles
-
-`$$\begin{align}
-M_0\ :\ Y_{ijk} &amp;= \mu + E_{ijk}\\
-M_{1}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + E_{ijk}\\
-M_{2}\ :\ Y_{ijk} &amp;= \mu + \beta_j + E_{ijk}\\
-M_{12}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j + E_{ijk}\\
-M_{comp}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j +\gamma_{ij} + E_{ijk}\\
-\end{align}$$`
-
---
-
-&lt;a class = question&gt; Comment mesurer l'effet des différents facteurs&lt;/a&gt; 
-
---
-
-Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
+Formellement:  le levier pour l'observatio `\(i\)` est
+`$$(X (X^\intercal X)^{-1}X^\intercal)_{ii}$$`
 
 ---
-template: variance_decomposition
-## Réduction de variabilité
-
-`$$\begin{align}
-SSM &amp; = RSS_0 - RSS_{comp}\\
-SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + {RSS_1 - RSS_{12}} +{RSS_{12} - RSS_{comp}} \\
-\end{align}$$`
---
 
 
-&lt;img src="./RSS4_Ralpha.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
 
+
+count: false
+
+&lt;img src="regression_files/figure-html/levier1_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
-template: variance_decomposition
-## Réduction de variabilité
 
-`$$\begin{align}
-SSM &amp; = RSS_0 - RSS_{comp}\\
-SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + {RSS_{12} - RSS_{comp}} \\
-\end{align}$$`
+&lt;img src="regression_files/figure-html/levier1_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
-
-
-&lt;img src="./RSS4_Rbeta.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
-
----
-count: false
-template: variance_decomposition
-## Réduction de variabilité
-
-`$$\begin{align}
-SSM &amp; = RSS_0 - RSS_{comp}\\
-SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
-\end{align}$$`
-
-
-
-&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
-
----
-template: variance_decomposition
-## Test de type 1
-
-
- &lt;table style="width:100%"&gt;
-  &lt;tr&gt;
-    &lt;th&gt;Source&lt;/th&gt;
-    &lt;th&gt;H0&lt;/th&gt;
-    &lt;th&gt;SS&lt;/th&gt;
-    &lt;th&gt;Df&lt;/th&gt;
-    &lt;th&gt;F&lt;/th&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;th&gt; Fact1 &lt;/th&gt;
-    &lt;th&gt; M0 et M1 sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\alpha\vert \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\(I-1\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\alpha\vert \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;th&gt; Fact2 &lt;/th&gt;
-    &lt;th&gt; M1 et M12 sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\beta\vert\alpha, \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\(J-1\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;th&gt; Inter &lt;/th&gt;
-    &lt;th&gt; M12 et Mcomp sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\gamma\vert \beta, \alpha, \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\((J-1)(J-1)\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;/table&gt; 
+&lt;style&gt;
+.panel1-levier1-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-levier1-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-levier1-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
 
 
 
 
 ---
-template: variance_decomposition
-## Tests de type 1
+# Construire le modèle d'analyse de la covariance
 
-Rôle asymétrique des facteurs (l'ordre des facteurs importe).
+A partir des données bats:
 
---
+Les différentes espèces de chauve souris ont des tailles de cerveau très variables, ce qui conduit à des volumes variables de la partie auditive.
 
-## Tests de type 2
+Quel modèle pouvez vous proposer pour étudier l’influence du régime sur la part du cerveau dédiée à l’audition, compte tenu de la taille total du cerveau ? 
 
-But : symétriser le rôle des différents facteurs
+Quel test pourrait permettre d’étudier cette influence ?
 
-&lt;img src="./RSS5.png" width="45%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
----
-template: variance_decomposition
-## Test de type 2
-
- &lt;table style="width:100%"&gt;
-  &lt;tr&gt;
-    &lt;th&gt;Source&lt;/th&gt;
-    &lt;th&gt;H0&lt;/th&gt;
-    &lt;th&gt;SS&lt;/th&gt;
-    &lt;th&gt;Df&lt;/th&gt;
-    &lt;th&gt;F&lt;/th&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;th&gt; Fact1 &lt;/th&gt;
-    &lt;th&gt; M2 et M12 sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\alpha\vert \beta, \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\(I-1\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\alpha\vert\beta, \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;th&gt; Fact2 &lt;/th&gt;
-    &lt;th&gt; M1 et M12 sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\beta\vert\alpha, \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\(J-1\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-    &lt;th&gt; Inter &lt;/th&gt;
-    &lt;th&gt; M12 et Mcomp sont équivalents &lt;/th&gt;
-    &lt;th&gt; `\(R(\gamma\vert \beta, \alpha, \mu)\)` &lt;/th&gt;
-    &lt;th&gt; `\((J-1)(J-1)\)` &lt;/th&gt;
-    &lt;th&gt; `$$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
-&lt;/tr&gt;
-&lt;/table&gt; 
-
----
-template: variance_decomposition
-## L'exemple des fréquence cardiaque
-
-### Type 1
-
-```r
-MComp &lt;- lm(freqC ~ Sexe + Sport_Fact +Sexe:Sport_Fact, data = freqdata)
-anova(MComp)
-```
-
-```
-Analysis of Variance Table
-
-Response: freqC
-                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
-Sexe             1   0.63   0.625  0.2308  0.634439    
-Sport_Fact       4 483.90 120.975 44.6677 3.207e-12 ***
-Sexe:Sport_Fact  4  54.00  13.500  4.9846  0.003347 ** 
-Residuals       30  81.25   2.708                      
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
---
-### Type 2
-
-
-```r
-library(car)
-Anova(MComp, type = 2)
-```
-
-```
-Anova Table (Type II tests)
-
-Response: freqC
-                Sum Sq Df F value    Pr(&gt;F)    
-Sexe              0.63  1  0.2308  0.634439    
-Sport_Fact      483.90  4 44.6677 3.207e-12 ***
-Sexe:Sport_Fact  54.00  4  4.9846  0.003347 ** 
-Residuals        81.25 30                      
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
----
-template: variance_decomposition
-## L'exemple des fréquence cardiaque
-
-Il s'agit du cas particulier `\(n_{ij}\)` sont tous égaux. Le plan d'expérience est dit **équilibré**.
-
---
-
-
-&lt;img src="./RSS3_eq.png" width="45%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
----
-template: variance_decomposition
-## Fréquence cardiaque, plan d'expérience déséquilibré
-
-
-```r
-table(freqdata_des$Sexe, freqdata_des$Sport)
-```
-
-```
-   
-    1 2 3 4 5
-  F 6 3 5 3 2
-  M 3 2 6 5 5
-```
-
-```r
-anova(MComp)
-```
-
-```
-Analysis of Variance Table
-
-Response: freqC
-                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
-Sexe             1  46.88  46.881  28.129 9.882e-06 ***
-Sport_Fact       4 461.77 115.441  69.265 1.025e-14 ***
-Sexe:Sport_Fact  4  69.73  17.432  10.459 1.995e-05 ***
-Residuals       30  50.00   1.667                      
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
-
-```r
-Anova(MComp, type = 2)
-```
-
-```
-Anova Table (Type II tests)
-
-Response: freqC
-                Sum Sq Df F value    Pr(&gt;F)    
-Sexe              1.14  1  0.6857    0.4142    
-Sport_Fact      461.77  4 69.2648 1.025e-14 ***
-Sexe:Sport_Fact  69.73  4 10.4593 1.995e-05 ***
-Residuals        50.00 30                      
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-```
 
 
 
 ---
-template: variance_decomposition
-## Exercice
+# Pause
 
-Indiquer dans chaque portion du schéma ci-dessous, le somme des carrés représentés. 
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!
 
-
-&lt;img src="./RSS3.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
-
----
-template: pause
-
----
-name: comp_moyenne
-# Comparaison des différents groupes
----
-template: comp_moyenne
-
-## Question 
-
-&lt;a class=question&gt; Quels sont les niveaux de pratiques sportives correspondant à des fréquences cardiaques différentes ?&lt;/a&gt;
-
---
-
-Calcul des moyennes par niveau de pratique sportive
-
-
-```
-[90m# A tibble: 5 x 2[39m
-  Sport     m
-  [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m     1  80.6
-[90m2[39m     2  81.8
-[90m3[39m     3  85.4
-[90m4[39m     4  85.4
-[90m# … with 1 more row[39m
-```
-
-
-Calcul des moyennes par sexe
-
-
-```
-[90m# A tibble: 2 x 2[39m
-  Sexe      m
-  [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m F      83.7
-[90m2[39m M      85.9
-```
-
-
---
-&lt;a style=care&gt; Attention : &lt;/a&gt; comparaison de femmes sportives avec des hommes sédentaires
-
-Plan d'expérience
-
-
-```
-   
-    1 2 3 4 5
-  F 6 3 5 3 2
-  M 3 2 6 5 5
-```
-
-
-
----
-template: comp_moyenne
-
-La moyenne au sein du groupe `\(i\)` pour le facteur est 1 est donnée par :
-`$$Y_{i..} = \frac{1}{n_{i+}}\sum_{j=1}^J \sum_{k=1}^{n_ij}Y_{ijk},$$`
-avec `\(n_{i+}=\sum_j n_{ij},\)` le nombre total d'observations pour le niveau `\(i\)`. 
-
-Alors `$$\mathbb{E}(Y_{i..} )= \mu + \alpha_i  + \frac{1}{n_{i+}}\sum_{j=1}^J  n_{ij} (\beta_j  +\gamma_{ij}).$$`
-
---
-Sur notre exemple
-`$$\mathbb{E}(Y_{1..} )= \mu  + \alpha_1 + \frac{1}{n_{i+}} \left( 6 (\beta_1 + \gamma_{11}) + 3 (\beta_2 + \gamma_{12})  + 5 (\beta_3 + \gamma_{13}) + 3 (\beta_4 + \gamma_{14})+ 2 (\beta_5 + \gamma_{15})\right).$$`
-
-`$$\mathbb{E}(Y_{2..} )= \mu  + \alpha_2 + \frac{1}{n_{i+}} \left( 3 (\beta_1 + \gamma_{21}) + 2 (\beta_2 + \gamma_{22})  + 6 (\beta_3 + \gamma_{23}) + 5 (\beta_4 + \gamma_{24})+ 5 (\beta_5 + \gamma_{25})\right).$$`
-
---
-
-`$$\begin{align}
-\mathbb{E}(Y_{1..} - Y_{2..} )= &amp; \alpha_1- \alpha_2 + \frac{1}{n_{i+}} \left( 3 \beta_1  + 6\gamma_{11}  - 3\gamma_{21} +\beta_2 + 3\gamma_{12}  - 2\gamma_{22} - \beta_3 +5\gamma_{13}  - 6\gamma_{23}\right. \\
-&amp; \left. -2\beta_4 + 3 \gamma_{14}  -  5\gamma_{24} -3 \beta_5 + 2 \gamma_{15} -5 \gamma_{25} \right).
-\end{align}$$`
-
-Les effets potentiels de la pratique sportive n'interviennent pas de la même manière dans les deux moyennes.
-
-
----
-template: comp_moyenne
-## Moyennes ajustées
-
-C'est la moyenne qu'on observerait dans un plan d'expérience équilibré
-
-`$$\tilde{\mu}_{i.} = \mu + \alpha_i + \frac{1}{J}\sum_{j=1}^J (\beta_j +\gamma_{ij}).$$`
-`$$\tilde{\mu}_{.j} = \mu + \beta_j + \frac{1}{I}\sum_{i=1}^I (\alpha_i +\gamma_{ij}).$$`
-
-
-*On redresse artificiellement le plan d'expérience*
---
-
-`$$\tilde{\mu}_{1.}-\tilde{\mu}_{2.} =  \alpha_1  -\alpha_{2}+ \frac{1}{J}\sum_{j=1}^J (\gamma_{1j} -\gamma_{2j}).$$`
-
----
-template: comp_moyenne
-
-## Moyennes ajustées pour le sexe
-
-
-```r
-library(emmeans)
-m_ajust_sexe &lt;- emmeans(MComp, "Sexe")
-pairs(m_ajust_sexe)
-```
-
-```
- contrast estimate    SE df t.ratio p.value
- F - M       0.373 0.442 30 0.844   0.4052 
-
-Results are averaged over the levels of: Sport_Fact 
-```
-
-```r
-plot(m_ajust_sexe)
-```
-
-&lt;img src="regression_files/figure-html/moy_ajustees-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
----
-
-template: comp_moyenne
-## Moyennes ajustées pour le sport
-
-
-```r
-m_ajust_sport &lt;- emmeans(MComp, "Sport_Fact")
-summary(pairs(m_ajust_sport))
-```
-
-```
- contrast estimate    SE df t.ratio p.value
- 1 - 2      -1.000 0.745 30  -1.342 0.6681 
- 1 - 3      -4.667 0.601 30  -7.766 &lt;.0001 
- 1 - 4      -4.933 0.656 30  -7.518 &lt;.0001 
- 1 - 5     -11.300 0.707 30 -15.981 &lt;.0001 
- 2 - 3      -3.667 0.707 30  -5.185 0.0001 
- 2 - 4      -3.933 0.755 30  -5.212 0.0001 
- 2 - 5     -10.300 0.799 30 -12.886 &lt;.0001 
- 3 - 4      -0.267 0.612 30  -0.435 0.9921 
- 3 - 5      -6.633 0.667 30  -9.950 &lt;.0001 
- 4 - 5      -6.367 0.717 30  -8.881 &lt;.0001 
-
-Results are averaged over the levels of: Sexe 
-P value adjustment: tukey method for comparing a family of 5 estimates 
-```
-
----
-
-template: comp_moyenne
-## Moyennes ajustées pour le sport
-
-&lt;img src="regression_files/figure-html/ajuste_sport_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
+Correction en TP &lt;/p&gt; 
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
