@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Analyse de la variance</title>
+    <title>Régression linéaire</title>
     <meta charset="utf-8" />
     <meta name="author" content="Marie-Pierre Etienne" />
     <script src="libs/header-attrs-2.4/header-attrs.js"></script>
@@ -12,8 +12,8 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Analyse de la variance
-## à 2 facteurs
+# Régression linéaire
+## simple et multiple
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
 ### 2020/09/11 (updated: 2020-10-08)
@@ -35,60 +35,42 @@ name: intro
 
 ---
 template: intro
-## Notre exemple de fréquence cardiaque
+## Etude de la pollution au SO2
 
-On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
-
+On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la viille
 
 
 
 
 ```r
 library(coursesdata)
-data(freqdata)
+data(usdata)
 ```
 
-&lt;img src="anova2_files/figure-html/freqdata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/usfata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 --
-&lt;p class="question"&gt; Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?&lt;/p&gt;
-
-Nous avions vu dans le cours sur l'analyse de la variance à 1 facteur qu'il n'y avait pas de différence entre homme et femmes.
+&lt;p class="question"&gt; La taille d'une ville est elle lidée à la pollution en SO2 ?&lt;/p&gt;
 
 
 ---
 template: intro
-## Notre exemple de fréquence cardiaque
-
-En plus du sexe, le jeu de données contient des informations sur le niveau de pratique sportive
-
-&lt;img src="anova2_files/figure-html/sport-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
---
-&lt;p class=question&gt; Y a t il un effet du sexe ou du sport sur la fréquence cardiaque ? &lt;/p&gt;
-&lt;p class=question&gt; Y a t il un effet du sexe  sur la fréquence cardiaque ? &lt;/p&gt;
-&lt;p class=question&gt; Y a t il un effet du sport sur la fréquence cardiaque ? &lt;/p&gt;
-
----
-template: intro
-## Cadre général du modèle d'analyse de la variance à 2 facteurs
+## Cadre général du modèle de régression simple
 
 On étudie le lien entre  
 - une variable quantitative notée `\(Y\)` (la fréquence cardiaque),
-- et deux variables facteurs pouvant prendre respectivement `\(I\)` modalités (I=2 pour le Sexe)  et J modalités (J=5 pour le Sport)
+- et une variable quantitative `\(x\)`.
 
-Les données peuvent être visualisées à l'aide d'un boxplot.
+Les données peuvent être visualisées à l'aide d'un nuage de points.
 
 
 --
-&lt;p class="question"&gt; Y a t il un effet de l'un au moins des facteurs ?&lt;/p&gt;
-&lt;p class="question"&gt; Y a t il un effet du facteur 1 ?&lt;/p&gt;
-&lt;p class="question"&gt; Y a t il un effet du facteur 2 ?&lt;/p&gt;
-
+&lt;p class="question"&gt; La variable x a-t-elle un effet sur la variable Y ?&lt;/p&gt;
 
 ---
 name: model
-# Le modèle d'analyse de la variance à 2 facteurs
+# Le modèle de régression simple
 
 ---
 template: model
@@ -112,25 +94,27 @@ Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
 
 
 
-
-
-
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="regression_files/figure-html/reg_versiongraphique_user_04_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 &lt;style&gt;
-.panel1-anova_versiongraphique_anova2-user {
+.panel1-reg_versiongraphique-user {
   color: black;
   width: 99%;
   hight: 32%;
@@ -138,7 +122,7 @@ count: false
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-anova_versiongraphique_anova2-user {
+.panel2-reg_versiongraphique-user {
   color: black;
   width: NA%;
   hight: 32%;
@@ -146,7 +130,7 @@ count: false
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-anova_versiongraphique_anova2-user {
+.panel3-reg_versiongraphique-user {
   color: black;
   width: NA%;
   hight: 33%;
@@ -159,13 +143,6 @@ count: false
 
 
 ---
-count:false
-
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_fade-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
-
----
-
 
 
 
@@ -173,20 +150,25 @@ count:false
 
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_M0_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_M0_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/reg_versiongraphique_M0_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="regression_files/figure-html/reg_versiongraphique_M0_user_04_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 &lt;style&gt;
-.panel1-anova_versiongraphique_M0-user {
+.panel1-reg_versiongraphique_M0-user {
   color: black;
   width: 99%;
   hight: 32%;
@@ -194,7 +176,7 @@ count: false
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-anova_versiongraphique_M0-user {
+.panel2-reg_versiongraphique_M0-user {
   color: black;
   width: NA%;
   hight: 32%;
@@ -202,7 +184,7 @@ count: false
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-anova_versiongraphique_M0-user {
+.panel3-reg_versiongraphique_M0-user {
   color: black;
   width: NA%;
   hight: 33%;
@@ -211,6 +193,9 @@ count: false
   font-size: 80%
 }
 &lt;/style&gt;
+
+
+
 
 
 
@@ -222,164 +207,49 @@ template: model
 
 Lequel de ces mécanismes est le plus crédible au vu des donées ?
 
-&lt;img src="anova2_files/figure-html/compare_model_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
-
+&lt;img src="regression_files/figure-html/compare_model_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 template: model
 
-## Version régulière du modèle Mcomp
+## Le modèle de régression simple 
 
-`$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+`$$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
 avec 
-- `\(i=1,\ldots,I\)` le niveau du facteur 1,
-- `\(j=1,\ldots,J\)` le niveau du facteur 2,
-- `\(k= 1,\ldots, n_{ij}\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
-- `\(n_{ij}\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(n=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
-- `\(\mu_{ij}\)` le comportement moyen du groupe `\((i,j)\)`,
-- `\(\sigma^2\)` la variance commune à tous les groupes.
+- `\(x_k\)` la valeur de la variable explicative pour l'observation `\(k\)`, 
+- `\(k=1,\ldots,n\)` le numéro d'individus, `\(n\)` le nombre total d'individus,
+- `\(\beta_0\)` l'ordonnée à l'origine, 
+- `\(\beta_1\)` la pente de la droite, mesure de l'effet de la variable `\(x\)`
+
+- `\(\sigma^2\)` la variance.
 
 ### Une écriture équivalente 
 
-`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_{ij}, \sigma^2).$$`
+`$$Y_{k} \overset{ind}{\sim}\mathcal{N}(\beta_0+\beta_1 x_k, \sigma^2).$$`
 
 
 ### Nombre de paramètres du modèle
 
-- `\(I*J\)` paramètres de moyenne  `\((\mu_{11}, \mu_{12}, \ldots,  \mu_{1J}, \ldots \mu_{IJ})\)`; 
+- `\(2\)` paramètres de moyenne  `\((\beta_0, \beta_1)\)`; 
 - 1 paramètre de variance `\(\sigma^2\)`
 
 ---
 template: model
 
-## Version régulière du modèle Mcomp sur l'exemple 1
+## Le modèle de régression simple sur l'exemple de la pollution.
 
-`$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+`$$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
 avec 
-- `\(i=1,\ldots,2\)` le niveau du facteur Sexe,
-- `\(j=1,\ldots,5\)` le niveau du facteur Sport,
-- `\(k= 1,\ldots, 4\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
-- `\(4\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(n= 40=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
-- `\(\mu_{ij}\)` le comportement moyen du groupe `\((i,j)\)`,
-- `\(\sigma^2\)` la variance commune à tous les groupes.
+- `\(x_k\)` la population dans la ville `\(k\)`, 
+- `\(k=1,\ldots,n\)` le numéro de la ville, `\(n=41\)`,
+- `\(\beta_0\)` l'ordonnée à l'origine, 
+- `\(\beta_1\)` la pente de la droite, mesure de l'effet de la population sur la pollution.
 
+- `\(\sigma^2\)` la variance.
 
-
-`\(I=2, J= 5\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
-
-
-### Nombre de paramètres
-- 10 paramètres de moyenne
+### Nombre de paramètres du modèle
+- 2 paramètres de moyennes
 - 1 paramètre de variance
-
----
-template: model
-## Version singulière du modèle du modèle Mcomp
-
-`$$Y_{ijk} = \mu + \alpha_i +\beta_j +\gamma_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
-avec 
-- `\(i=1,\ldots,I\)` le niveau du facteur 1,
-- `\(j=1,\ldots,J\)` le niveau du facteur 2,
-- `\(k= 1,\ldots, n_{ij}\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
-- `\(\mu\)`  le comportement moyen de référence
-- `\(\alpha_i\)`  l'effet différentiel du niveau `\(i\)` 
-- `\(\beta_j\)`  l'effet différentiel du niveau `\(j\)` 
-- `\(\gamma_{ij}\)`  l'effet différentiel de la rencontre des niveaux `\((i,j),\)`
-- `\(\sigma^2\)` la variance commune à tous les groupes.
-
-
-### Nombre de paramètres du modèle
-
-- `\(1 + I + J + I*J\)` paramètres de moyenne  
-- 1 paramètre de variance `\(\sigma^2\)`
-
---
-
-#### La version dans les logiciels et qui permet de séparer les effets des différens facteurs.
-
-
-
----
-template: model
-## Lien entre les deux versions du même modèle
-
- &lt;table style="width:100%"&gt;
-  &lt;tr&gt;
-    &lt;th&gt;Groupe&lt;/th&gt;
-    &lt;th&gt;V. régulière&lt;/th&gt;
-    &lt;th&gt;V. singulière&lt;/th&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;td&gt;1&lt;/td&gt;
-    &lt;td&gt; `\(\mu_{11}\)` &lt;/td&gt;
-    &lt;td&gt; `\(\mu +\alpha_1 + \beta_1 + \gamma_{11}\)` &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-    &lt;td&gt;2&lt;/td&gt;
-    &lt;td&gt; `\(\mu_{12}\)` &lt;/td&gt;
-    &lt;td&gt; `\(\mu +\alpha_1 + \beta_2 + \gamma_{12}\)` &lt;/td&gt;
-  &lt;/tr&gt;
-    &lt;tr&gt;
-    &lt;td&gt; &lt;/td&gt;
-    &lt;td&gt;  &lt;/td&gt;
-    &lt;td&gt;   &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;/tr&gt;
-    &lt;tr&gt;
-    &lt;td&gt; &lt;/td&gt;
-    &lt;td&gt;  &lt;/td&gt;
-    &lt;td&gt;   &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;/tr&gt;
-    &lt;tr&gt;
-    &lt;td&gt; &lt;/td&gt;
-    &lt;td&gt;  &lt;/td&gt;
-    &lt;td&gt;   &lt;/td&gt;
-  &lt;/tr&gt;
-    &lt;tr&gt;
-    &lt;td&gt;I&lt;/td&gt;
-    &lt;td&gt; `\(\mu_{IJ}\)` &lt;/td&gt;
-    &lt;td&gt; `\(\mu +\alpha_I +\beta_J +\gamma_{IJ}\)` &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/table&gt; 
-
---
-
-&lt;a class=care&gt; Problème &lt;/a&gt;  Le problème est identique au modèle d'analyse de la variance, le modèle sous cette forme est  &lt;a style="font-weight:400;"&gt; indéterminé&lt;/a&gt;.
-
---
-
-#### Solution : ajouter des contraintes
-Par défaut dans R :
-`\(\alpha_1=0,\)`  `\(\beta_1=0,\)` et `\(\gamma_{1j}=0\)` pour tous les `\(j\)` et `\(\gamma_{i1}=0\)` pour tous les `\(i\)`.
-
-Ce qui correspond à `\(1 + 1 + J + (I-1)=I  + J +1\)` contraintes. 
-
-#### Nombre de paramètres 
-- On a donc `\(1 + I + J + IJ\)` paramètres dont `\(I  + J +1\)` sont contraints, il reste donc
-`\(IJ\)` à estimer pour le comportement moyen
-- 1 paramètre de variance `\(\sigma^2\)`.
-
-
-
----
-template: model
-## Que signifient ces contraintes (à partir de l'exemple)
-
-Le groupe `\((1,1)\)`, c'est à dire les femmes très sportives ont un comportement moyen dans le modèle égal à `\(\mu +\alpha_1 +\beta_1 + \gamma_{11},\)` ce qui vaut `\(\mu\)` étant données les contraintes.
-
---
-
-Le groupe `\((1,j)\)` désigne les femmes à la pratique sportive identifiée `\(j\)`. En moyenne leur fréquence cardiaque dans le modèle est `\(\mu + \alpha_1 +\beta_j +\gamma_{1j}\)`, soit étant données les contraintes `\(\mu +\beta_j.\)` `\(\beta_j\)` est donc l'effet différentiel du sport `\(j\)` par rapport au sport `\(1\)`  &lt;a class=care&gt; pour les femmes&lt;/a&gt;.
-
---
-
-Le groupe `\((i,1)\)` désigne les individus de sexe `\(i\)`  à la pratique sportive identifiée `\(1\)`. En moyenne leur fréquence cardiaque dans le modèle est `\(\mu + \alpha_i +\beta_1 +\gamma_{i1}\)`, soit étant données les contraintes `\(\mu +\alpha_i.\)` `\(\alpha_i\)` est donc l'effet différentiel du sexe `\(i\)`  par rapport au sexe de référence `\(1\)`   &lt;a class=care&gt; pour les sportifs de niveau 1&lt;/a&gt;.
-
---
-
-Les termes `\(\gamma_{ij}\)` sont difficiles à interpréter et seront discuter en TP.
-
 
 
 ---
@@ -389,230 +259,61 @@ template: model
 ### Forme régulière 
 
 `$$Y=\begin{pmatrix}
-Y_{111}\\
-Y_{112}\\
+Y_{1}\\
+Y_{2}\\
 \vdots\\
-Y_{11n_{11}}\\
-Y_{121}\\
+Y_{k}\\
 \vdots\\
-Y_{12n_{12}}\\
-\vdots\\
-Y_{ijk}\\
-\vdots\\
-Y_{IJn_{IJ}}\end{pmatrix},
+Y_{n}\end{pmatrix},
  \quad
-{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_{11} &amp; \mu_{12} &amp; \ldots &amp; \ldots &amp;\mu_{IJ}\end{matrix}}}{\begin{pmatrix}
-1 &amp; 0 &amp; 0 &amp; \ldots 0\\
-1 &amp; 0 &amp; 0 &amp; \ldots 0\\
-\vdots\\
-1 &amp; 0 &amp; 0 &amp; \ldots 0\\
-0 &amp; 1 &amp; 0 &amp; \ldots 0 \\
-\vdots\\
-0 &amp; 1 &amp; 0 &amp; \ldots 0 \\
-\vdots\\
-0 &amp; \ldots  &amp; 1 &amp; \ldots 0 \\\vdots\\
-0 &amp; 0 &amp; 0 &amp; \ldots 1 \end{pmatrix}},\quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\beta_0  &amp; \beta_1\end{matrix}}}{\begin{pmatrix}
+1 &amp; x_1\\
+1 &amp; x_2\\
+\vdots &amp; \vdots\\
+1 &amp; x_k\\
+ \vdots &amp; \vdots\\
+1 &amp; x_n\\
+ \end{pmatrix}},\quad
 {\bf{\theta}} =\begin{pmatrix}
-\mu_{11}\\
-\mu_{12}\\
+\beta_0\\
+\beta_1\\
+\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{1}\\
+E_{2}\\
 \vdots\\
-\mu_{1J}\\
-\mu_{21}\\
+E_{k}\\
 \vdots\\
-\mu_{IJ}\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
-E_{111}\\
-E_{112}\\
-\vdots\\
-E_{11n_{11}}\\
-E_{121}\\
-\vdots\\
-E_{12n_{12}}\\
-\vdots\\
-E_{IJn_{IJ}}\end{pmatrix}}$$`
+E_{n}\\
+\end{pmatrix}}$$`
 ---
 template: model
 
-## Sous forme matricielle
- `$$\bf{Y = X\theta + E}$$`
-### Forme singulière
+## Exercice
 
-&lt;p class=question&gt; Ecrire le modèle en version singulière sous forme matricielle en intégrant les contraintes.&lt;/p&gt;
+&lt;p class=question&gt; Détailler le modèle sous forme matricielle pour l'exemple de la pollution (écrire les 3 premières lignes de la matrice `\(X\)` )&lt;/p&gt;
+
+--
+Attention, la réponse est dans la slide qui suit !
 
 
 ---
 template: model
 
-## sur l'exemple de la fréquence cardiaque
+## Correction 
 
 
 
 ```r
-Mcomp &lt;- lm(freqC ~ Sexe + Sport + Sexe:Sport, data = freqdata)
-model.matrix(Mcomp)
+Mcomp &lt;- lm(SO2 ~ pop , data = usdata)
+model.matrix(Mcomp) %&gt;% head(n = 3)
 ```
 
 ```
-   (Intercept) SexeM Sport SexeM:Sport
-1            1     1     1           1
-2            1     0     1           0
-3            1     1     1           1
-4            1     0     1           0
-5            1     1     1           1
-6            1     0     1           0
-7            1     1     1           1
-8            1     0     1           0
-9            1     1     2           2
-10           1     0     2           0
-11           1     1     2           2
-12           1     0     2           0
-13           1     1     2           2
-14           1     0     2           0
-15           1     1     2           2
-16           1     0     2           0
-17           1     1     3           3
-18           1     0     3           0
-19           1     1     3           3
-20           1     0     3           0
-21           1     1     3           3
-22           1     0     3           0
-23           1     1     3           3
-24           1     0     3           0
-25           1     1     4           4
-26           1     0     4           0
-27           1     1     4           4
-28           1     0     4           0
-29           1     1     4           4
-30           1     0     4           0
-31           1     1     4           4
-32           1     0     4           0
-33           1     1     5           5
-34           1     0     5           0
-35           1     1     5           5
-36           1     0     5           0
-37           1     1     5           5
-38           1     0     5           0
-39           1     1     5           5
-40           1     0     5           0
-attr(,"assign")
-[1] 0 1 2 3
-attr(,"contrasts")
-attr(,"contrasts")$Sexe
-[1] "contr.treatment"
+  (Intercept) pop
+1           1 582
+2           1 132
+3           1 716
 ```
-
----
-template: model
-
-## sur l'exemple de la fréquence cardiaque
-*Attention, il manque une colonne*
-
-
-```r
-Mcomp &lt;- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
-model.matrix(Mcomp)
-```
-
-```
-   (Intercept) SexeM Sport_Fact2 Sport_Fact3 Sport_Fact4 Sport_Fact5
-1            1     1           0           0           0           0
-2            1     0           0           0           0           0
-3            1     1           0           0           0           0
-4            1     0           0           0           0           0
-5            1     1           0           0           0           0
-6            1     0           0           0           0           0
-7            1     1           0           0           0           0
-8            1     0           0           0           0           0
-9            1     1           1           0           0           0
-10           1     0           1           0           0           0
-11           1     1           1           0           0           0
-12           1     0           1           0           0           0
-13           1     1           1           0           0           0
-14           1     0           1           0           0           0
-15           1     1           1           0           0           0
-16           1     0           1           0           0           0
-17           1     1           0           1           0           0
-18           1     0           0           1           0           0
-19           1     1           0           1           0           0
-20           1     0           0           1           0           0
-21           1     1           0           1           0           0
-22           1     0           0           1           0           0
-23           1     1           0           1           0           0
-24           1     0           0           1           0           0
-25           1     1           0           0           1           0
-26           1     0           0           0           1           0
-27           1     1           0           0           1           0
-28           1     0           0           0           1           0
-29           1     1           0           0           1           0
-30           1     0           0           0           1           0
-31           1     1           0           0           1           0
-32           1     0           0           0           1           0
-33           1     1           0           0           0           1
-34           1     0           0           0           0           1
-35           1     1           0           0           0           1
-36           1     0           0           0           0           1
-37           1     1           0           0           0           1
-38           1     0           0           0           0           1
-39           1     1           0           0           0           1
-40           1     0           0           0           0           1
-   SexeM:Sport_Fact2 SexeM:Sport_Fact3 SexeM:Sport_Fact4 SexeM:Sport_Fact5
-1                  0                 0                 0                 0
-2                  0                 0                 0                 0
-3                  0                 0                 0                 0
-4                  0                 0                 0                 0
-5                  0                 0                 0                 0
-6                  0                 0                 0                 0
-7                  0                 0                 0                 0
-8                  0                 0                 0                 0
-9                  1                 0                 0                 0
-10                 0                 0                 0                 0
-11                 1                 0                 0                 0
-12                 0                 0                 0                 0
-13                 1                 0                 0                 0
-14                 0                 0                 0                 0
-15                 1                 0                 0                 0
-16                 0                 0                 0                 0
-17                 0                 1                 0                 0
-18                 0                 0                 0                 0
-19                 0                 1                 0                 0
-20                 0                 0                 0                 0
-21                 0                 1                 0                 0
-22                 0                 0                 0                 0
-23                 0                 1                 0                 0
-24                 0                 0                 0                 0
-25                 0                 0                 1                 0
-26                 0                 0                 0                 0
-27                 0                 0                 1                 0
-28                 0                 0                 0                 0
-29                 0                 0                 1                 0
-30                 0                 0                 0                 0
-31                 0                 0                 1                 0
-32                 0                 0                 0                 0
-33                 0                 0                 0                 1
-34                 0                 0                 0                 0
-35                 0                 0                 0                 1
-36                 0                 0                 0                 0
-37                 0                 0                 0                 1
-38                 0                 0                 0                 0
-39                 0                 0                 0                 1
-40                 0                 0                 0                 0
-attr(,"assign")
- [1] 0 1 2 2 2 2 3 3 3 3
-attr(,"contrasts")
-attr(,"contrasts")$Sexe
-[1] "contr.treatment"
-
-attr(,"contrasts")$Sport_Fact
-[1] "contr.treatment"
-```
-
----
-class: inverse
-name: pause
-# Pause
-
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
-&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
-
 ---
 name: parametre
 # Estimation des paramètres
@@ -657,58 +358,263 @@ La somme des carrés résiduelles s'écrit sous la forme
   $$S^2 =\frac{1}{DF_{res}} RSS, $$
 est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
 
-Dans le cas du modèle d'analyse de la variance à 2 facteurs `\(DF_res=n-IJ\)` (n observations et IJ paramètres de moyennes à estimer, le nombre de composantes dans le vecteur `\(\theta\)`)
+Dans le cas du modèle de régression simple  `\(DF_{res}=n-2\)` (n observations et 2 paramètres de moyennes à estimer, le nombre de composantes dans le vecteur `\(\theta\)`)
 
 --
 
 ## Estimation de `\(\sigma^2\)`
 
-`$$\hat{\sigma}^2 =\frac{1}{n-IJ} RSS_{obs}.$$`
+`$$\hat{\sigma}^2 =\frac{1}{n-2} RSS_{obs}.$$`
 ---
 template: parametre
-## sur l'exemple de la fréquence cardiaque
+## Vérifier l'estimation sur l'exemple de la pollution
+
 
 
 ```r
-summary(Mcomp)
+X &lt;- model.matrix(Mcomp)
+XXprimemoinsUn &lt;- solve(t(X)%*%X)
+XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
 ```
 
 ```
+                   [,1]
+(Intercept) 17.86831630
+pop          0.02001359
+```
 
-Call:
-lm(formula = freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
+```r
+summary(Mcomp)$coefficients
+```
 
-Residuals:
-   Min     1Q Median     3Q    Max 
- -3.00  -1.00   0.00   1.00   3.25 
+```
+               Estimate  Std. Error  t value     Pr(&gt;|t|)
+(Intercept) 17.86831630 4.713843676 3.790604 0.0005093514
+pop          0.02001359 0.005643813 3.546111 0.0010349968
+```
+--
+Loi de l'estimateur
 
-Coefficients:
-                  Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)        81.0000     0.8229  98.438  &lt; 2e-16 ***
-SexeM              -2.0000     1.1637  -1.719 0.095979 .  
-Sport_Fact2         1.5000     1.1637   1.289 0.207247    
-Sport_Fact3         1.5000     1.1637   1.289 0.207247    
-Sport_Fact4         4.7500     1.1637   4.082 0.000305 ***
-Sport_Fact5         8.7500     1.1637   7.519 2.21e-08 ***
-SexeM:Sport_Fact2   0.5000     1.6457   0.304 0.763361    
-SexeM:Sport_Fact3   6.5000     1.6457   3.950 0.000438 ***
-SexeM:Sport_Fact4   1.5000     1.6457   0.911 0.369316    
-SexeM:Sport_Fact5   2.7500     1.6457   1.671 0.105119    
+
+```r
+summary(Mcomp)$sigma^2 * XXprimemoinsUn 
+```
+
+```
+            (Intercept)           pop
+(Intercept) 22.22032220 -1.938582e-02
+pop         -0.01938582  3.185262e-05
+```
+
+```r
+sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
+```
+
+```
+(Intercept)         pop 
+4.713843676 0.005643813 
+```
+
+
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+template: model
 
-Residual standard error: 1.646 on 30 degrees of freedom
-Multiple R-squared:  0.8689,	Adjusted R-squared:  0.8296 
-F-statistic: 22.09 on 9 and 30 DF,  p-value: 6.689e-11
-```
+## Le modèle de régression multiple
+
+Plusieurs variables sont potentiellement liées à la pollution enSO2
+
+
+- temp : Average temperature in Fahrenheit
+- manuf : No. of companies employing more than 20 employees
+- pop : Population in thousands
+- wind : Average annual wind speed in miles/hour
+- precip : annual precipitation height in inches
+- days : No. of days of precipitation
+
+
+&lt;a class=question&gt; Quelles sont les variables liées à la pollution en SO2 ? &lt;/a&gt;
 
 ---
-class: inverse
-name: pause
-# Pause
+template: model
 
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
-&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
+## Le modèle de régression multiple 
+
+`$$Y_{k} = \beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p}  +  E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+avec 
+- `\(x_{k}^{l}\)` la valeur de la variable explicative `\(l\)` pour l'observation `\(k\)`, 
+- `\(k=1,\ldots,n\)` le numéro d'individus, `\(n\)` le nombre total d'individus,
+- `\(\beta_0\)` l'ordonnée à l'origine, 
+- `\(\beta_l\)` l'effet de la variable `\(X^{l}\)` sur la variable à expliquer,
+- `\(\sigma^2\)` la variance.
+
+### Une écriture équivalente 
+
+`$$Y_{k} \overset{ind}{\sim}\mathcal{N}\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$`
+
+
+### Nombre de paramètres du modèle
+
+- `\(l+1\)` paramètres de moyenne  `\((\beta_0, \beta_1, \ldots, \beta_l)\)`; 
+- 1 paramètre de variance `\(\sigma^2\)`
+
+---
+template: model
+## Sous forme matricielle
+ `$$\bf{Y = X\theta + E}$$`
+### Forme régulière 
+
+`$$Y=\begin{pmatrix}
+Y_{1}\\
+Y_{2}\\
+\vdots\\
+Y_{k}\\
+\vdots\\
+Y_{n}\end{pmatrix},
+ \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\beta_0  &amp;&amp; \beta_1&amp;&amp; \beta_2&amp;&amp;\ldots &amp;&amp;\beta_l\end{matrix}}}{\begin{pmatrix}
+1 &amp; x_1^{1} &amp; x_1^{2} &amp; \ldots &amp;x_1^{l}\\
+1 &amp; x_2^{1} &amp; x_2^{2} &amp; \ldots &amp;x_2^{l}\\
+\vdots &amp; \vdots&amp; \vdots &amp;&amp; \vdots\\
+1 &amp; x_k^{1} &amp; x_k^{2} &amp; \ldots &amp;x_k^{l}\\
+ \vdots &amp; \vdots&amp; \vdots &amp;&amp; \vdots\\
+1 &amp; x_n^{1} &amp; x_n^{2} &amp; \ldots &amp;x_n^{l}\\
+ \end{pmatrix}},\quad
+{\bf{\theta}} =\begin{pmatrix}
+\beta_0\\
+\beta_1\\
+\beta_2\\
+\vdots\\
+\beta_l\\
+\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{1}\\
+E_{2}\\
+\vdots\\
+E_{k}\\
+\vdots\\
+E_{n}\\
+\end{pmatrix}}$$`
+
+---
+template: model
+
+## Sur l'exemple de la pollution
+
+
+
+```r
+Mcomp &lt;- lm(SO2 ~ . - City , data = usdata) # toutes les variables sauf City
+model.matrix(Mcomp) %&gt;% head(n = 3)
+```
+
+```
+  (Intercept) temp manuf pop wind precip days
+1           1 70.3   213 582  6.0   7.05   36
+2           1 61.0    91 132  8.2  48.52  100
+3           1 56.7   453 716  8.7  20.66   67
+```
+---
+name: parametre
+# Estimation des paramètres
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version matricielle
+
+
+Le modèle sous forme matricielle s'écrit
+
+`$$\bf{Y = X\theta + E}.$$`
+--
+
+### Estimation de `\(\theta\)`
+
+`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$`
+
+--
+
+### Estimateur de `\(\theta\)`
+
+`$$T = (X^\intercal X )^{-1} X^\intercal Y.$$`
+--
+
+### Loi de l'estimateur de `\(\theta\)`
+
+
+`$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$`
+
+---
+template: parametre
+## Le paramètre de variance
+
+La somme des carrés résiduelles s'écrit sous la forme 
+
+`$$RSS = || Y- X \hat{\theta} ||^2$$`
+
+### Estimateur de la variance 
+
+  $$S^2 =\frac{1}{DF_{res}} RSS, $$
+est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
+
+Dans le cas du modèle de régression simple  `\(DF_{res}=n-l-1\)` (n observations et 2 paramètres de moyennes à estimer, le nombre de composantes dans le vecteur `\(\theta\)`)
+
+--
+
+## Estimation de `\(\sigma^2\)`
+
+`$$\hat{\sigma}^2 =\frac{1}{n-l-1} RSS_{obs}.$$`
+---
+template: parametre
+## Vérifier l'estimation sur l'exemple de la pollution
+
+
+
+```r
+X &lt;- model.matrix(Mcomp)
+XXprimemoinsUn &lt;- solve(t(X)%*%X)
+XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
+```
+
+```
+                    [,1]
+(Intercept) 111.72848064
+temp         -1.26794109
+manuf         0.06491817
+pop          -0.03927674
+wind         -3.18136579
+precip        0.51235896
+days         -0.05205019
+```
+
+```r
+summary(Mcomp)$coefficients
+```
+
+```
+                Estimate  Std. Error   t value     Pr(&gt;|t|)
+(Intercept) 111.72848064 47.31810073  2.361221 0.0240867374
+temp         -1.26794109  0.62117952 -2.041183 0.0490557189
+manuf         0.06491817  0.01574825  4.122245 0.0002277862
+pop          -0.03927674  0.01513274 -2.595482 0.0138461970
+wind         -3.18136579  1.81501910 -1.752800 0.0886503978
+precip        0.51235896  0.36275507  1.412410 0.1669175999
+days         -0.05205019  0.16201386 -0.321270 0.7499724652
+```
+--
+Loi de l'estimateur
+
+
+```r
+sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
+```
+
+```
+(Intercept)        temp       manuf         pop        wind      precip 
+47.31810073  0.62117952  0.01574825  0.01513274  1.81501910  0.36275507 
+       days 
+ 0.16201386 
+```
+
 
 ---
 name: modcomp
@@ -717,25 +623,21 @@ name: modcomp
 
 ---
 template: modcomp
-## Rappel exemple fréquence cardiaque (exemple 1)
+## Pollution 
 
-On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
-
-
-
-&lt;img src="anova2_files/figure-html/freqdata2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;p class="question"&gt; La pollution en SO2 dans les villes américaines est elles liées à l'une au moins des variables caractérisiques des villes ?&lt;/p&gt;
 
 
---
-&lt;p class="question"&gt; Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?&lt;/p&gt;
+-- 
 
+On va à la pêche ....
 
 ---
 template: modcomp
 ## Sous forme de comparaison de modèle
 
 
-&lt;img src="anova2_files/figure-html/compare_model_graph2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/compare_model_graph2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 --
 &lt;p class="question"&gt; Le modèle Mcomp est il plus pertinent que le modèle M0 ?&lt;/p&gt;
@@ -750,23 +652,24 @@ On va donc opposer une hypothèse de travail `\(H_0\)` contre une hypothèse alt
 
 
 `$$\begin{align} 
-H_0 &amp; =\left \lbrace \mbox{Pas de différence entre les différents groupes }\right\rbrace\\
-    &amp; =\left \lbrace  \mbox{pour tout }i, \alpha_i =0, \mbox{pour tout }j,\beta_j=0  \mbox{ et pour tout }(i,j),\gamma_{ij}=0   \right\rbrace\\
+H_0 &amp; =\left \lbrace \mbox{Auncune variable n'est liée à la pollution en SO2}\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{pour tout p\geq 1, \beta_p =0   \right\rbrace\\
     &amp; =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
 \end{align}$$`
+
 
 `\(H_1\)` prend les formes équivalentes suivantes
 
 `$$\begin{align} 
-H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
-    &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \mbox{ ou un }j, \beta_j \ne 0 \mbox{ ou un } (i,j), \gamma_{ij} \ne 0  \right\rbrace\\
+H_1 &amp; =\left \lbrace \mbox{Au moins 1 variable est liée à la pollution en SO2}\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{Il existe un } p, \beta_p \ne 0  \right\rbrace\\
     &amp; =\left \lbrace  M_{comp} \mbox{ est préférable à } M0 \right\rbrace.
 \end{align}$$`
 
 --
 
 Sous `\(H_0\)`, 
-`$$F= \frac{\frac{SS_{M_{comp}}}{IJ-1}}{\frac{RSS}{n-IJ}} \underset{H_0}{\sim}\mathcal{F}(IJ-1, n-IJ)$$`  
+`$$F= \frac{\frac{SS_{M_{comp}}}{l}}{\frac{RSS}{n-l-1}} \underset{H_0}{\sim}\mathcal{F}(l, n-l-1)$$`  
 
 ---
 template: modcomp
@@ -783,17 +686,17 @@ Sous `\(H_0\)` la loi de distribution de `\(F\)` est
 
 count: false
 
-&lt;img src="anova2_files/figure-html/pvalue_graphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/pvalue_graphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/pvalue_graphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/pvalue_graphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 count: false
 
-&lt;img src="anova2_files/figure-html/pvalue_graphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/pvalue_graphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 &lt;style&gt;
 .panel1-pvalue_graphique-user {
@@ -1300,7 +1203,7 @@ Results are averaged over the levels of: Sport_Fact
 plot(m_ajust_sexe)
 ```
 
-&lt;img src="anova2_files/figure-html/moy_ajustees-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/moy_ajustees-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -1336,11 +1239,9 @@ P value adjustment: tukey method for comparing a family of 5 estimates
 template: comp_moyenne
 ## Moyennes ajustées pour le sport
 
-&lt;img src="anova2_files/figure-html/ajuste_sport_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/ajuste_sport_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
 
 
----
-template: pause
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
