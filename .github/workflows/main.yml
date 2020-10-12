@@ -20,6 +20,7 @@ jobs:
           install.packages("remotes")
           install.packages(c("devtools","plotly","ggpubr","gifski"))
           install.packages(c("tidyverse","magick","gganimate","GGally","sf", "ggfortify"))
+          install.packages('maps')
           install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos", "ggpubr", "car", "emmeans"))
           install.packages(c("kableExtra","RefManageR"))
           remotes::install_github("yihui/xaringan")
