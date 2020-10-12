@@ -18,7 +18,8 @@ car
 emmeans
 maps
 sf
-kableExtra
+rnaturalearth
 GGally
+kableExtra
 gganimate
 plotly
