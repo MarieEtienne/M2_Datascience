@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 ## simple et multiple
 ### Marie-Pierre Etienne
 ### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
-### 2020/09/11 (updated: 2020-10-08)
+### 2020/09/11 (updated: 2020-10-12)
 
 ---
 
@@ -37,7 +37,7 @@ name: intro
 template: intro
 ## Etude de la pollution au SO2
 
-On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la viille
+On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la ville
 
 
 
@@ -51,7 +51,7 @@ data(usdata)
 
 
 --
-&lt;p class="question"&gt; La taille d'une ville est elle lidée à la pollution en SO2 ?&lt;/p&gt;
+&lt;p class="question"&gt; La taille d'une ville est elle liée à la pollution en SO2 ?&lt;/p&gt;
 
 
 ---
@@ -59,14 +59,14 @@ template: intro
 ## Cadre général du modèle de régression simple
 
 On étudie le lien entre  
-- une variable quantitative notée `\(Y\)` (la fréquence cardiaque),
+- une variable quantitative notée `\(Y\)` (l'indicateur de SO2),
 - et une variable quantitative `\(x\)`.
 
 Les données peuvent être visualisées à l'aide d'un nuage de points.
 
 
 --
-&lt;p class="question"&gt; La variable x a-t-elle un effet sur la variable Y ?&lt;/p&gt;
+&lt;p class="question"&gt; La variable x permet elle d'expliquer la variabilité de la variable Y ?&lt;/p&gt;
 
 ---
 name: model
@@ -77,7 +77,7 @@ template: model
 
 ## Graphiquement 
 
-Une visualisation graphique du modèle d'analyse de la variance.
+Une visualisation graphique du modèle d'analyse de régression simple
 
 &lt;br&gt; &lt;br&gt; &lt;br&gt; &lt;br&gt;
 
@@ -217,7 +217,7 @@ template: model
 `$$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
 avec 
 - `\(x_k\)` la valeur de la variable explicative pour l'observation `\(k\)`, 
-- `\(k=1,\ldots,n\)` le numéro d'individus, `\(n\)` le nombre total d'individus,
+- `\(k=1,\ldots,n\)` le numéro d'individu, `\(n\)` le nombre total d'individus,
 - `\(\beta_0\)` l'ordonnée à l'origine, 
 - `\(\beta_1\)` la pente de la droite, mesure de l'effet de la variable `\(x\)`
 
@@ -393,11 +393,11 @@ summary(Mpop)$coefficients
 pop          0.02001359 0.005643813 3.546111 0.0010349968
 ```
 --
-Loi de l'estimateur
+## Loi de l'estimateur
 
 
 ```r
-summary(Mpop)$sigma^2 * XXprimemoinsUn 
+summary(Mpop)$sigma^2 * XXprimemoinsUn  # sigma2 Xt X
 ```
 
 ```
@@ -423,32 +423,74 @@ Il est fréquent d'utiliser un modèle de régression pour prédire.
 
 ## Prédiction de la valeur moyenne pour un `\(x\)` particulier
 
-- **Valeur moyenne attendue** pour `\(y\)` pour un `\(x\)` donné: `\(\beta_0+\beta_1 x.\)`
+### Valeur moyenne attendue pour `\(y\)` pour un `\(x\)` donné
+`\(\beta_0+\beta_1 x.\)`
 
-- **Valeur moyenne prédite** pour `\(y\)` pour un `\(x\)` donné: `\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
+### Valeur moyenne prédite pour `\(y\)` pour un `\(x\)` donné
+`\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
 
+
+```r
+predict(Mpop, newdata=data.frame(pop=333))
+```
 
 ```
        1 
 24.53284 
 ```
 
-- **Intervalle de confiance pour la valeur moyenne prédite** pour `\(y\)` pour un `\(x\)` donné: `\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
+### Intervalle de confiance pour la valeur moyenne prédite  pour `\(y\)` pour un `\(x\)` donné
+`\(\hat{\beta}_0+\hat{\beta}_1 x.\)`
 
+
+```r
+predict(Mpop, newdata=data.frame(pop=333), interval = 'confidence')
+```
 
 ```
        fit      lwr      upr
 1 24.53284 17.28453 31.78115
 ```
 
-## Prédiction de la valeur possible `\(x\)` particulier
+---
+template:  prediction
+Il est fréquent d'utiliser un modèle de régression pour prédire. 
 
+## Prédiction de la valeur possible `\(y\)` pour un  `\(x\)` particulier
+
+
+```r
+predict(Mpop, newdata=data.frame(pop=333), interval = 'prediction')
+```
 
 ```
        fit       lwr      upr
 1 24.53284 -17.90225 66.96793
 ```
 
+---
+template:  prediction
+## Sur l'exemple de la polution
+
+## Intervalle de confiance pour le comportement moyen
+
+
+&lt;img src="regression_files/figure-html/predic_plot-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+count: false
+template:  prediction
+## Sur l'exemple de la polution
+
+## Intervalle de confiance pour le comportement moyen
+
+
+&lt;img src="regression_files/figure-html/predic_plot_pred-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+name: model
+# Modèle de régression multiple
 
 ---
 template: model
@@ -479,14 +521,14 @@ template: model
 `$$Y_{k} = \beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p}  +  E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
 avec 
 - `\(x_{k}^{l}\)` la valeur de la variable explicative `\(l\)` pour l'observation `\(k\)`, 
-- `\(k=1,\ldots,n\)` le numéro d'individus, `\(n\)` le nombre total d'individus,
+- `\(k=1,\ldots,n\)` le numéro d'individu, `\(n\)` le nombre total d'individus,
 - `\(\beta_0\)` l'ordonnée à l'origine, 
 - `\(\beta_l\)` l'effet de la variable `\(X^{l}\)` sur la variable à expliquer,
 - `\(\sigma^2\)` la variance.
 
 ### Une écriture équivalente 
 
-`$$Y_{k} \overset{ind}{\sim}\mathcal{N}\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$`
+`$$Y_{k} \overset{ind}{\sim}\mathcal{N}(\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$`
 
 
 ### Nombre de paramètres du modèle
@@ -605,6 +647,7 @@ Dans le cas du modèle de régression simple  `\(DF_{res}=n-l-1\)` (n observatio
 template: parametre
 ## Vérifier l'estimation sur l'exemple de la pollution
 
+### Estimation
 
 
 ```r
@@ -638,9 +681,28 @@ wind         -3.18136579  1.81501910 -1.752800 0.0886503978
 precip        0.51235896  0.36275507  1.412410 0.1669175999
 days         -0.05205019  0.16201386 -0.321270 0.7499724652
 ```
---
-Loi de l'estimateur
+---
 
+template: parametre
+## Vérifier l'estimation sur l'exemple de la pollution
+
+### Loi de l'estimateur
+
+
+```r
+summary(Mcomp)$coefficients
+```
+
+```
+                Estimate  Std. Error   t value     Pr(&gt;|t|)
+(Intercept) 111.72848064 47.31810073  2.361221 0.0240867374
+temp         -1.26794109  0.62117952 -2.041183 0.0490557189
+manuf         0.06491817  0.01574825  4.122245 0.0002277862
+pop          -0.03927674  0.01513274 -2.595482 0.0138461970
+wind         -3.18136579  1.81501910 -1.752800 0.0886503978
+precip        0.51235896  0.36275507  1.412410 0.1669175999
+days         -0.05205019  0.16201386 -0.321270 0.7499724652
+```
 
 ```r
 sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
@@ -815,7 +877,7 @@ Model 2: SO2 ~ temp + manuf + pop + wind + precip + days
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-## Lien entr les statistiques  de tests
+### Lien entre les statistiques  de tests
 
 
 ```r
@@ -867,8 +929,35 @@ autoplot(Mcomp)
 
 ## Mathématiquement
 
-Formellement:  le levier pour l'observatio `\(i\)` est
-`$$(X (X^\intercal X)^{-1}X^\intercal)_{ii}$$`
+Le levier `\(lev_i\)` pour l'observation `\(i\)` est défini par
+`$$H=X (X^\intercal X)^{-1}X^\intercal; \quad lev_{i}= H_{ii},$$`
+--
+### D'où viennt cette matrice `\(H\)` ?
+
+$$ \hat{Y} = H Y$$
+--
+### Sur l'exemple de la régression simple 
+
+
+```r
+h.us.lm &lt;- hatvalues(Mpop)
+h.us.lm
+```
+
+```
+         1          2          3          4          5          6          7 
+0.02444303 0.04132345 0.02524994 0.02504346 0.03952636 0.04521998 0.02603168 
+         8          9         10         11         12         13         14 
+0.02486268 0.02997079 0.02531882 0.59239806 0.02579734 0.03677543 0.03258749 
+        15         16         17         18         19         20         21 
+0.02440841 0.02896059 0.03093873 0.08536149 0.02575668 0.02515988 0.02440361 
+        22         23         24         25         26         27         28 
+0.02949202 0.03430016 0.04247944 0.02597074 0.02619528 0.02590162 0.02474115 
+        29         30         31         32         33         34         35 
+0.15851954 0.02497554 0.03814844 0.02440790 0.02631315 0.02852063 0.05345225 
+        36         37         38         39         40         41 
+0.03834126 0.03112651 0.03153591 0.02483924 0.04593530 0.02526602 
+```
 
 ---
 
@@ -917,7 +1006,7 @@ count: false
 ---
 # Construire le modèle d'analyse de la covariance
 
-A partir des données bats:
+## A partir des données chauve souris (bats)
 
 Les différentes espèces de chauve souris ont des tailles de cerveau très variables, ce qui conduit à des volumes variables de la partie auditive.
 

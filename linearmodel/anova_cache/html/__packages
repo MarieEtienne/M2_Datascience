@@ -16,3 +16,5 @@ ggfortify
 carData
 car
 emmeans
+maps
+sf

@@ -57,7 +57,7 @@ name: intro
 template: intro
 ## Etude de la pollution au SO2
 
-On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la viille
+On a mesuré pour 41 villes américaines, la pollution au SO2 ainsi que la population dans la ville
 
 ```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
 ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
@@ -72,7 +72,7 @@ usdata %>% ggplot() +  aes(x= pop, y = SO2)+  geom_point()
 
 
 --
-<p class="question"> La taille d'une ville est elle lidée à la pollution en SO2 ?</p>
+<p class="question"> La taille d'une ville est elle liée à la pollution en SO2 ?</p>
 
 
 ---
@@ -80,14 +80,14 @@ template: intro
 ## Cadre général du modèle de régression simple
 
 On étudie le lien entre  
-- une variable quantitative notée $Y$ (la fréquence cardiaque),
+- une variable quantitative notée $Y$ (l'indicateur de SO2),
 - et une variable quantitative $x$.
 
 Les données peuvent être visualisées à l'aide d'un nuage de points.
 
 
 --
-<p class="question"> La variable x a-t-elle un effet sur la variable Y ?</p>
+<p class="question"> La variable x permet elle d'expliquer la variabilité de la variable Y ?</p>
 
 ---
 name: model
@@ -98,7 +98,7 @@ template: model
 
 ## Graphiquement 
 
-Une visualisation graphique du modèle d'analyse de la variance.
+Une visualisation graphique du modèle d'analyse de régression simple
 
 <br> <br> <br> <br>
 
@@ -113,13 +113,13 @@ Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
 ```{r reg_versiongraphique_prep, eval = TRUE, echo = FALSE}
 set.seed(222)
 n <- 20
-x <- rnorm(n, mean= 10, sd = 2)
+x <- round(rnorm(n, mean= 10, sd = 2),2)
 beta0 <- 1
 beta1 <- 0.5
 sigma <- 1
 fake_dta <- tibble(x= x, y = rnorm(n, mean = beta0 + beta1*x, sd =sigma))  
 
-x0 <- 8
+x0 <-  x[4]
 norm_dta <- tibble::tibble(y = rnorm(1000, mean=beta0 + beta1*x0, sd= sigma), x= x0 + dnorm(x = y- beta0 - beta1*x0, mean= 0,  sd=0.5))
 
 norm_dta0 <- tibble::tibble(y = rnorm(1000, mean=mean(fake_dta$y), sd= sigma), x= x0 + dnorm(x = y - mean(fake_dta$y), mean= 0,  sd=0.5))
@@ -131,7 +131,7 @@ ggplot(data=fake_dta) +
   ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
   ggtitle('Modèle Mcomp') +
   geom_abline(slope = beta1, intercept = beta0) + #BREAK
-  geom_point(x=8, y=beta0+beta1*8, col = 'red', size=2) + #BREAK
+  geom_point(x=x0, y=beta0+beta1*x0, col = 'red', size=2) + #BREAK
   geom_point(data=norm_dta, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
   geom_point(aes(x=x, y=y)) 
 ```
@@ -146,7 +146,7 @@ ggplot(data=fake_dta) +
   ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
   ggtitle('Modèle nul') +
   geom_abline(slope = 0, intercept = mean(fake_dta$y)) + #BREAK
-  geom_point(x=8, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
+  geom_point(x=x0, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
   geom_point(data=norm_dta0, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
   geom_point(aes(x=x, y=y)) 
 ```
@@ -162,14 +162,14 @@ pM0 <- ggplot(data=fake_dta) +
   ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
   ggtitle('Modèle nul') +
   geom_abline(slope = 0, intercept = mean(fake_dta$y)) + #BREAK
-  geom_point(x=8, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
+  geom_point(x=x0, y = mean(fake_dta$y), col = 'red', size=2) + #BREAK
   geom_point(data=norm_dta0, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
   geom_point(aes(x=x, y=y)) 
 pMcomp <- ggplot(data=fake_dta) + 
   ylab('y') + xlim(range(fake_dta$x)) +ylim(range(fake_dta$y)) +
   ggtitle('Modèle Mcomp') +
   geom_abline(slope = beta1, intercept = beta0) + #BREAK
-  geom_point(x=8, y=beta0+beta1*8, col = 'red', size=2) + #BREAK
+  geom_point(x=x0, y=beta0+beta1*x0, col = 'red', size=2) + #BREAK
   geom_point(data=norm_dta, aes(y=y, x=x), col = 'red', alpha=0.02) + #BREAK
   geom_point(aes(x=x, y=y)) 
 ```
@@ -192,7 +192,7 @@ template: model
 $$Y_{k} = \beta_0 +\beta_1 x_{k}  +E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
 avec 
 - $x_k$ la valeur de la variable explicative pour l'observation $k$, 
-- $k=1,\ldots,n$ le numéro d'individus, $n$ le nombre total d'individus,
+- $k=1,\ldots,n$ le numéro d'individu, $n$ le nombre total d'individus,
 - $\beta_0$ l'ordonnée à l'origine, 
 - $\beta_1$ la pente de la droite, mesure de l'effet de la variable $x$
 
@@ -344,10 +344,10 @@ XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
 summary(Mpop)$coefficients
 ```
 --
-Loi de l'estimateur
+## Loi de l'estimateur
 
 ```{r loi_estim,  eval = TRUE, echo = TRUE}
-summary(Mpop)$sigma^2 * XXprimemoinsUn 
+summary(Mpop)$sigma^2 * XXprimemoinsUn  # sigma2 Xt X
 sqrt(diag(summary(Mpop)$sigma^2 * XXprimemoinsUn ))
 ```
 ---
@@ -359,26 +359,65 @@ Il est fréquent d'utiliser un modèle de régression pour prédire.
 
 ## Prédiction de la valeur moyenne pour un $x$ particulier
 
-- **Valeur moyenne attendue** pour $y$ pour un $x$ donné: $\beta_0+\beta_1 x.$
+### Valeur moyenne attendue pour $y$ pour un $x$ donné
+$\beta_0+\beta_1 x.$
 
-- **Valeur moyenne prédite** pour $y$ pour un $x$ donné: $\hat{\beta}_0+\hat{\beta}_1 x.$
+### Valeur moyenne prédite pour $y$ pour un $x$ donné
+$\hat{\beta}_0+\hat{\beta}_1 x.$
 
-```{r pred, eval = TRUE}
+```{r pred, eval = TRUE, echo = TRUE}
 predict(Mpop, newdata=data.frame(pop=333))
 ```
 
-- **Intervalle de confiance pour la valeur moyenne prédite** pour $y$ pour un $x$ donné: $\hat{\beta}_0+\hat{\beta}_1 x.$
+### Intervalle de confiance pour la valeur moyenne prédite  pour $y$ pour un $x$ donné
+$\hat{\beta}_0+\hat{\beta}_1 x.$
 
-```{r pred_IC, eval = TRUE}
+```{r pred_IC, eval = TRUE, echo = TRUE}
 predict(Mpop, newdata=data.frame(pop=333), interval = 'confidence')
 ```
 
-## Prédiction de la valeur possible $x$ particulier
+---
+template:  prediction
+Il est fréquent d'utiliser un modèle de régression pour prédire. 
 
-```{r pred_x, eval = TRUE}
+## Prédiction de la valeur possible $y$ pour un  $x$ particulier
+
+```{r pred_x, eval = TRUE, echo = TRUE}
 predict(Mpop, newdata=data.frame(pop=333), interval = 'prediction')
 ```
 
+---
+template:  prediction
+## Sur l'exemple de la polution
+
+## Intervalle de confiance pour le comportement moyen
+
+
+```{r predic_plot, eval = TRUE}
+ggplot(usdata) + aes(x=pop, y= SO2 ) + geom_point() + geom_smooth(method= 'lm', se = TRUE)
+
+```
+
+
+---
+count: false
+template:  prediction
+## Sur l'exemple de la polution
+
+## Intervalle de confiance pour le comportement moyen
+
+
+```{r predic_plot_pred, eval = TRUE}
+pred_interval <- predict(Mpop,  interval="prediction", level = 0.95)
+pred_interval <- as.data.frame(pred_interval) %>% mutate(pop=usdata$pop) %>% arrange(pop)
+
+ggplot(usdata) + geom_point(aes(x=pop, y= SO2 ) )  + 
+  geom_ribbon(data=pred_interval, aes(x = pop, ymin = lwr, ymax = upr), fill = "blue", alpha = 0.1) + geom_smooth(method= 'lm', se = TRUE, aes(x=pop, y= SO2 ) )
+```
+
+---
+name: model
+# Modèle de régression multiple
 
 ---
 template: model
@@ -409,14 +448,14 @@ template: model
 $$Y_{k} = \beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p}  +  E_{k},\quad E_{k}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
 avec 
 - $x_{k}^{l}$ la valeur de la variable explicative $l$ pour l'observation $k$, 
-- $k=1,\ldots,n$ le numéro d'individus, $n$ le nombre total d'individus,
+- $k=1,\ldots,n$ le numéro d'individu, $n$ le nombre total d'individus,
 - $\beta_0$ l'ordonnée à l'origine, 
 - $\beta_l$ l'effet de la variable $X^{l}$ sur la variable à expliquer,
 - $\sigma^2$ la variance.
 
 ### Une écriture équivalente 
 
-$$Y_{k} \overset{ind}{\sim}\mathcal{N}\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$
+$$Y_{k} \overset{ind}{\sim}\mathcal{N}(\beta_0 +\beta_1 x_{k}^{1}  + \beta_2 x_{k}^{2} + \ldots +  \beta_p x_{k}^{p} , \sigma^2).$$
 
 
 ### Nombre de paramètres du modèle
@@ -527,6 +566,7 @@ $$\hat{\sigma}^2 =\frac{1}{n-l-1} RSS_{obs}.$$
 template: parametre
 ## Vérifier l'estimation sur l'exemple de la pollution
 
+### Estimation
 
 ```{r estimation_mult, eval = TRUE, echo = TRUE}
 X <- model.matrix(Mcomp)
@@ -534,10 +574,15 @@ XXprimemoinsUn <- solve(t(X)%*%X)
 XXprimemoinsUn %*% t(X) %*% matrix(usdata$SO2, ncol =1)
 summary(Mcomp)$coefficients
 ```
---
-Loi de l'estimateur
+---
+
+template: parametre
+## Vérifier l'estimation sur l'exemple de la pollution
+
+### Loi de l'estimateur
 
 ```{r loi_estim_mult,  eval = TRUE, echo = TRUE}
+summary(Mcomp)$coefficients
 sqrt(diag(summary(Mcomp)$sigma^2 * XXprimemoinsUn ))
 ```
 
@@ -658,7 +703,7 @@ Mcomp_l <- lm(SO2 ~  temp + manuf +  wind + precip + days, data = usdata)
 anova(Mcomp_l, Mcomp)
 ```
 
-## Lien entr les statistiques  de tests
+### Lien entre les statistiques  de tests
 
 ```{r stu2, eval = TRUE, echo =TRUE}
 res <- summary(Mcomp)$coefficients
@@ -693,8 +738,19 @@ autoplot(Mcomp)
 
 ## Mathématiquement
 
-Formellement:  le levier pour l'observatio $i$ est
-$$(X (X^\intercal X)^{-1}X^\intercal)_{ii}$$
+Le levier $lev_i$ pour l'observation $i$ est défini par
+$$H=X (X^\intercal X)^{-1}X^\intercal; \quad lev_{i}= H_{ii},$$
+--
+### D'où viennt cette matrice $H$ ?
+
+$$ \hat{Y} = H Y$$
+--
+### Sur l'exemple de la régression simple 
+
+```{r levier}, eval = TRUE, echo = TRUE}
+h.us.lm <- hatvalues(Mpop)
+h.us.lm
+```
 
 ---
 
@@ -715,7 +771,7 @@ usdata %>% ggplot() + aes(x=pop, y=SO2) + geom_point(aes(col = grand)) + theme(l
 ---
 # Construire le modèle d'analyse de la covariance
 
-A partir des données bats:
+## A partir des données chauve souris (bats)
 
 Les différentes espèces de chauve souris ont des tailles de cerveau très variables, ce qui conduit à des volumes variables de la partie auditive.
 

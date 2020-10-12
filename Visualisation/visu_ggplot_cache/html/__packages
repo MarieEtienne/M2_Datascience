@@ -16,6 +16,8 @@ ggfortify
 carData
 car
 emmeans
+maps
+sf
 kableExtra
 GGally
 gganimate
