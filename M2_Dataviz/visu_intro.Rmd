@@ -1,6 +1,6 @@
 ---
-title: "Graphics and maps with R"
-subtitle: "<br/>Under Hadley Wickham's reign"
+title: "Visualisation de données"
+subtitle: "<br/> Pourquoi, comment "
 author: "Marie-Pierre Etienne"
 date: '2020/09/11 (updated: `r Sys.Date()`)'
 institute: https://github.com/MarieEtienne/stateoftheRinRennes/
@@ -32,17 +32,7 @@ with_sol <- FALSE ## in order to control the output
 with_course <- TRUE
 ```
 
-background-size: cover
 
-<audio controls>
-  <source src="2020_10_27_Constance_Par_Jupiter.mp3" type="audio/mpeg">
-  <source src="2020_10_27_Constance_Par_Jupiter" type="audio/ogg"/>
-</audio>
-
-
-.center[ Pourquoi la visualisation des données est importante ?]
-
----
 
 ```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
 BibOptions(check.entries = FALSE,
@@ -55,9 +45,81 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 ```
 
 
+name: intro
+count: false
+
 # Introduction
 
+---
+template: intro 
 
+## Pourquoi la visualisation des données est importante ?
+
+<br>  <br> 
+
+
+- La chronique de Constance par Constance dans  Par Jupiter 
+
+≤br>
+
+<audio controls>
+  <source src="2020_10_27_Constance_Par_Jupiter.mp3" type="audio/mpeg">
+  <source src="2020_10_27_Constance_Par_Jupiter" type="audio/ogg"/>
+</audio>
+
+---
+template: intro 
+
+## Un exemple inspirant : le réchauffement climatique en une image 
+
+[Extrait du journale Le Monde le 3 janvier 2020](https://www.lemonde.fr/les-decodeurs/article/2020/01/03/2019-est-la-troisieme-annee-la-plus-chaude-en-france-visualisez-la-hausse-dans-votre-ville_6024699_4355770.html?xtor=CS2-33281034-%5BKW%5D-%5Bgratuit%5D-%5Barticleacquisition%5D&utm_campaign=keywee_acquisition&utm_medium=PaidSocial&utm_source=Facebook&kwp_0=1527732&kwp_4=4629376&kwp_1=1961091)
+
+--
+
+<p class="question"> Qu'est ce qui est efficace dans cette visualisation ? </p>
+
+
+---
+template: intro 
+
+## Le musée des horreurs
+
+- [Le pourcentage de fumeurs aux Pays-Bas](https://viz.wtf/image/630887965804150786)
+
+--
+
+- [Le Tumblr WTFViz](https://viz.wtf/)
+
+--
+
+-  [Probabilité d'infection par le coronavirus par G. Forestier](https://i.redd.it/b3vvel2xtsv51.jpg)
+
+--
+
+- [Le coronavirus par Jean Casteix](https://www.ouest-france.fr/sante/virus/coronavirus/covid-19-couvre-feu-que-voulaient-dire-les-droles-de-graphiques-montres-par-jean-castex-7016245)
+
+
+---
+template: intro 
+
+## Qu'est ce qu'une visualisation efficace ?
+
+--
+-
+-
+-
+-
+-
+
+
+
+---
+template: intro 
+
+
+## Some resources
+
+- [Data vizualization with R](https://rkabacoff.github.io/datavis/)
 - [R for Data Science](https://r4ds.had.co.nz/) `r Citep(myBib, "wickham2017R")`
 - [R Graphics Cookbook](http://www.cookbook-r.com/)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
@@ -67,16 +129,13 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 
 
 
-```{r graph_bib, out.height = "150px", eval = TRUE}
-book1 <- ggdraw() + draw_image("https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png")
-book2 <-  ggdraw() + draw_image("http://www.cookbook-r.com/r_graphics_cookbook.png")
-book3 <-  ggdraw() + draw_image("https://geocompr.robinlovelace.net/images/cover.png")
-plot_grid(book1, book2, book3, nrow = 1)
-```
+---
+name: ggplot
+# ggplot presentation
+
 
 ---
-
-# ggplot presentation
+template: ggplot
 
 gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Graphics `r Citep(myBib, "wilkinson2005gramma")`, that allows you to compose graphs by combining independent components* `r Citep(myBib, "wickham2016ggplot2")`.
 
@@ -112,8 +171,9 @@ data.frame(x = sample(1:10, size = n, replace = TRUE), y = 3*rnorm(n)) %>%
 
 ---
 
+template: ggplot
 
-# Presentation based on 
+## Presentation based on 
 
 
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
