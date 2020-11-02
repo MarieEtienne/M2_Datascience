@@ -28,7 +28,6 @@ library(flipbookr)
 library(RefManageR)
 library(kableExtra)
 source(paste0(params$setup_path, "knitr_setup.R"))
-options(crayon.enabled = FALSE)
 with_sol <- FALSE ## in order to control the output
 with_course <- TRUE
 ```

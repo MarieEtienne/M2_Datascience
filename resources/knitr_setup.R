@@ -12,6 +12,9 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
                       fig.width = 7, fig.height = 3.5,  
                       out.width = '60%', out.height = '30%' )
 
+## To solve issues with tibble displays in xaringan and github action
+options(crayon.enabled = FALSE)
+ 
 ## for beamer pres
 # knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
 #                       verbose = TRUE, comment = NA, 
