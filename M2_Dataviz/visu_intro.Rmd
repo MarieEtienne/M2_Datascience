@@ -761,6 +761,17 @@ penguins %>%
 template: plot_univar
 class: inverse
 
+
+
+```{r turtle, eval = TRUE, echo = FALSE, out.width='50%'}
+# All defaults
+knitr::include_graphics("images/turtle.jpeg")
+```
+
+.center[.highlight[Your turn!]]
+
+
+
 ---
 template: plot_univar
 class: inverse
