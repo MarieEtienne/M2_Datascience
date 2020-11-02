@@ -368,12 +368,6 @@ penguins %>%
 name: scatter_slide_col
 # A colored scatter plot
 
-```{r simple_scatter}
-penguins %>% 
-  ggplot() + 
-  aes( x= bill_l, y=bill_d) + 
-  geom_point()
-```
 
 
 ```{r scatter_plot_species}
@@ -463,7 +457,7 @@ Propose a fancy graph to visualize the relation between Brain weight and Body we
 
 
 ---
-template: scatter_anderson
+template: scatter_slide_col
 count: true
 
 Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
@@ -479,7 +473,7 @@ penguins %>% ggplot() +
 
 
 ---
-template: scatter_slide
+template: scatter_slide_col
 
 ## Some nice color palette
 - [Inspired by Ghibli](https://github.com/ewenme/ghibli)
@@ -488,10 +482,11 @@ template: scatter_slide
 
 
 ---
-
+name: scatter_slide_lab
 count: true
 
-## with nice labels
+# Porperly labeled colored graph
+
 
 ```{r scatter_labels_gg, eval = TRUE, echo = TRUE}
 gg <- gg + scale_color_manual(values = wesanderson::wes_palette(name = "Zissou1"))
@@ -512,20 +507,13 @@ gg  +
 
 
 
----
-name: scatter_label
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
-
 
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: true
 
-## and a pre-set general theme
+## using  a pre-set general theme
 
 ---
 
@@ -541,7 +529,7 @@ gg  +
 `r chunk_reveal("scatter_themelight", break_type = "user")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and another pre set general theme
@@ -561,7 +549,7 @@ gg + scale_color_manual(values = color_darj) +
 `r chunk_reveal("scatter_thememinimal", break_type = "user")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a pre set general theme
@@ -574,10 +562,10 @@ gg <- gg + scale_color_manual(values = color_darj) +
 ```
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: true
 
-## and a custom  theme
+## Defining s specific theme
 
 The default theme might not be the best option
 
@@ -597,7 +585,7 @@ gg +
 `r chunk_reveal("scatter_below", break_type = "auto")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a custom  theme
@@ -612,7 +600,7 @@ gg +
 
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a custom  theme
@@ -627,10 +615,15 @@ gg + theme(legend.position=c(.9, .6),
 ```
 
 ---
-template: scatter_label
+name: sum_info
+
+# Summarizing information for easier reading
+
+---
+template: sum_info
 count: true
 
-## and fitted statistical models
+## with fitted statistical models
 
 ```{r}
 gg
@@ -652,11 +645,35 @@ gg +
 `r chunk_reveal("stat_info_lm", break_type = "auto")`
 
 
+
 ---
-template: scatter_anderson
+template: scatter_slide_col
+class: inverse
+
+```{r lion, eval = TRUE, echo = FALSE}
+# All defaults
+knitr::include_graphics("images/lion.jpg")
+```
+
+.center[.highlight[Your turn!]]
+
+
+---
+class: inverse
+template: scatter_slide_lab
 count: true
 
-### Exercise
+## Vizualizing the relation between Body weight and Brain weight among bats species
+
+Propose a fancy graph to visualize the relation between Brain weight and Body weight. Does this relation differs between Diets ?
+
+
+
+
+---
+template: scatter_slide_lab
+count: true
+
 
 Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
 
@@ -673,9 +690,8 @@ penguins %>% ggplot() +
 
 ---
 
-# A scatter plot
+template: scatter_slide_lab
 
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels, nice custom theme
 
 To keep the theme preferences for all plots to come
 
@@ -711,12 +727,13 @@ penguins %>%
 
 
 ---
-# Many other type of plots 
+name: plot_univar
+# Representing univariate distribution
 
 
 ```{r simple_hist}
 penguins %>%
-  ggplot() + aes(x = bill_l) + geom_histogram(position = 'identity') +
+  ggplot() + aes(x = bill_l) + geom_histogram() +
   labs( x = 'Bill length in mm') +
   theme_minimal()
 ```
