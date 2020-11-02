@@ -955,7 +955,7 @@ count: false
 
 ```{r ggpubr_p2, eval = TRUE, echo = TRUE}
 gg_p2 <- penguins %>%
-  ggplot()  + aes(x = bill_l, y = ..density..) + geom_histogram(alpha=0.5, aes( fill = species)) +
+  ggplot()  + aes(x = bill_l, y = ..density..) + geom_histogram(alpha=0.5, position = "identity", aes( fill = species)) +
    geom_density(aes(col = species)) +
   labs( x = 'Bill length in mm') +
   scale_fill_manual(values = wesanderson::wes_palette('Zissou1')) +
