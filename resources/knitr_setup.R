@@ -69,6 +69,5 @@ options(tibble.print_max = 4, tibble.print_min = 4)
 ### Theme ggplot
 theme_set(theme_light())
 
- 
 #### css style
 
