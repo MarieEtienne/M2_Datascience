@@ -787,11 +787,13 @@ Represent the distribution of bill length according to species.
 
 ```{r color_hist_cor}
 penguins %>%
-  ggplot() + aes(x = bill_l, fill = species) + geom_histogram(  position = "identity", alpha = 0.5) +
+  ggplot() + aes(x = bill_l, fill = species) + 
+  geom_histogram(  position = "identity", alpha = 0.5) +
   labs( x = 'Bill length in mm') +
   scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
 ```
 
+---
 
 `r chunk_reveal("color_hist_cor", break_type = "auto")`
 
@@ -802,7 +804,8 @@ Represent the distribution of bill length according to species.
 
 ```{r color_hist_cor_show, eval = TRUE, echo = FALSE}
 penguins %>%
-  ggplot() + aes(x = bill_l, fill = species) + geom_histogram(  position = "identity", alpha = 0.5) +
+  ggplot() + aes(x = bill_l, fill = species) + 
+  geom_histogram(  position = "identity", alpha = 0.5) +
   labs( x = 'Bill length in mm') +
   scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
 ```
@@ -825,7 +828,19 @@ penguins %>%
 `r chunk_reveal("color_hist_facet", break_type = "auto")`
 
 ---
+template: compare_plot
 
+
+```{r color_hist_facet_sho, eval = TRUE, echo = FALSE}
+penguins %>%
+  ggplot() + aes(x = bill_l, fill = species) + 
+  geom_histogram() +
+  facet_wrap(~species) + 
+  labs( x = 'Bill length in mm') +
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
+```
+
+---
 template: compare_plot
 count: false
 class: inverse 
@@ -840,7 +855,6 @@ knitr::include_graphics("images/wolf.jpeg")
 
 
 ---
-
 template: compare_plot
 count: false
 
