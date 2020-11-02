@@ -251,11 +251,11 @@ freqdata %&gt;%group_by(Sexe) %&gt;% summarise(n= n())
 ```
 
 ```
-[90m# A tibble: 2 x 2[39m
+# A tibble: 2 x 2
   Sexe      n
-  [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m
-[90m1[39m F        20
-[90m2[39m M        20
+  &lt;chr&gt; &lt;int&gt;
+1 F        20
+2 M        20
 ```
 Ainsi 
 - `\(k=1, \ldots, n_i\)`, avec `\(n_1=20\)` et `\(n_2=20\)` et `\(n=40\)`.
@@ -635,11 +635,11 @@ freqdata %&gt;% group_by(Sexe) %&gt;% summarise(m = mean(freqC), n= n())
 ```
 
 ```
-[90m# A tibble: 2 x 3[39m
+# A tibble: 2 x 3
   Sexe      m     n
-  [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m
-[90m1[39m F      84.3    20
-[90m2[39m M      84.6    20
+  &lt;chr&gt; &lt;dbl&gt; &lt;int&gt;
+1 F      84.3    20
+2 M      84.6    20
 ```
 
 
@@ -804,15 +804,15 @@ count: false
 .panel2-var_est-user[
 
 ```
-[90m# A tibble: 40 x 3[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 3
+# Groups:   Sexe [2]
   freqC Sport Sexe 
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m
-[90m1[39m    82     1 M    
-[90m2[39m    82     1 F    
-[90m3[39m    77     1 M    
-[90m4[39m    79     1 F    
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;
+1    82     1 M    
+2    82     1 F    
+3    77     1 M    
+4    79     1 F    
+# … with 36 more rows
 ```
 ]
 
@@ -831,15 +831,15 @@ freqdata %&gt;%  group_by(Sexe) %&gt;%
 .panel2-var_est-user[
 
 ```
-[90m# A tibble: 40 x 4[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 4
+# Groups:   Sexe [2]
   freqC Sport Sexe   yhat
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6
-[90m2[39m    82     1 F      84.3
-[90m3[39m    77     1 M      84.6
-[90m4[39m    79     1 F      84.3
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt;
+1    82     1 M      84.6
+2    82     1 F      84.3
+3    77     1 M      84.6
+4    79     1 F      84.3
+# … with 36 more rows
 ```
 ]
 
@@ -859,15 +859,15 @@ freqdata %&gt;%  group_by(Sexe) %&gt;%
 .panel2-var_est-user[
 
 ```
-[90m# A tibble: 40 x 6[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 6
+# Groups:   Sexe [2]
   freqC Sport Sexe   yhat  Ehat Ehat_2
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m  [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m   6.50
-[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m   5.29
-[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m  57.0 
-[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m  28.1 
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1    82     1 M      84.6 -2.55   6.50
+2    82     1 F      84.3 -2.30   5.29
+3    77     1 M      84.6 -7.55  57.0 
+4    79     1 F      84.3 -5.30  28.1 
+# … with 36 more rows
 ```
 ]
 
@@ -1258,15 +1258,15 @@ count: false
 .panel2-rss-user[
 
 ```
-[90m# A tibble: 40 x 4[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 4
+# Groups:   Sexe [2]
   freqC Sport Sexe      m
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6
-[90m2[39m    82     1 F      84.3
-[90m3[39m    77     1 M      84.6
-[90m4[39m    79     1 F      84.3
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt;
+1    82     1 M      84.6
+2    82     1 F      84.3
+3    77     1 M      84.6
+4    79     1 F      84.3
+# … with 36 more rows
 ```
 ]
 
@@ -1286,15 +1286,15 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 .panel2-rss-user[
 
 ```
-[90m# A tibble: 40 x 5[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 5
+# Groups:   Sexe [2]
   freqC Sport Sexe      m  Ehat
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m
-[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m
-[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m
-[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+1    82     1 M      84.6 -2.55
+2    82     1 F      84.3 -2.30
+3    77     1 M      84.6 -7.55
+4    79     1 F      84.3 -5.30
+# … with 36 more rows
 ```
 ]
 
@@ -1315,15 +1315,15 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 .panel2-rss-user[
 
 ```
-[90m# A tibble: 40 x 6[39m
-[90m# Groups:   Sexe [2][39m
+# A tibble: 40 x 6
+# Groups:   Sexe [2]
   freqC Sport Sexe      m  Ehat E2hat
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m  6.50
-[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m  5.29
-[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m 57.0 
-[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1    82     1 M      84.6 -2.55  6.50
+2    82     1 F      84.3 -2.30  5.29
+3    77     1 M      84.6 -7.55 57.0 
+4    79     1 F      84.3 -5.30 28.1 
+# … with 36 more rows
 ```
 ]
 
@@ -1345,14 +1345,14 @@ freqdata %&gt;% group_by(Sexe) %&gt;%
 .panel2-rss-user[
 
 ```
-[90m# A tibble: 40 x 6[39m
+# A tibble: 40 x 6
   freqC Sport Sexe      m  Ehat E2hat
-  [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;int&gt;[39m[23m [3m[90m&lt;chr&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m [3m[90m&lt;dbl&gt;[39m[23m
-[90m1[39m    82     1 M      84.6 -[31m2[39m[31m.[39m[31m55[39m  6.50
-[90m2[39m    82     1 F      84.3 -[31m2[39m[31m.[39m[31m30[39m  5.29
-[90m3[39m    77     1 M      84.6 -[31m7[39m[31m.[39m[31m55[39m 57.0 
-[90m4[39m    79     1 F      84.3 -[31m5[39m[31m.[39m[31m30[39m 28.1 
-[90m# … with 36 more rows[39m
+  &lt;dbl&gt; &lt;int&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1    82     1 M      84.6 -2.55  6.50
+2    82     1 F      84.3 -2.30  5.29
+3    77     1 M      84.6 -7.55 57.0 
+4    79     1 F      84.3 -5.30 28.1 
+# … with 36 more rows
 ```
 ]
 

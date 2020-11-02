@@ -1,6 +1,6 @@
 ---
 title: "Visualisation de données"
-subtitle: "<br> Pourquoi, comment "
+subtitle: "<br> Pourquoi et comment ? "
 author: "Marie-Pierre Etienne"
 date: '2020/09/11 (updated: `r Sys.Date()`)'
 institute: https://github.com/MarieEtienne/stateoftheRinRennes/
@@ -28,7 +28,6 @@ library(flipbookr)
 library(RefManageR)
 library(kableExtra)
 source(paste0(params$setup_path, "knitr_setup.R"))
-options(crayon.enabled = FALSE)
 with_sol <- FALSE ## in order to control the output
 with_course <- TRUE
 ```
@@ -108,7 +107,7 @@ count: false
 - [Le Tumblr WTFViz](https://viz.wtf/)
 - [Probabilité d'infection par le coronavirus par G. Forestier](https://i.redd.it/b3vvel2xtsv51.jpg)
 
-```{r gf, eval = TRUE, echo = FALSE}
+```{r gf, eval = TRUE, echo = FALSE, out.width = '90%', out.height = '40%'   }
 # All defaults
 knitr::include_graphics("images/corona_gf.png")
 ```
@@ -132,17 +131,20 @@ knitr::include_graphics("images/corona_j_castex.png")
 ---
 template: intro 
 
-## Qu'est ce qu'une visualisation efficace ?
+## Quels sont les éléments d'une visualisation efficace ?
+
+- $$ $$
+- $$ $$ 
+- $$ $$
+- $$ $$
+- $$ $$ 
+- $$ $$
+- $$ $$
 
 --
 
--
--
--
--
--
-
-
+.care[ Objectif du jour :]
+Acquérir des outils pour gérer ces différents aspects
 
 ---
 template: intro 
@@ -157,35 +159,60 @@ template: intro
 - [R graph gallery](https://www.r-graph-gallery.com/ggplot2-package.html)
 - [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
 - [Don’t cha wish your ggplot had colours like me?](https://www.dataembassy.co.nz/Liza-colours-in-R#22)
-
-
-
----
-name: ggplot
-# ggplot presentation
-
+- [Valoriser ses données avec R](https://mtes-mct.github.io/parcours-r/m5/) (formation du  Ministere de la Transition Écologique et Solidaire (MTES)  et du Ministère de la Cohésion des Territoires et des relations avec les collectivités territoriales (MCTRCT))
 
 ---
-template: ggplot
+name: manip
+# Data manipulation
 
-gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Graphics `r Citep(myBib, "wilkinson2005gramma")`, that allows you to compose graphs by combining independent components* `r Citep(myBib, "wickham2016ggplot2")`.
+---
+template: manip
 
-*[The] grammar tells us that a graphic maps the*
-- *data* 
-- *to the aesthetic attributes (colour, shape, size)* 
-- *of geometric objects (points, lines, bars)*. 
-- *The plot may also include statistical transformations of the data and information about the plot’s coordinate system*.
-- *Facetting can be used to plot for different subsets of the data.* 
-*The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "ickham2016ggplot2")`.
-
-
-For coherence, we will make use of the `tidyverse` suite. Be sure to understand the `%>%` operator.
+The tidyverse is designed to facilitate data manipulation and we will use  the `%>%` operator.
 
 
 ```{r load_tidyverse, message = FALSE, eval = TRUE, echo = TRUE}
 library(tidyverse)
 ```
 
+
+```{r tidy_pres1, eval = TRUE, echo = FALSE, out.width = '60%', out.height = '40%'   }
+# All defaults
+knitr::include_graphics("images/data-science.png")
+```
+
+
+---
+template: manip
+
+The tidyverse is designed to facilitate data manipulation and we will use  the `%>%` operator.
+
+
+```{r load_tidyverse2, message = FALSE, eval = TRUE, echo = TRUE}
+library(tidyverse)
+```
+
+
+```{r tidy_pres2, eval = TRUE, echo = FALSE, out.width = '80%', out.height = '60%', fig.cap='Extract from https://mtes-mct.github.io/parcours-r/m5/package-ggplot2.html' }
+# All defaults
+knitr::include_graphics("images/tidyverse.png")
+```
+---
+template: manip
+
+## The %>% operator
+
+```{r tidy_ex_echo, echo = TRUE}
+set.seed(1)
+n <- 8
+data.frame(x = sample(1:10, size = n, replace = TRUE), 
+           y = 3*rnorm(n)) %>% 
+  mutate(xplusy = x + y ) %>% 
+  filter( xplusy > 4) %>% 
+  select(x, y)
+```
+
+---
 
 ```{r tidy_ex}
 set.seed(1)
@@ -201,22 +228,25 @@ data.frame(x = sample(1:10, size = n, replace = TRUE), y = 3*rnorm(n)) %>%
 `r chunk_reveal("tidy_ex", break_type = "auto")`
 
 ---
+template: manip
 
-template: ggplot
+## Useful commands 
 
-## Presentation based on 
+- `mutate` to create a new column,
+- `filter` to select lines according to some conditions,
+- `select` to select some columss,
 
+--
 
-- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
-- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
-- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
-- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
-- [Don’t cha wish your ggplot had colours like me?](https://www.dataembassy.co.nz/Liza-colours-in-R#22)
+- `rename` to rename variables,
+- `group_by`  for grouping factor,
+- `summarise` to cumputate summary statistics,
+- ...
+
 
 ---
-
-# First running example:  The Palmer Penguins dataset
-
+template: manip
+## First running example:  The Palmer Penguins dataset
 
 
 ```{r palmer_data, eval = TRUE, echo = TRUE}
@@ -228,10 +258,21 @@ penguins %>%
   print(n=2)
 ```
 
+---
+template: manip
+## A case study running example:  The bats dataset
+
+
+```{r bats_data, eval = TRUE, echo = TRUE}
+data(bats,package = "coursesdata")
+bats %>%   as_tibble() %>% print(n = 2, na.print = NULL)
+```
+
 
 ---
+template: manip
 
-# The Palmer Penguins dataset : overview
+##  Combining group_by, mutate and summarise 
 
 
 ```{r show_data_palmer, eval = TRUE, echo = TRUE}
@@ -242,6 +283,64 @@ penguins %>%
   summarise_if(is.numeric, mean, na.rm = TRUE) %>%
   print(n=10)
 ```
+
+
+```{r show_data_palmer_flip}
+
+penguins %>%
+  group_by(species, sex, year, island) %>%
+  mutate(n = n()) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  print(n=10)
+```
+
+
+---
+
+`r chunk_reveal("show_data_palmer_flip", break_type = "auto")`
+
+---
+template: manip
+class: inverse
+
+```{r otter, eval = TRUE, echo = FALSE}
+# All defaults
+knitr::include_graphics("images/otter.jpg")
+```
+
+.center[.highlight[Your turn!]]
+
+---
+template: manip
+class: inverse
+
+
+##  Combining group_by, mutate and summarise - Your turn!
+
+1. create a Diet_fact colum, where Diet is understood as a factor
+2. count the number of species by Diet
+3. Compute the average body weight per Diet, and per Diet x Clade
+4. Compute the mean and standard deviation for Brain weight per Diet
+
+
+
+---
+name: ggplot
+# Vizualization thanks to ggplot
+
+
+---
+template: ggplot
+
+gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Graphics `r Citep(myBib, "wilkinson2005gramma")`, that allows you to compose graphs by combining independent components* `r Citep(myBib, "wickham2016ggplot2")`.
+
+*[The] grammar tells us that a graphic maps the*
+- *data* 
+- *to the aesthetic attributes (colour, shape, size)* 
+- *of geometric objects (points, lines, bars)*. 
+- *The plot may also include statistical transformations of the data and information about the plot’s coordinate system*.
+- *Facetting can be used to plot for different subsets of the data.* 
+*The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "ickham2016ggplot2")`.
 
 
 ---
@@ -264,10 +363,12 @@ penguins %>%
 `r chunk_reveal("simple_scatter", break_type = "auto")`
 
 ---
-template: scatter_slide
-count: false
 
-## with colors 
+---
+name: scatter_slide_col
+# A colored scatter plot
+
+
 
 ```{r scatter_plot_species}
 penguins %>% 
@@ -282,7 +383,7 @@ penguins %>%
 `r chunk_reveal("scatter_plot_species", break_type = "user")`
 
 ---
-template: scatter_slide
+template: scatter_slide_col
 count: false
 
 
@@ -308,7 +409,7 @@ gg +
 `r chunk_reveal("scatter_viridis", break_type = "auto")`
 
 ---
-template: scatter_slide
+template: scatter_slide_col
 count: false
 
 ##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
@@ -331,35 +432,48 @@ gg +
 
 `r chunk_reveal("scatter_wesanderson", break_type = "auto")`
 
----
-name: scatter_anderson
 
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
 
 ---
-template: scatter_anderson
+template: scatter_slide_col
+class: inverse
+
+```{r seal, eval = TRUE, echo = FALSE}
+# All defaults
+knitr::include_graphics("images/seal.jpg")
+```
+
+.center[.highlight[Your turn!]]
+
+
+---
+class: inverse
+template: scatter_slide_col
 count: true
 
-### Exercise
+## Vizualizing the relation between Body weight and Brain weight among bats species
+
+Propose a fancy graph to visualize the relation between Brain weight and Body weight. Does this relation differs between Diets ?
+
+
+---
+template: scatter_slide_col
+count: true
 
 Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
 
-
---
 
 ```{r exo_relation_cor, eval =  TRUE, echo = with_sol}
 penguins %>% ggplot() +
   aes(x= bm, y = flip_l, col = as_factor(year) ) + 
   geom_point() + 
-  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+  scale_color_manual(values = wesanderson::wes_palette(name = "Zissou1"))
 
 ```
 
 
 ---
-template: scatter_slide
+template: scatter_slide_col
 
 ## Some nice color palette
 - [Inspired by Ghibli](https://github.com/ewenme/ghibli)
@@ -368,13 +482,14 @@ template: scatter_slide
 
 
 ---
-template: scatter_anderson
+name: scatter_slide_lab
 count: true
 
-## with nice labels
+# Porperly labeled colored graph
+
 
 ```{r scatter_labels_gg, eval = TRUE, echo = TRUE}
-gg <- gg + scale_color_manual(values = color_darj) 
+gg <- gg + scale_color_manual(values = wesanderson::wes_palette(name = "Zissou1"))
 ```
 
 
@@ -392,20 +507,13 @@ gg  +
 
 
 
----
-name: scatter_label
-
-# A scatter plot
-
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
-
 
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: true
 
-## and a pre-set general theme
+## using  a pre-set general theme
 
 ---
 
@@ -421,7 +529,7 @@ gg  +
 `r chunk_reveal("scatter_themelight", break_type = "user")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and another pre set general theme
@@ -441,7 +549,7 @@ gg + scale_color_manual(values = color_darj) +
 `r chunk_reveal("scatter_thememinimal", break_type = "user")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a pre set general theme
@@ -454,10 +562,10 @@ gg <- gg + scale_color_manual(values = color_darj) +
 ```
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: true
 
-## and a custom  theme
+## Defining s specific theme
 
 The default theme might not be the best option
 
@@ -477,7 +585,7 @@ gg +
 `r chunk_reveal("scatter_below", break_type = "auto")`
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a custom  theme
@@ -492,7 +600,7 @@ gg +
 
 
 ---
-template: scatter_label
+template: scatter_slide_lab
 count: false
 
 ## and a custom  theme
@@ -507,10 +615,15 @@ gg + theme(legend.position=c(.9, .6),
 ```
 
 ---
-template: scatter_label
+name: sum_info
+
+# Summarizing information for easier reading
+
+---
+template: sum_info
 count: true
 
-## and fitted statistical models
+## with fitted statistical models
 
 ```{r}
 gg
@@ -532,11 +645,35 @@ gg +
 `r chunk_reveal("stat_info_lm", break_type = "auto")`
 
 
+
 ---
-template: scatter_anderson
+template: scatter_slide_col
+class: inverse
+
+```{r lion, eval = TRUE, echo = FALSE}
+# All defaults
+knitr::include_graphics("images/lion.jpg")
+```
+
+.center[.highlight[Your turn!]]
+
+
+---
+class: inverse
+template: scatter_slide_lab
 count: true
 
-### Exercise
+## Vizualizing the relation between Body weight and Brain weight among bats species
+
+Propose a fancy graph to visualize the relation between Brain weight and Body weight. Does this relation differs between Diets ?
+
+
+
+
+---
+template: scatter_slide_lab
+count: true
+
 
 Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
 
@@ -553,9 +690,8 @@ penguins %>% ggplot() +
 
 ---
 
-# A scatter plot
+template: scatter_slide_lab
 
-##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels, nice custom theme
 
 To keep the theme preferences for all plots to come
 
@@ -591,12 +727,13 @@ penguins %>%
 
 
 ---
-# Many other type of plots 
+name: plot_univar
+# Representing univariate distribution
 
 
 ```{r simple_hist}
 penguins %>%
-  ggplot() + aes(x = bill_l) + geom_histogram(position = 'identity') +
+  ggplot() + aes(x = bill_l) + geom_histogram() +
   labs( x = 'Bill length in mm') +
   theme_minimal()
 ```
@@ -620,7 +757,7 @@ Add the color according to species and use the `Zissou1` palette from `wesanders
 
 ```{r color_hist_cor}
 penguins %>%
-  ggplot() + aes(x = bill_l, fill = species) + geom_histogram() +
+  ggplot() + aes(x = bill_l, fill = species) + geom_histogram(  position = "identity", alpha = 0.5) +
   labs( x = 'Bill length in mm') +
   scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
 ```

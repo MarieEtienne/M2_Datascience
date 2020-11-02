@@ -26,14 +26,17 @@ a, a > code {
 .remark-code-line-highlighted     { background-color: #e2dd95; }
 
 .highlight { 
-  color: #278B9A; 
+  color: #B40F20; 
   font-weight: 400;
+  font-size: 150%;
+  
+  
 }
 
 
 .inverse {
   background-color: #1A292C;
-  color: #d6d6d6;
+  color: #0e8192;
   text-shadow: 0 0 20px #333;
 }
 
@@ -43,7 +46,6 @@ a, a > code {
   color: #B40F20;
   text-align: center;
   align-content: center;
-  text-shadow: 0 0 20px #333;
   font-size: 110%;
   
 }
@@ -55,7 +57,7 @@ a, a > code {
 }
 
 .inverse h1, .inverse h2, .inverse h3 {
-  color: #1A292C;
+  color: #145B63;
 }
 
 
@@ -122,12 +124,19 @@ th, td { padding: 2px; }
   padding: 3% 2em 1em 2em
 }
 
+
+
 .title-slide .inverse .remark-slide-content {
   background-color: #FAFAFA;
 }
 
 .inverse {
   background-color: #FAFAFA;
+  border-top: 60px solid #DCFFC5;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.5;
+  padding: 3% 2em 1em 2em;
   text-shadow: none;
 }
 
