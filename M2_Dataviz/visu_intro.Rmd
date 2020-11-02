@@ -42,6 +42,7 @@ BibOptions(check.entries = FALSE,
            hyperlink = FALSE,
            dashed = FALSE)
 myBib <- ReadBib("./visu.bib", check = FALSE)
+theme_set(theme_grey())
 ```
 
 
@@ -152,7 +153,7 @@ template: intro
 
 ## Some resources
 
-- [Data vizualization with R](https://rkabacoff.github.io/datavis/)
+- [Data visualization with R](https://rkabacoff.github.io/datavis/)
 - [R for Data Science](https://r4ds.had.co.nz/) `r Citep(myBib, "wickham2017R")`
 - [R Graphics Cookbook](http://www.cookbook-r.com/)
 - [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")`
@@ -326,7 +327,7 @@ class: inverse
 
 ---
 name: ggplot
-# Vizualization thanks to ggplot
+# Visualization thanks to ggplot
 
 
 ---
@@ -451,7 +452,7 @@ class: inverse
 template: scatter_slide_col
 count: true
 
-## Vizualizing the relation between Body weight and Brain weight among bats species
+## Visualizing the relation between Body weight and Brain weight among bats species
 
 Propose a fancy graph to visualize the relation between Brain weight and Body weight. Does this relation differs between Diets ?
 
@@ -485,7 +486,10 @@ template: scatter_slide_col
 name: scatter_slide_lab
 count: true
 
-# Porperly labeled colored graph
+# Properly labeled colored graph
+
+---
+template: scatter_slide_lab
 
 
 ```{r scatter_labels_gg, eval = TRUE, echo = TRUE}
@@ -537,8 +541,18 @@ count: false
 
 ---
 
+```{r scatter_thememinimal_show, eval = TRUE, echo = TRUE}
+gg  +
+  labs( x = 'Bill length in mm',  
+        y = 'Bill depth in mm',  color = "Species") +
+  theme_light() + 
+  theme_minimal() 
+```
+
+---
+
 ```{r scatter_thememinimal}
-gg + scale_color_manual(values = color_darj) +
+gg  +
   labs( x = 'Bill length in mm',  
         y = 'Bill depth in mm',  color = "Species") +
   theme_light() + #BREAK 
@@ -556,7 +570,7 @@ count: false
 
 
 ```{r scatter_set_theme, eval = TRUE, echo = TRUE}
-gg <- gg + scale_color_manual(values = color_darj) +
+gg <- gg  +
   labs( x = 'Bill length in mm',  y = 'Bill depth in mm',  color = "Species") +
   theme_light()
 ```
@@ -663,7 +677,7 @@ class: inverse
 template: scatter_slide_lab
 count: true
 
-## Vizualizing the relation between Body weight and Brain weight among bats species
+## Visualizing the relation between Body weight and Brain weight among bats species
 
 Propose a fancy graph to visualize the relation between Brain weight and Body weight. Does this relation differs between Diets ?
 
@@ -684,7 +698,8 @@ Propose a fancy graph to visualize the relation between flipper and body mass. D
 penguins %>% ggplot() + 
   aes(x= bm, y = flip_l, col = as_factor(year) ) + 
   geom_point() + geom_smooth(method = 'lm') +
-  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
+  labs( x = 'Bill length in mm',  y = 'Bill depth in mm',  color = "Species") 
 
 ```
 
@@ -730,8 +745,11 @@ penguins %>%
 name: plot_univar
 # Representing univariate distribution
 
+---
+template: plot_univar
+count: false
 
-```{r simple_hist}
+```{r simple_hist, echo = TRUE, eval = TRUE}
 penguins %>%
   ggplot() + aes(x = bill_l) + geom_histogram() +
   labs( x = 'Bill length in mm') +
@@ -740,20 +758,21 @@ penguins %>%
 
 
 ---
+template: plot_univar
+class: inverse
 
-# Many other types of plots 
+---
+template: plot_univar
+class: inverse
 
-## Histogram - exercise
+Represent the distribution of body weight according to diet among bats species.
 
-Add the color according to species and use the `Zissou1` palette from `wesanderson` package.
-
-```{r color_hist,   echo = TRUE}
- penguins %>%  ...
-```
 
 
 ---
+template: plot_univar
 
+Represent the distribution of bill length according to species.
 
 ```{r color_hist_cor}
 penguins %>%
@@ -766,13 +785,23 @@ penguins %>%
 `r chunk_reveal("color_hist_cor", break_type = "auto")`
 
 ---
+template: plot_univar
 
+Represent the distribution of bill length according to species.
 
-# Many other types of plots 
+```{r color_hist_cor_show, eval = TRUE, echo = FALSE}
+penguins %>%
+  ggplot() + aes(x = bill_l, fill = species) + geom_histogram(  position = "identity", alpha = 0.5) +
+  labs( x = 'Bill length in mm') +
+  scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
+```
 
-## Comparing plots
+.care[Note the use of the position and alpha parameters.]
+---
+name: compare_plot
+# Comparing plots : facetting
 
-
+---
 ```{r color_hist_facet}
 penguins %>%
   ggplot() + aes(x = bill_l, fill = species) + 
@@ -782,18 +811,27 @@ penguins %>%
   scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
 ```
 
-
-
----
-
 `r chunk_reveal("color_hist_facet", break_type = "auto")`
 
 ---
 
-# Many other types of plots 
+template: compare_plot
+count: false
+class: inverse 
 
-## Comparing plots - exercise
 
+```{r wolf, eval = TRUE, echo = FALSE}
+# All defaults
+knitr::include_graphics("images/wolf.jpeg")
+```
+
+.center[.highlight[Your turn!]]
+
+
+---
+
+template: compare_plot
+count: false
 
 Change the previous graph to add a fitted density line
 
@@ -822,11 +860,12 @@ penguins %>% ...
 
 
 ---
+name: boxplot
+# Comparing distribution
 
-
-# Many other types of plots 
-
-## Boxplot
+---
+template: boxplot
+count: false
 
 ```{r color_boxplot, eval = TRUE, echo = TRUE}
  penguins %>%  ggplot() + aes(x = species,  y = bill_l) +
@@ -862,9 +901,14 @@ penguins %>%  ggplot() + aes(x = species,  y = bill_l) +
 `r chunk_reveal("color_boxplot_3", break_type = "user")`
 
 ---
+name: annotating
+# Precise labelling
 
+---
+template: annotating
+count: false
 
-# Handling superscript and subscript
+## Handling superscript and subscript
 
 
 ```{r color_boxplot_sup_sub, echo = TRUE, eval = TRUE}
@@ -903,8 +947,8 @@ gg_p2 <- penguins %>%
   ggplot()  + aes(x = bill_l, y = ..density..) + geom_histogram(alpha=0.5, aes( fill = species)) +
    geom_density(aes(col = species)) +
   labs( x = 'Bill length in mm') +
-  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) +
-  scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))
+  scale_fill_manual(values = wesanderson::wes_palette('Zissou1')) +
+  scale_color_manual(values = wesanderson::wes_palette('Zissou1'))
 gg_p2
 ```
 
