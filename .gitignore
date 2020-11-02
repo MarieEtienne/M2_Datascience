@@ -3,8 +3,10 @@
 .RData
 .Ruserdata
 *.pdf
+*.html
 *_cache/
  Rscript R/
 */libs/
 *_files/
 Visualisation/visu_ggplot.html
+render/
