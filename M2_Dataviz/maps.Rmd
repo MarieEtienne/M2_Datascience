@@ -64,6 +64,22 @@ zone_map %>%
   geom_text(data = bat24, aes(x= lon, y = lat, label = text), hjust = 0.1, nudge_x = 0.004, col = 'red' ) 
 ```
 
+
+
+```{r openstreetmap_package_keep,  eval = TRUE, fig.show = 'hide',  dpi =200, out.width='50%'}
+##remotes::install_github("ropensci/osmdata")
+rennes_bb <- osmdata::getbb('Rennes') %>% 
+  as.numeric() ##get bounding box
+bat24 <- data.frame(lat= 48.114072, lon = -1.710184, 
+                    text = 'Batiment 24')
+zone_map <- ggmap::get_stamenmap(bbox = rennes_bb, 
+                                 zoom = 13) 
+zone_map %>%
+  ggmap::ggmap() + 
+  geom_point(data = bat24, aes(x= lon, y = lat), col = 'red') + 
+  geom_text(data = bat24, aes(x= lon, y = lat, label = text), hjust = 0.1, nudge_x = 0.004, col = 'red' ) 
+```
+
 ---
 
 
