@@ -10,6 +10,7 @@ output:
     css: [  'metropolis',  'mpe_pres.css']
     lib_dir: libs
     nature:
+      ratio: '16:9'
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -984,7 +985,7 @@ count: false
 
 ```{r ggpubr_p3, eval = TRUE, echo = TRUE}
 ##install.packages('ggpubr')
-ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1)
+ ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1)
 ```
 
 ---
@@ -992,7 +993,7 @@ template: useful_package
 count: false
 
 ```{r ggpubr_p4, eval = TRUE, echo = TRUE}
-ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1, common.legend = TRUE)
+ggpubr::ggarrange(gg_p1 + labs(x=''), gg_p2, nrow=2, ncol = 1, common.legend = TRUE)
 ```
 
 ---
