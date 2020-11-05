@@ -484,8 +484,7 @@ count: false
 ## Metropolitan French departments
 
 ```{r plot_data_dpt1}
-dpt_complete %>% ggplot2::ggplot() + 
-  geom_sf(aes(fill = p2017)) 
+dpt_complete %>% ggplot2::ggplot() 
 ```
 
 ---
@@ -500,7 +499,8 @@ dpt_complete %>%
   mutate(area = st_area(geometry), dens = p2017/area) %>%
   ggplot() +
   geom_sf(aes(fill = as.numeric(dens))) +
-  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log")
+  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log") +
+  labs(fill = 'Density')
 ```
 
 ---
@@ -508,8 +508,47 @@ dpt_complete %>%
 
 `r chunk_reveal("plot_data_dpt2", break_type = "auto")`
 
+---
+
+template: sf
+count: false
+
+## From departments to regions
+
+
+### Tidying the dataset
+
+
+```{r tidying, eval = TRUE, echo = TRUE}
+dpt_complete %>%  print(n=5)
+```
+
+```{r tidying_eval2}
+dpt_complete %>%
+  select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
+         p2020, p2017, p2012, p2007, p1999) %>%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%>%
+  group_by(NOM_REGION, Year) %>%
+  summarise(pop = sum(Population), geometry= st_union(geometry),
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area)) -> 
+  region_complete 
+
+region_complete %>%
+  ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry)) +
+  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log", breaks = c(50, 150, 450),
+                      name = 'Density')
+
+```
+
 
 ---
+
+`r chunk_reveal("tidying_eval2", break_type = "auto")`
+
+
+---
+
+
 # References
 
 
