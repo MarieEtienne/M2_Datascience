@@ -1,6 +1,6 @@
 ---
-title: Graphics and maps with R - Part2
-subtitle: Under Hadley Wickham's reign
+title: Visualisation 
+subtitle: Drawing maps
 author: Marie-Pierre Etienne
 date: '2020/09/11 (updated: `r Sys.Date()`)'
 institute: https://github.com/MarieEtienne/stateoftheRinRennes/
@@ -13,9 +13,9 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
-      beforeInit: "./collapseoutput.js"
+      beforeInit: '../resources/collapseoutput.js'
     includes:
-      after_body: insert-logo.html
+      after_body: '../resources/insert-logo.html'
 bibliography: visu.bib
 fontsize: 10pt
 params:
@@ -49,11 +49,27 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 Get free maps thanks to  OpenStreetMap through the `osmdata` package  ( [vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) )
 
 
-```{r openstreetmap_package, eval = TRUE, echo = FALSE, fig.show = 'hide',  dpi =200, out.width='50%'}
+```{r openstreetmap_package,  fig.show = 'hide',  dpi =200, out.width='50%'}
 ##remotes::install_github("ropensci/osmdata")
 rennes_bb <- osmdata::getbb('Rennes') %>% 
   as.numeric() ##get bounding box
 rennes_bb
+bat24 <- data.frame(lat= 48.114072, lon = -1.710184, 
+                    text = 'Batiment 24')
+zone_map <- ggmap::get_stamenmap(bbox = rennes_bb, 
+                                 zoom = 13) 
+zone_map %>%
+  ggmap::ggmap() + 
+  geom_point(data = bat24, aes(x= lon, y = lat), col = 'red') + 
+  geom_text(data = bat24, aes(x= lon, y = lat, label = text), hjust = 0.1, nudge_x = 0.004, col = 'red' ) 
+```
+
+
+
+```{r openstreetmap_package_keep,  eval = TRUE, fig.show = 'hide',  dpi =200, out.width='50%'}
+##remotes::install_github("ropensci/osmdata")
+rennes_bb <- osmdata::getbb('Rennes') %>% 
+  as.numeric() ##get bounding box
 bat24 <- data.frame(lat= 48.114072, lon = -1.710184, 
                     text = 'Batiment 24')
 zone_map <- ggmap::get_stamenmap(bbox = rennes_bb, 
@@ -167,7 +183,7 @@ An  approximation of sea level on Earth contains:
 
 
 ```{r fig_coord_sys,  out.width = "40%", fig.cap = "Geodetic datum (source https://commons.wikimedia.org/wiki/File:Azimutalprojektion-schief_kl.jpg, author:	Stefan Kühn,  Fotograf )", eval = TRUE}
-knitr::include_graphics("img/1280px-ECEF.png")
+knitr::include_graphics("images/1280px-ECEF.png")
 ```
 
 At global scale  *World Geodetic System* (WGS84) is the reference geodetic datum for GPS 
@@ -233,6 +249,9 @@ france_dta <-   world  %>% filter(name == 'France')
 template: coordinate_header
 
 ### Focus on Metropolitan France 
+
+Change of WGS84
+
 
 ```{r sf_metro_example_map,  eval = TRUE, echo = TRUE}
 metro_dta <- france_dta %>% st_crop( xmin = -5, xmax = 11, ymin= 40.6, ymax = 52) 
@@ -441,7 +460,7 @@ count: false
 The population by department is available [here](https://www.insee.fr/fr/statistiques/fichier/2012713/TCRD_004.xls) or [here in csv format]()
 
 ```{r read_pop, echo = TRUE, eval = TRUE}
-population <- read_delim("~/git/courses/data/population.csv", 
+population <- read_delim("../data/population.csv", 
     ";", escape_double = FALSE,  col_types = cols(`1999` = col_double(), 
         `2007` = col_double(), `2012` = col_double(), 
         `2017` = col_double()), trim_ws = TRUE, 
@@ -465,9 +484,8 @@ count: false
 ## Metropolitan French departments
 
 ```{r plot_data_dpt1}
-dpt_complete %>% ggplot() + 
-  geom_sf(aes(fill = p2017)) +
-  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05")
+dpt_complete %>% ggplot2::ggplot() + 
+  geom_sf(aes(fill = p2017)) 
 ```
 
 ---
@@ -478,18 +496,18 @@ dpt_complete %>% ggplot() +
 
 
 ```{r plot_data_dpt2}
-dpt_complete %>% 
-  mutate(area = st_area(geometry), dens = p2017/area) %>% 
-  ggplot() + 
+dpt_complete %>%
+  mutate(area = st_area(geometry), dens = p2017/area) %>%
+  ggplot() +
   geom_sf(aes(fill = as.numeric(dens))) +
-  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log")
+  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log") +
+  labs(fill = 'Density')
 ```
 
 ---
 
 
 `r chunk_reveal("plot_data_dpt2", break_type = "auto")`
-
 
 ---
 
@@ -507,17 +525,18 @@ dpt_complete %>%  print(n=5)
 ```
 
 ```{r tidying_eval2}
-region_complete <- dpt_complete %>% 
+dpt_complete %>%
   select(ID_GEOFLA, CODE_DEPT, NOM_DEPT, NOM_REGION,
-         p2020, p2017, p2012, p2007, p1999) %>% 
-  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%>% 
-  group_by(NOM_REGION, Year) %>% 
+         p2020, p2017, p2012, p2007, p1999) %>%
+  pivot_longer(cols = starts_with("p"), names_to = 'Year', values_to = 'Population'  )%>%
+  group_by(NOM_REGION, Year) %>%
   summarise(pop = sum(Population), geometry= st_union(geometry),
-            area = units::set_units(st_area(geometry), km^2), dens = (pop/area)) 
+            area = units::set_units(st_area(geometry), km^2), dens = (pop/area)) -> 
+  region_complete 
 
-region_complete %>% 
-  ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry)) + 
-  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log", breaks = c(50, 150, 450), 
+region_complete %>%
+  ggplot() + facet_wrap(~Year) + geom_sf(aes(fill = as.numeric(dens), geometry = geometry)) +
+  scale_fill_gradient(low = "#75c9c5", high = "#fb1c05", trans = "log", breaks = c(50, 150, 450),
                       name = 'Density')
 
 ```
@@ -527,10 +546,10 @@ region_complete %>%
 
 `r chunk_reveal("tidying_eval2", break_type = "auto")`
 
-<!-- Ajouter manip tidy pour mettre les années en tidy et faire les cartes par annéees -->
-
 
 ---
+
+
 # References
 
 

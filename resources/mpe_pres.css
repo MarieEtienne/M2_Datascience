@@ -7,7 +7,7 @@ body {
 
 .remark-code, .remark-inline-code {
   font-family: 'Fira Code', 'Lucida Console', Monaco, monospace;
-  font-size: 80%;
+  font-size: 70%;
 }
 
 
@@ -26,19 +26,42 @@ a, a > code {
 .remark-code-line-highlighted     { background-color: #e2dd95; }
 
 .highlight { 
-  color: #278B9A; 
+  color: #B40F20; 
   font-weight: 400;
+  font-size: 150%;
+  
+  
 }
 
 
 .inverse {
-  background-color: #272822;
-  color: #d6d6d6;
+  background-color: #1A292C;
+  color: #0e8192;
   text-shadow: 0 0 20px #333;
 }
-.inverse h1, .inverse h2, .inverse h3 {
-  color: #f3f3f3;
+
+
+.question {
+  background-color: #ecefef;
+  color: #B40F20;
+  text-align: center;
+  align-content: center;
+  font-size: 110%;
+  
 }
+
+
+.care {
+  color: #B40F20;
+  font-weight: 700;
+}
+
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #145B63;
+}
+
+
+
 /* Two-column layout */
 .left-column {
   color: #777;
@@ -78,7 +101,7 @@ blockquote {
   border-bottom: 1px solid #666;
 }
 .remark-slide table thead th { border-bottom: 1px solid #ddd; }
-th, td { padding: 5px; }
+th, td { padding: 2px; }
 .remark-slide thead, .remark-slide tfoot, .remark-slide tr:nth-child(even) { background: #eee }
 
 @page { margin: 0; }
@@ -94,12 +117,14 @@ th, td { padding: 5px; }
 
 .remark-slide-content {
   background-color: #FAFAFA;
-  border-top: 70px solid #d4e7ed;
-  font-size: 16px;
+  border-top: 60px solid #d4e7ed;
+  font-size: 17px;
   font-weight: 300;
   line-height: 1.5;
   padding: 3% 2em 1em 2em
 }
+
+
 
 .title-slide .inverse .remark-slide-content {
   background-color: #FAFAFA;
@@ -107,6 +132,11 @@ th, td { padding: 5px; }
 
 .inverse {
   background-color: #FAFAFA;
+  border-top: 60px solid #DCFFC5;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.5;
+  padding: 3% 2em 1em 2em;
   text-shadow: none;
 }
 
@@ -122,7 +152,7 @@ th, td { padding: 5px; }
 
 h1 {
   font-weight: normal;
-  margin-top: -95px;
+  margin-top: -80px;
   margin-left: -00px;
   color: #F2AD00;
 }
@@ -150,15 +180,15 @@ h3, h4 {
   margin-bottom: -10px;
 }
 .remark-slide-content h1 {
-  font-size: 35px;
+  font-size: 27px;
 }
 
 .remark-slide-content h2 {
-  font-size: 25px;
+  font-size: 23px;
 }
 
 .remark-slide-content h3 {
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .left-column h2, .left-column h3, .left-column h4 {
@@ -214,25 +244,25 @@ hr, .title-slide h2::after, .mline h1::after {
 }
 
 hr, .mline h1::after {
-  margin: 1em 15px 0 15px;
+  margin: 1em 13px 0 15px;
 }
 
 .title-slide h2::after {
-  margin: 10px 15px 35px 0;
+  margin: 10px 13px 35px 0;
 }
 
 .mline h1::after {
-  margin: 10px 15px 0 15px;
+  margin: 10px 13px 0 15px;
 }
 
 .remark-slide-number {
-  font-size: 13pt;
+  font-size: 10pt;
   color: #272822;
   opacity: 1;
 }
 
 .inverse .remark-slide-number {
-  font-size: 13pt;
+  font-size: 11pt;
   color: #FAFAFA;
   opacity: 1;
 }

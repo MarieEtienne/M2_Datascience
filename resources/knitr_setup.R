@@ -9,9 +9,12 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
                       dpi = 100,
                       echo = FALSE, eval = FALSE, 
                       fig.align = "center", results = "markup", 
-                      fig.width = 6, fig.height = 4,  
-                      out.width = 'auto')
+                      fig.width = 7, fig.height = 3.5,  
+                      out.width = '60%', out.height = '30%' )
 
+## To solve issues with tibble displays in xaringan and github action
+options(crayon.enabled = FALSE)
+ 
 ## for beamer pres
 # knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache = TRUE,
 #                       verbose = TRUE, comment = NA, 
@@ -63,7 +66,8 @@ options(tibble.print_max = 4, tibble.print_min = 4)
 # 
 
 
-
+### Theme ggplot
+theme_set(theme_light())
 
 #### css style
 
