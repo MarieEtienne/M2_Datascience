@@ -1,0 +1,45 @@
+name: slides
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew install gdal geos udunits gifski pandoc-citeproc imagemagick
+      - uses: r-lib/actions/setup-r@master
+      - name: Install R packages
+        run: |
+          install.packages("remotes")
+          install.packages(c("devtools","plotly","ggpubr","gifski"))
+          install.packages(c("tidyverse","magick","gganimate","GGally","sf", "ggfortify"))
+          install.packages('maps')
+          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos", "ggpubr", "car", "emmeans"))
+          install.packages(c("kableExtra"))
+          remotes::install_github("ropensci/RefManageR")
+          remotes::install_github("yihui/xaringan")
+          remotes::install_github("gadenbuie/xaringanExtra")
+          remotes::install_github("EvaMaeRey/flipbookr")
+          remotes::install_github("ropensci/osmdata")
+          remotes::install_github("allisonhorst/palmerpenguins")
+          remotes::install_github("MarieEtienne/coursesdata")
+        shell: Rscript {0}
+      - name: Generate slides
+        run: Rscript R/render.R
+
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@master
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          source-directory: 'render'
+          destination-github-username: 'MarieEtienne'
+          destination-repository-name: 'courses-test-output'
+          user-email: marie-pierre.etienne@agrocampus-ouest.fr
