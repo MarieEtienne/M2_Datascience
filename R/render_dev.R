@@ -1,8 +1,12 @@
 #system('rm -rf render')
 system('mkdir -p render')
-directory <- 'M2_Dataviz'
+dirnames <- stringr::str_split(
+  list.files('.', pattern = '.Rmd',
+             full.names = TRUE, recursive = TRUE) ,
+  pattern = '/', simplify = TRUE)[,2]
 
 
+for(directory in dirnames){
   filenames <- list.files(directory, pattern = '.Rmd',
                           full.names = TRUE)
   system(glue::glue( 'cp resources/mpe_pres.css {directory}/.'))
@@ -15,3 +19,4 @@ directory <- 'M2_Dataviz'
   }
   system( glue::glue( 'cp -rf  {directory} render/ '))
   
+}
