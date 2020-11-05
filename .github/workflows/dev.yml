@@ -22,8 +22,8 @@ jobs:
           git add test.txt  
           git commit -m "Test action to push changes"
       - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.API_TOKEN_GITHUB }}
-        branch: gh-pages
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.API_TOKEN_GITHUB }}
+          branch: gh-pages
     
