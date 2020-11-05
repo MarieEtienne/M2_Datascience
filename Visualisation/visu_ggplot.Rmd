@@ -1,0 +1,767 @@
+---
+title: "Graphics and maps with R"
+subtitle: "<br/>Under Hadley Wickham's reign"
+author: "Marie-Pierre Etienne"
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/MarieEtienne/stateoftheRinRennes/
+csl: ../resources/apa-no-doi-no-issue.csl
+output:
+  xaringan::moon_reader:
+    css: [  'metropolis', 'hygge', 'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../resources/collapseoutput.js'
+    includes:
+      after_body: '../resources/insert-logo.html'
+bibliography: visu.bib
+fontsize: 10pt
+params:
+  child_path: ''
+  setup_path: ../resources/
+---
+
+```{r setup,   cahe = FALSE, eval = TRUE, echo = FALSE, message = FALSE}
+library(flipbookr)
+library(RefManageR)
+library(kableExtra)
+source(paste0(params$setup_path, "knitr_setup.R"))
+with_sol <- FALSE ## in order to control the output
+with_course <- TRUE
+```
+
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./visu.bib", check = FALSE)
+```
+
+
+# Introduction
+
+
+- [R for Data Science](https://r4ds.had.co.nz/) `r Citep(myBib, "wickham2017R")`
+- [R Graphics Cookbook](http://www.cookbook-r.com/)
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
+- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
+- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
+- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+
+
+
+```{r graph_bib, out.height = "150px", eval = TRUE}
+book1 <- ggdraw() + draw_image("https://d33wubrfki0l68.cloudfront.net/b88ef926a004b0fce72b2526b0b5c4413666a4cb/24a30/cover.png")
+book2 <-  ggdraw() + draw_image("http://www.cookbook-r.com/r_graphics_cookbook.png")
+book3 <-  ggdraw() + draw_image("https://geocompr.robinlovelace.net/images/cover.png")
+plot_grid(book1, book2, book3, nrow = 1)
+```
+
+---
+
+# ggplot presentation
+
+gg stands for Grammar of Graphics  and  ggplot2  is *based on the Grammar of Graphics `r Citep(myBib, "wilkinson2005gramma")`, that allows you to compose graphs by combining independent components* `r Citep(myBib, "wickham2016ggplot2")`.
+
+*[The] grammar tells us that a graphic maps the*
+- *data* 
+- *to the aesthetic attributes (colour, shape, size)* 
+- *of geometric objects (points, lines, bars)*. 
+- *The plot may also include statistical transformations of the data and information about the plot’s coordinate system*.
+- *Facetting can be used to plot for different subsets of the data.* 
+*The combination of these independent components are what make up a graphic.*  `r Citep(myBib, "ickham2016ggplot2")`.
+
+
+For coherence, we will make use of the `tidyverse` suite. Be sure to understand the `%>%` operator.
+
+
+```{r load_tidyverse, message = FALSE, eval = TRUE, echo = TRUE}
+library(tidyverse)
+```
+
+
+```{r tidy_ex}
+set.seed(1)
+n <- 8
+data.frame(x = sample(1:10, size = n, replace = TRUE), y = 3*rnorm(n)) %>% 
+  mutate(xplusy = x + y ) %>% 
+  filter( xplusy > 4) %>% 
+  select(x, y)
+```
+
+---
+
+`r chunk_reveal("tidy_ex", break_type = "auto")`
+
+---
+
+
+# Presentation based on 
+
+
+- [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html) `r Citep(myBib, "wickham2016ggplot2")` 
+- [Geocomputation with R](https://geocompr.robinlovelace.net/) `r Citep(myBib, "lovelace2019geocomputation")`
+- [Tutoriel de Raphaelle Momal et Marie Perrot Dockes](https://stateofther.github.io/post/fancy-plotting/)
+- [Drawing beautiful maps programmatically with R](https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html)
+- [Don’t cha wish your ggplot had colours like me?](https://www.dataembassy.co.nz/Liza-colours-in-R#22)
+
+---
+
+# First running example:  The Palmer Penguins dataset
+
+
+
+```{r palmer_data, eval = TRUE, echo = TRUE}
+#remotes::install_github("allisonhorst/palmerpenguins")
+data(penguins,package = "palmerpenguins")
+penguins <- penguins %>%
+  rename(bill_l = bill_length_mm, bill_d = bill_depth_mm, flip_l = flipper_length_mm, bm = body_mass_g)
+penguins %>%
+  print(n=2)
+```
+
+
+---
+
+# The Palmer Penguins dataset : overview
+
+
+```{r show_data_palmer, eval = TRUE, echo = TRUE}
+
+penguins %>%
+  group_by(species, sex, year, island) %>%
+  mutate(n = n()) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>%
+  print(n=10)
+```
+
+
+---
+ 
+# Simple plots 
+
+---
+name: scatter_slide
+# A scatter plot
+
+```{r simple_scatter}
+penguins %>% 
+  ggplot() + 
+  aes( x= bill_l, y=bill_d) + 
+  geom_point()
+```
+
+---
+
+`r chunk_reveal("simple_scatter", break_type = "auto")`
+
+---
+template: scatter_slide
+count: false
+
+## with colors 
+
+```{r scatter_plot_species}
+penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d) +
+  geom_point() + #BREAK
+  aes(col = species)  #BREAK
+```
+
+---
+
+`r chunk_reveal("scatter_plot_species", break_type = "user")`
+
+---
+template: scatter_slide
+count: false
+
+
+```{r gg1_save, eval = TRUE, echo = TRUE}
+gg <- penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d) +
+  geom_point() + 
+  aes(col = species)  
+```
+
+
+## with a color blind compliant palette
+
+
+---
+
+```{r scatter_viridis}
+gg + 
+  scale_color_viridis_d()
+```
+
+`r chunk_reveal("scatter_viridis", break_type = "auto")`
+
+---
+template: scatter_slide
+count: false
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
+
+Following  a Tumblr blog  [Wes Anderson Palettes](https://wesandersonpalettes.tumblr.com/), Karthik Ram proposes the [wesanderson palette](https://github.com/karthik/wesanderson) on Github.
+
+
+```{r scatter_define_palette_wesanderson,eval = TRUE, echo = TRUE}
+## remotes::install_github("wesanderson")
+color_darj <- wesanderson::wes_palette(name = "Darjeeling1")
+```
+
+---
+
+```{r scatter_wesanderson}
+gg + 
+  scale_color_manual(values = color_darj)
+```
+
+
+`r chunk_reveal("scatter_wesanderson", break_type = "auto")`
+
+---
+name: scatter_anderson
+
+# A scatter plot
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson) 
+
+---
+template: scatter_anderson
+count: true
+
+### Exercise
+
+Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
+
+
+--
+
+```{r exo_relation_cor, eval =  TRUE, echo = with_sol}
+penguins %>% ggplot() +
+  aes(x= bm, y = flip_l, col = as_factor(year) ) + 
+  geom_point() + 
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+
+```
+
+
+---
+template: scatter_slide
+
+## Some nice color palette
+- [Inspired by Ghibli](https://github.com/ewenme/ghibli)
+- [The yarr pirate palette](https://cran.r-project.org/web/packages/yarrr/vignettes/piratepal.html)
+- [Harry Potter inspiration](https://github.com/aljrico/harrypotter)![](https://github.com/aljrico/harrypotter/blob/master/man/figures/logo.png)
+
+
+---
+template: scatter_anderson
+count: true
+
+## with nice labels
+
+```{r scatter_labels_gg, eval = TRUE, echo = TRUE}
+gg <- gg + scale_color_manual(values = color_darj) 
+```
+
+
+---
+
+```{r scatter_labels}
+gg  +
+  labs( x = 'Bill length in mm') +
+  labs(y = 'Bill depth in mm') +
+  labs(color = "Species")
+```
+
+`r chunk_reveal("scatter_labels", break_type = "auto")`
+
+
+
+
+---
+name: scatter_label
+
+# A scatter plot
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels
+
+
+
+---
+template: scatter_label
+count: true
+
+## and a pre-set general theme
+
+---
+
+```{r scatter_themelight}
+gg  +
+  labs( x = 'Bill length in mm') +
+  labs(y = 'Bill depth in mm') +
+  labs(color = "Species") + #BREAK
+  theme_light() #BREAK
+```
+
+
+`r chunk_reveal("scatter_themelight", break_type = "user")`
+
+---
+template: scatter_label
+count: false
+
+## and another pre set general theme
+
+
+---
+
+```{r scatter_thememinimal}
+gg + scale_color_manual(values = color_darj) +
+  labs( x = 'Bill length in mm',  
+        y = 'Bill depth in mm',  color = "Species") +
+  theme_light() + #BREAK 
+  theme_minimal() #BREAK 
+```
+
+
+`r chunk_reveal("scatter_thememinimal", break_type = "user")`
+
+---
+template: scatter_label
+count: false
+
+## and a pre set general theme
+
+
+```{r scatter_set_theme, eval = TRUE, echo = TRUE}
+gg <- gg + scale_color_manual(values = color_darj) +
+  labs( x = 'Bill length in mm',  y = 'Bill depth in mm',  color = "Species") +
+  theme_light()
+```
+
+---
+template: scatter_label
+count: true
+
+## and a custom  theme
+
+The default theme might not be the best option
+
+
+
+```{r preset_theme, eval = TRUE, echo = FALSE}
+gg
+```
+
+---
+
+```{r scatter_below}
+gg + 
+  theme(legend.position="bottom")
+```
+
+`r chunk_reveal("scatter_below", break_type = "auto")`
+
+---
+template: scatter_label
+count: false
+
+## and a custom  theme
+
+The legend position can also be specified by a vector ` c(x,y)`.  Their values should be between 0 and 1. c(0,0) corresponds to the “bottom left” and c(1,1) corresponds to the “top right” position. We may want to change the size.
+
+
+```{r scatter_within, eval = TRUE, echo = TRUE}
+gg + 
+  theme(legend.position=c(.9, .6))
+```
+
+
+---
+template: scatter_label
+count: false
+
+## and a custom  theme
+
+```{r scatter_custom, eval = TRUE, echo = TRUE}
+gg + theme(legend.position=c(.9, .6),
+           text = element_text(size = 10, face = "italic"),
+           axis.text.x = element_text(angle=90, hjust=1),
+           legend.text = element_text(size = 9, face = 'plain'),
+           legend.title = element_text(size = 11, face = "bold") )
+
+```
+
+---
+template: scatter_label
+count: true
+
+## and fitted statistical models
+
+```{r}
+gg
+```
+
+
+---
+
+
+```{r stat_info_lm}
+gg + 
+  geom_smooth(method = 'lm', se = FALSE) +
+  geom_smooth(method = 'loess', se = TRUE)
+```
+
+
+
+
+`r chunk_reveal("stat_info_lm", break_type = "auto")`
+
+
+---
+template: scatter_anderson
+count: true
+
+### Exercise
+
+Propose a fancy graph to visualize the relation between flipper and body mass. Does this relation change over year ?
+
+
+--
+
+```{r exo_relation_cor2, eval =  TRUE, echo = with_sol}
+penguins %>% ggplot() + 
+  aes(x= bm, y = flip_l, col = as_factor(year) ) + 
+  geom_point() + geom_smooth(method = 'lm') +
+  scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1"))
+
+```
+
+---
+
+# A scatter plot
+
+##  with a color tribute to [Wes Anderson](https://en.wikipedia.org/wiki/Wes_Anderson),  nice labels, nice custom theme
+
+To keep the theme preferences for all plots to come
+
+```{r theme_setup}
+
+penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d, col = species) +
+  geom_point()  #BREAK
+
+```
+
+---
+
+`r chunk_reveal("theme_setup", break_type = "user")`
+
+
+
+```{r theme_setup_2}
+
+theme_set(theme_light())
+theme_update(legend.position="bottom") #BREAK
+penguins %>% 
+  ggplot() +
+  aes( x= bill_l, y=bill_d, col = species) +
+  geom_point() #BREAK
+```
+
+
+---
+
+`r chunk_reveal("theme_setup_2", break_type = "user")`
+
+
+---
+# Many other type of plots 
+
+
+```{r simple_hist}
+penguins %>%
+  ggplot() + aes(x = bill_l) + geom_histogram(position = 'identity') +
+  labs( x = 'Bill length in mm') +
+  theme_minimal()
+```
+
+
+---
+
+# Many other types of plots 
+
+## Histogram - exercise
+
+Add the color according to species and use the `Zissou1` palette from `wesanderson` package.
+
+```{r color_hist,   echo = TRUE}
+ penguins %>%  ...
+```
+
+
+---
+
+
+```{r color_hist_cor}
+penguins %>%
+  ggplot() + aes(x = bill_l, fill = species) + geom_histogram() +
+  labs( x = 'Bill length in mm') +
+  scale_fill_manual(values = wesanderson::wes_palette('Zissou1', n = 3)) 
+```
+
+
+`r chunk_reveal("color_hist_cor", break_type = "auto")`
+
+---
+
+
+# Many other types of plots 
+
+## Comparing plots
+
+
+```{r color_hist_facet}
+penguins %>%
+  ggplot() + aes(x = bill_l, fill = species) + 
+  geom_histogram() +
+  facet_wrap(~species) + 
+  labs( x = 'Bill length in mm') +
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
+```
+
+
+
+---
+
+`r chunk_reveal("color_hist_facet", break_type = "auto")`
+
+---
+
+# Many other types of plots 
+
+## Comparing plots - exercise
+
+
+Change the previous graph to add a fitted density line
+
+```{r color_hist_dens_ex}
+
+penguins %>% ...
+```
+
+
+---
+
+
+```{r color_hist_dens_cor}
+
+ penguins %>%  ggplot() + aes(x = bill_l, y = ..density..) +
+  facet_wrap(~species) + 
+  geom_histogram(alpha=0.5, aes( fill = species)) +
+   geom_density(aes(col = species)) + 
+  labs( x = 'Bill length in mm') + #BREAK
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) +  #BREAK
+  scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))   
+
+```
+
+`r chunk_reveal("color_hist_dens_cor", break_type = "user")`
+
+
+---
+
+
+# Many other types of plots 
+
+## Boxplot
+
+```{r color_boxplot, eval = TRUE, echo = TRUE}
+ penguins %>%  ggplot() + aes(x = species,  y = bill_l) +
+  geom_boxplot(alpha=0.5, aes( fill = species)) +
+  labs( y = 'Bill length in mm') + #BREAK
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) +  #BREAK
+  scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))   
+```
+
+---
+
+```{r color_boxplot_2}
+ penguins %>%  ggplot() + aes(x = species,  y = bill_l) +
+  geom_violin(alpha=0.5, aes( fill = species)) +
+  labs( y = 'Bill length in mm') + #BREAK
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
+```
+
+
+`r chunk_reveal("color_boxplot_2", break_type = "user")`
+
+---
+
+
+```{r color_boxplot_3}
+penguins %>%  ggplot() + aes(x = species,  y = bill_l) +
+  geom_boxplot(alpha=0.5, aes( fill = species)) +
+  geom_jitter(color="black", size=0.4, alpha=0.8) +
+  labs( y = 'Bill length in mm') + #BREAK
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
+```
+
+`r chunk_reveal("color_boxplot_3", break_type = "user")`
+
+---
+
+
+# Handling superscript and subscript
+
+
+```{r color_boxplot_sup_sub, echo = TRUE, eval = TRUE}
+penguins %>%  mutate(mu = bill_l * bill_d) %>% 
+  ggplot() + aes(y= mu ) +
+  geom_boxplot(alpha=0.5, aes( fill = species)) +
+  labs( y = bquote(mu~(mm^2))) +
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) 
+```
+
+
+
+---
+name: useful_package 
+
+# Useful packages for publication
+
+The `ggpubr`  package is very helpful for publication.
+
+---
+template: useful_package
+count: false
+
+```{r ggpubr_p1, eval = TRUE, echo = TRUE}
+gg_p1 <- gg
+gg_p1
+``` 
+
+
+---
+template: useful_package
+count: false
+
+```{r ggpubr_p2, eval = TRUE, echo = TRUE}
+gg_p2 <- penguins %>%
+  ggplot()  + aes(x = bill_l, y = ..density..) + geom_histogram(alpha=0.5, aes( fill = species)) +
+   geom_density(aes(col = species)) +
+  labs( x = 'Bill length in mm') +
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) +
+  scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))
+gg_p2
+```
+
+
+---
+template: useful_package
+count: false
+
+```{r ggpubr_p3, eval = TRUE, echo = TRUE}
+##install.packages('ggpubr')
+ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1)
+```
+
+---
+template: useful_package
+count: false
+
+```{r ggpubr_p4, eval = TRUE, echo = TRUE}
+ggpubr::ggarrange(gg_p1, gg_p2, nrow=2, ncol = 1, common.legend = TRUE)
+```
+
+---
+name: bivariate_explore 
+
+# Useful packages for publications/explorations
+
+The `GGally`  package contains plenty of very useful and nice functions
+
+---
+template: bivariate_explore
+count: false
+
+```{r ggpairs, eval = TRUE, echo = TRUE}
+##install.packages('GGally')
+library(GGally)
+penguins %>% ggpairs(columns = c(1,3,4,5), mapping = aes(col = species)) +
+scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+
+scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + theme(text = element_text(size = 6))
+```
+
+---
+template: bivariate_explore
+count: false
+
+```{r ggpairs_fancy, eval = TRUE, echo = TRUE}
+penguins %>% ggpairs(columns = c(1,3,4,5), mapping = aes(col = species),
+                     upper = list(continuous = wrap( "cor",size = 2)),
+                     lower = list(continuous = wrap('points', size = .5))) +
+  scale_color_manual(values = wesanderson::wes_palette('Darjeeling1'))+
+  scale_fill_manual(values = wesanderson::wes_palette('Darjeeling1')) + theme(text = element_text(size = 6))
+```
+
+---
+
+name: gganimate
+
+# Useful packages for presentation
+
+The `gganimate`  package produces animated graph (html only).
+
+
+```{r ani_final, eval = T, echo = T}
+library(gganimate)
+gg  +
+  transition_states(year)  +
+  geom_text(x = 56 , y = 15,
+            aes(label = as.character(year)),
+            size = 8, col = "grey50") +
+  theme(legend.position="bottom") 
+```
+
+
+---
+name: plotly
+
+# Useful packages for online reporting
+
+The `plotly`  package produces interactive plots  (html only).
+
+
+```{r plotly, eval = T, echo = T, fig.height=5, fig.width=4}
+library(plotly)
+gg  %>%  ggplotly()
+```
+
+---
+
+# Inspiring websites
+
+- [R Graph Gallery](https://www.r-graph-gallery.com/)
+- [Top50 ggplot Visualisation](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+
+---
+
+# References
+
+
+```{r refs, echo=FALSE, results="asis", eval = TRUE, cache = FALSE}
+PrintBibliography(myBib)
+```
