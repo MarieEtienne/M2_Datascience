@@ -60,6 +60,7 @@ On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
 
 
 ```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot_save <- function(...) ggplot2::ggplot(...) 
 ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
 #remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
 ```
@@ -1446,6 +1447,10 @@ template: pause
 
 Avant de passer à l'analyse de variance à deux facteurs ...
 ---
+
+```{r ggplot_back, echo = FALSe, eval = TRUE}
+ggplot <- function(...) ggplot2::ggplot(...) 
+```
 
 
 
