@@ -8,36 +8,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: brew install gdal geos udunits gifski pandoc-citeproc imagemagick
-      - uses: r-lib/actions/setup-r@master
-      - name: Install R packages
-        run: |
-          install.packages("remotes")
-          install.packages(c("devtools","plotly","ggpubr","gifski"))
-          install.packages(c("tidyverse","magick","gganimate","GGally","sf", "ggfortify"))
-          install.packages('maps')
-          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos", "ggpubr", "car", "emmeans"))
-          install.packages(c("kableExtra"))
-          remotes::install_github("ropensci/RefManageR")
-          remotes::install_github("yihui/xaringan")
-          remotes::install_github("gadenbuie/xaringanExtra")
-          remotes::install_github("EvaMaeRey/flipbookr")
-          remotes::install_github("ropensci/osmdata")
-          remotes::install_github("allisonhorst/palmerpenguins")
-          remotes::install_github("MarieEtienne/coursesdata")
-        shell: Rscript {0}
       - name: Generate slides
-        run: Rscript R/render.R
-
-      - name: Publish to another repository
-        uses: johno/actions-push-subdirectories@master
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: render
+        run: |
+          echo 'ok' > test.txt
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add test.txt  
+          git commit -m "Test action to push changes"
+      - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.API_TOKEN_GITHUB }}
+        branch: gh-pages
+    
