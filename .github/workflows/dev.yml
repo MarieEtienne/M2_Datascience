@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -34,12 +34,10 @@ jobs:
       - name: Generate slides
         run: Rscript R/render.R
 
-      - name: Pushes to another repository
-        uses: cpina/github-action-push-to-another-repository@master
+      - name: Publish to another repository
+        uses: johno/actions-push-subdirectories@master
         env:
-          API_TOKEN_GITHUB: ${{ secrets.ACCESS_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          source-directory: 'render'
-          destination-github-username: 'MarieEtienne'
-          destination-repository-name: 'courses-test-output'
-          user-email: marie-pierre.etienne@agrocampus-ouest.fr
+          args: render
