@@ -1437,10 +1437,7 @@ Sur un  paramètre  pvaut une valeur donnée (par défaut R teste systématiquem
 
 
 
-  
-```{r ggplot_back}
-ggplot <- function(...) ggplot2::ggplot(...)
-```
+
 
 ---
 template: pause
