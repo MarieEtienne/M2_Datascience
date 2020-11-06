@@ -1,0 +1,1080 @@
+---
+title: Analyse de la variance
+subtitle: à 2 facteurs
+author: Marie-Pierre Etienne
+date: '2020/09/11 (updated: `r Sys.Date()`)'
+institute: https://github.com/marieetienne
+csl: ../resources/apa-no-doi-no-issue.csl
+output:
+  xaringan::moon_reader:
+    css: [  'metropolis',  'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../resources/collapseoutput.js'
+    includes:
+      after_body: '../resources/insert-logo.html'
+fontsize: 10pt
+params:
+  child_path: ''
+  setup_path: ../resources/
+---
+
+
+
+```{r setup, include=FALSE, eval = TRUE}
+source(paste0(params$setup_path, "knitr_setup.R"))
+with_sol <- TRUE ## in order to control the output
+with_course <- TRUE
+library('flipbookr')
+library(RefManageR)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+```
+
+```{r reference,  include=FALSE, cache=FALSE, eval = TRUE}
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("./lm.bib", check = FALSE)
+```
+
+
+name: intro
+# Introduction
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
+```{r freqdata, eval = TRUE, echo = c(1,2), warning = FALSE}
+library(coursesdata)
+data(freqdata)
+freqdata %>% ggplot() +  aes(x= Sexe, y = freqC)+  geom_boxplot(aes(fill = Sexe, col = Sexe), alpha = 0.5) + theme(legend.position = 'none')  + 
+  geom_jitter( size=0.8, alpha=0.7, width = 0.15, aes(col = as.factor(Sexe)))
+freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
+```
+
+
+--
+<p class="question"> Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?</p>
+
+Nous avions vu dans le cours sur l'analyse de la variance à 1 facteur qu'il n'y avait pas de différence entre homme et femmes.
+
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+En plus du sexe, le jeu de données contient des informations sur le niveau de pratique sportive
+
+```{r sport, eval = TRUE}
+freqdata %>% mutate(Sport_Fact = as.factor(Sport)) -> freqdata
+freqdata %>% ggplot() + aes(y = freqC, x = Sport_Fact, fill = Sexe) + geom_boxplot() + xlab('Sport')
+```
+--
+<p class=question> Y a t il un effet du sexe ou du sport sur la fréquence cardiaque ? </p>
+<p class=question> Y a t il un effet du sexe  sur la fréquence cardiaque ? </p>
+<p class=question> Y a t il un effet du sport sur la fréquence cardiaque ? </p>
+
+---
+template: intro
+## Cadre général du modèle d'analyse de la variance à 2 facteurs
+
+On étudie le lien entre  
+- une variable quantitative notée $Y$ (la fréquence cardiaque),
+- et deux variables facteurs pouvant prendre respectivement $I$ modalités (I=2 pour le Sexe)  et J modalités (J=5 pour le Sport)
+
+Les données peuvent être visualisées à l'aide d'un boxplot.
+
+
+--
+<p class="question"> Y a t il un effet de l'un au moins des facteurs ?</p>
+<p class="question"> Y a t il un effet du facteur 1 ?</p>
+<p class="question"> Y a t il un effet du facteur 2 ?</p>
+
+
+---
+name: model
+# Le modèle d'analyse de la variance à 2 facteurs
+
+---
+template: model
+
+## Graphiquement 
+
+Une visualisation graphique du modèle d'analyse de la variance.
+
+<br> <br> <br> <br>
+
+
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
+
+
+
+
+---
+
+```{r anova_versiongraphique, eval = TRUE, echo = FALSE}
+set.seed(222)
+I <- 2
+J <- 3
+mu <- round(4  * rnorm(I*J),2)
+effectif <- sample(10:30, size =  I*J, replace = TRUE)
+fake_dta <- tibble( fact1 = rep(rep(1:I, each=J), effectif),
+                    fact2 = rep(rep(1:J, I), effectif)) %>%
+  group_by(fact1, fact2) %>% 
+  mutate(group =(fact1-1)*J + fact2,
+         m = mu[group],
+         y = round(rnorm(n(), mean = m, sd = 2),2) ) %>%
+  mutate(fact1 = as.character(fact1), 
+         fact2 = as.character(fact2), 
+         ord=0)  
+
+names(mu) <- paste('mu', rep(1:I, each=J), rep(1:J,I), sep ='_')
+
+norm_dta <- map_df(.x = mu, .f = function(m){
+  dnorm(seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100),
+        mean = m, sd = 2)},
+  .id = 'Groupe') %>% 
+  mutate(x  = seq( min(mu) -3*2, max(mu)+ 3* 2, length.out = 100))  %>%
+  pivot_longer(cols = starts_with("mu"), names_to = 'Groupe', values_to ='density' )%>% 
+  mutate(fact1= str_remove(stringr::str_extract(Groupe, pattern = '[:digit:]_'), pattern = '_'),
+         fact2= str_remove(stringr::str_extract(Groupe, pattern = '_[:digit:]$'), pattern = '_')) 
+```
+
+
+```{r anova_versiongraphique_anova2}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+```{r anova_versiongraphique_anova2_save, eval = TRUE}
+pMcomp <- ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+`r chunk_reveal("anova_versiongraphique_anova2", break_type = "user", display_type="output")`
+
+---
+count:false
+
+```{r anova_versiongraphique_anova2_fade, eval = TRUE, echo = FALSE}
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle Mcomp') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta, aes(x= x, y = density, col = fact2, linetype= fact1 ), alpha =0.3)  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = m, col = fact2, linetype = fact1), alpha = 0.3) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+---
+
+
+```{r anova_M0_prep, eval=TRUE}
+mu0 <- mean(fake_dta$y)
+sd0 <- sd(fake_dta$y)
+norm_dta_M0 <- norm_dta %>%
+  select(x, fact1, fact2) %>%
+  mutate(mu0= mu0, sd = sd0, 
+         density = dnorm(x, mean=mu0, sd=sd0))
+```
+
+```{r anova_versiongraphique_M0}
+
+ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M0') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+`r chunk_reveal("anova_versiongraphique_M0", break_type = "user", display_type="output")`
+
+```{r anova_versiongraphique_M0_save, eval = TRUE}
+pM0 <- ggplot() + 
+  xlab('y') +
+  ggtitle('Modèle M0') +
+  theme(legend.position = 'bottom')  + 
+  geom_line(data = norm_dta_M0, aes(x= x, y = density, col = fact2, linetype= fact1 ))  + #BREAK
+  geom_vline(data=fake_dta, aes(xintercept = mu0, col = fact2, linetype = fact1)) + #BREAK
+  geom_point(data = fake_dta, aes(x = y, col = fact2, shape= fact1, y=ord), size = 2, alpha = 0.7) 
+```
+
+
+---
+template: model
+
+Lequel de ces mécanismes est le plus crédible au vu des donées ?
+
+```{r compare_model_graph, eval = TRUE, echo = FALSE}
+ggpubr::ggarrange(pMcomp, pM0, nrow = 1, common.legend = TRUE)
+```
+
+
+---
+template: model
+
+## Version régulière du modèle Mcomp
+
+$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,I$ le niveau du facteur 1,
+- $j=1,\ldots,J$ le niveau du facteur 2,
+- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $n_{ij}$ le nombre d'individus dans le groupe $(i,j)$ et $n=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
+- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
+- $\sigma^2$ la variance commune à tous les groupes.
+
+### Une écriture équivalente 
+
+$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_{ij}, \sigma^2).$$
+
+
+### Nombre de paramètres du modèle
+
+- $I*J$ paramètres de moyenne  $(\mu_{11}, \mu_{12}, \ldots,  \mu_{1J}, \ldots \mu_{IJ})$; 
+- 1 paramètre de variance $\sigma^2$
+
+---
+template: model
+
+## Version régulière du modèle Mcomp sur l'exemple 1
+
+$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,2$ le niveau du facteur Sexe,
+- $j=1,\ldots,5$ le niveau du facteur Sport,
+- $k= 1,\ldots, 4$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $4$ le nombre d'individus dans le groupe $(i,j)$ et $n= 40=\sum_ j\sum_i n_{ij}$ le nombre total d'individus,
+- $\mu_{ij}$ le comportement moyen du groupe $(i,j)$,
+- $\sigma^2$ la variance commune à tous les groupes.
+
+
+
+$I=2, J= 5$ et  la convention $i=1$ pour les femmes et $i=2$ pour les hommes.
+
+
+### Nombre de paramètres
+- 10 paramètres de moyenne
+- 1 paramètre de variance
+
+---
+template: model
+## Version singulière du modèle du modèle Mcomp
+
+$$Y_{ijk} = \mu + \alpha_i +\beta_j +\gamma_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$
+avec 
+- $i=1,\ldots,I$ le niveau du facteur 1,
+- $j=1,\ldots,J$ le niveau du facteur 2,
+- $k= 1,\ldots, n_{ij}$ le numéro de l'individu dans le groupe $(i,j)$, 
+- $\mu$  le comportement moyen de référence
+- $\alpha_i$  l'effet différentiel du niveau $i$ 
+- $\beta_j$  l'effet différentiel du niveau $j$ 
+- $\gamma_{ij}$  l'effet différentiel de la rencontre des niveaux $(i,j),$
+- $\sigma^2$ la variance commune à tous les groupes.
+
+
+### Nombre de paramètres du modèle
+
+- $1 + I + J + I*J$ paramètres de moyenne  
+- 1 paramètre de variance $\sigma^2$
+
+--
+
+#### La version dans les logiciels et qui permet de séparer les effets des différens facteurs.
+
+
+
+---
+template: model
+## Lien entre les deux versions du même modèle
+
+ <table style="width:100%">
+  <tr>
+    <th>Groupe</th>
+    <th>V. régulière</th>
+    <th>V. singulière</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td> $\mu_{11}$ </td>
+    <td> $\mu +\alpha_1 + \beta_1 + \gamma_{11}$ </td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td> $\mu_{12}$ </td>
+    <td> $\mu +\alpha_1 + \beta_2 + \gamma_{12}$ </td>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+  </tr>
+    <tr>
+    <td> </td>
+    <td>  </td>
+    <td>   </td>
+  </tr>
+    <tr>
+    <td>I</td>
+    <td> $\mu_{IJ}$ </td>
+    <td> $\mu +\alpha_I +\beta_J +\gamma_{IJ}$ </td>
+  </tr>
+</table> 
+
+--
+
+<a class=care> Problème </a>  Le problème est identique au modèle d'analyse de la variance, le modèle sous cette forme est  <a style="font-weight:400;"> indéterminé</a>.
+
+--
+
+#### Solution : ajouter des contraintes
+Par défaut dans R :
+$\alpha_1=0,$  $\beta_1=0,$ et $\gamma_{1j}=0$ pour tous les $j$ et $\gamma_{i1}=0$ pour tous les $i$.
+
+Ce qui correspond à $1 + 1 + J + (I-1)=I  + J +1$ contraintes. 
+
+#### Nombre de paramètres 
+- On a donc $1 + I + J + IJ$ paramètres dont $I  + J +1$ sont contraints, il reste donc
+$IJ$ à estimer pour le comportement moyen
+- 1 paramètre de variance $\sigma^2$.
+
+
+
+---
+template: model
+## Que signifient ces contraintes (à partir de l'exemple)
+
+Le groupe $(1,1)$, c'est à dire les femmes très sportives ont un comportement moyen dans le modèle égal à $\mu +\alpha_1 +\beta_1 + \gamma_{11},$ ce qui vaut $\mu$ étant données les contraintes.
+
+--
+
+Le groupe $(1,j)$ désigne les femmes à la pratique sportive identifiée $j$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_1 +\beta_j +\gamma_{1j}$, soit étant données les contraintes $\mu +\beta_j.$ $\beta_j$ est donc l'effet différentiel du sport $j$ par rapport au sport $1$  <a class=care> pour les femmes</a>.
+
+--
+
+Le groupe $(i,1)$ désigne les individus de sexe $i$  à la pratique sportive identifiée $1$. En moyenne leur fréquence cardiaque dans le modèle est $\mu + \alpha_i +\beta_1 +\gamma_{i1}$, soit étant données les contraintes $\mu +\alpha_i.$ $\alpha_i$ est donc l'effet différentiel du sexe $i$  par rapport au sexe de référence $1$   <a class=care> pour les sportifs de niveau 1</a>.
+
+--
+
+Les termes $\gamma_{ij}$ sont difficiles à interpréter et seront discuter en TP.
+
+
+
+---
+template: model
+## Sous forme matricielle
+ $$\bf{Y = X\theta + E}$$
+### Forme régulière 
+
+$$Y=\begin{pmatrix}
+Y_{111}\\
+Y_{112}\\
+\vdots\\
+Y_{11n_{11}}\\
+Y_{121}\\
+\vdots\\
+Y_{12n_{12}}\\
+\vdots\\
+Y_{ijk}\\
+\vdots\\
+Y_{IJn_{IJ}}\end{pmatrix},
+ \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_{11} & \mu_{12} & \ldots & \ldots &\mu_{IJ}\end{matrix}}}{\begin{pmatrix}
+1 & 0 & 0 & \ldots 0\\
+1 & 0 & 0 & \ldots 0\\
+\vdots\\
+1 & 0 & 0 & \ldots 0\\
+0 & 1 & 0 & \ldots 0 \\
+\vdots\\
+0 & 1 & 0 & \ldots 0 \\
+\vdots\\
+0 & \ldots  & 1 & \ldots 0 \\\vdots\\
+0 & 0 & 0 & \ldots 1 \end{pmatrix}},\quad
+{\bf{\theta}} =\begin{pmatrix}
+\mu_{11}\\
+\mu_{12}\\
+\vdots\\
+\mu_{1J}\\
+\mu_{21}\\
+\vdots\\
+\mu_{IJ}\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{111}\\
+E_{112}\\
+\vdots\\
+E_{11n_{11}}\\
+E_{121}\\
+\vdots\\
+E_{12n_{12}}\\
+\vdots\\
+E_{IJn_{IJ}}\end{pmatrix}}$$
+---
+template: model
+
+## Sous forme matricielle
+ $$\bf{Y = X\theta + E}$$
+### Forme singulière
+
+<p class=question> Ecrire le modèle en version singulière sous forme matricielle en intégrant les contraintes.</p>
+
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+
+
+```{r m_comp_false, eval = TRUE, echo = TRUE, out.width="100%"}
+Mcomp <- lm(freqC ~ Sexe + Sport + Sexe:Sport, data = freqdata)
+model.matrix(Mcomp)
+```
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+*Attention, il manque une colonne*
+
+```{r m_comp, eval = TRUE, echo = TRUE}
+Mcomp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
+model.matrix(Mcomp)
+```
+
+---
+class: inverse
+name: pause
+# Pause
+
+<br><br><br><br>
+<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
+
+---
+name: parametre
+# Estimation des paramètres
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version matricielle
+
+
+Le modèle sous forme matricielle s'écrit
+
+$$\bf{Y = X\theta + E}.$$
+--
+
+### Estimation de $\theta$
+
+$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$
+
+--
+
+### Estimateur de $\theta$
+
+$$T = (X^\intercal X )^{-1} X^\intercal Y.$$
+--
+
+### Loi de l'estimateur de $\theta$
+
+
+$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$
+
+---
+template: parametre
+## Le paramètre de variance
+
+La somme des carrés résiduelles s'écrit sous la forme 
+
+$$RSS = || Y- X \hat{\theta} ||^2$$
+
+### Estimateur de la variance 
+
+  $$S^2 =\frac{1}{DF_{res}} RSS, $$
+est un <a class=care> estimateur sans bias de  $\sigma^2$ </a> .
+
+Dans le cas du modèle d'analyse de la variance à 2 facteurs $DF_res=n-IJ$ (n observations et IJ paramètres de moyennes à estimer, le nombre de composantes dans le vecteur $\theta$)
+
+--
+
+## Estimation de $\sigma^2$
+
+$$\hat{\sigma}^2 =\frac{1}{n-IJ} RSS_{obs}.$$
+---
+template: parametre
+## sur l'exemple de la fréquence cardiaque
+
+```{r param_m_comp, eval = TRUE, echo = TRUE}
+summary(Mcomp)
+```
+
+---
+class: inverse
+name: pause
+# Pause
+
+<br><br><br><br>
+<p style="color:#B40F20;font-size:35px;text-align:center;">Prenons une petite pause !!!</p> 
+
+---
+name: modcomp
+# Test du modèle complet
+
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
+
+
+
+```{r freqdata2, ref.label='sport', eval = TRUE, warning = FALSE, results ='markup'}
+```
+
+
+--
+<p class="question"> Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?</p>
+
+
+---
+template: modcomp
+## Sous forme de comparaison de modèle
+
+
+```{r compare_model_graph2, ref.label='compare_model_graph', eval = TRUE, echo = FALSE, results='markup'}
+```
+
+--
+<p class="question"> Le modèle Mcomp est il plus pertinent que le modèle M0 ?</p>
+
+
+
+---
+template: modcomp
+## Hypothèses du test
+
+On va donc opposer une hypothèse de travail $H_0$ contre une hypothèse alternative $H_1$. $H_0$ peut donc prendre différentes formes:
+
+
+$$\begin{align} 
+H_0 & =\left \lbrace \mbox{Pas de différence entre les différents groupes }\right\rbrace\\
+    & =\left \lbrace  \mbox{pour tout }i, \alpha_i =0, \mbox{pour tout }j,\beta_j=0  \mbox{ et pour tout }(i,j),\gamma_{ij}=0   \right\rbrace\\
+    & =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
+\end{align}$$
+
+$H_1$ prend les formes équivalentes suivantes
+
+$$\begin{align} 
+H_1 & =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
+    & =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \mbox{ ou un }j, \beta_j \ne 0 \mbox{ ou un } (i,j), \gamma_{ij} \ne 0  \right\rbrace\\
+    & =\left \lbrace  M_{comp} \mbox{ est préférable à } M0 \right\rbrace.
+\end{align}$$
+
+--
+
+Sous $H_0$, 
+$$F= \frac{\frac{SS_{M_{comp}}}{IJ-1}}{\frac{RSS}{n-IJ}} \underset{H_0}{\sim}\mathcal{F}(IJ-1, n-IJ)$$  
+
+---
+template: modcomp
+## Loi de la statistique de test sous $H_0$ - graphiquement
+
+Sous $H_0$ la loi de distribution de $F$ est 
+
+```{r p_value, eval = TRUE}
+tibble(x = seq(0, 10, length.out = 2001)) %>% 
+  mutate(y = df(x, df1 = 4, df= 38)) -> chi_dta
+Fobs <- 1
+chi_dta %>% filter(x> Fobs) %>% add_row(x=100,y = 0) %>%  add_row(x=Fobs, y =0)  %>% 
+  add_row(x=Fobs, y =df(Fobs, df1 = 4, df= 38)) %>% arrange(x,y)  -> chi_dta_poly
+```
+
+
+```{r pvalue_graphique}
+ggplot(data  = chi_dta) + xlab('y') + ylab('density') + geom_line(aes(x=x, y=y)) + #BREAK
+  annotate("text", x = Fobs- 0.5, y = 0.05, label = "Fobs", col = 'red')+  geom_vline(aes(xintercept = Fobs), col = 'red') + #BREAK
+  geom_polygon(data = chi_dta_poly,  aes(x=x, y= y), alpha = 0.3) + xlim(c(0, max(chi_dta$x))) 
+
+```
+
+---
+
+`r chunk_reveal("pvalue_graphique", break_type = "user", display_type="output")`
+
+---
+name: variance_decomposition
+# Decomposition de SSM
+
+---
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+<br>
+
+- $RSS_0$ est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à $RSS$.
+
+
+<br>
+
+
+```{r var_1, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS1.png')
+```
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+<br>
+
+- $RSS_0$ est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à $RSS$.
+
+
+<br>
+
+```{r var_2, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS2.png')
+```
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+<br>
+
+- $RSS_0$ est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à $RSS$.
+
+
+<br>
+
+```{r var_3, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS3.png')
+```
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+<br>
+
+- $RSS_0$ est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à $RSS$.
+
+<br>
+
+```{r var_4, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS4.png')
+```
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+<br>
+
+- $RSS_0$ est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à $RSS$.
+
+
+<br>
+
+```{r var_5, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS5.png')
+```
+
+
+---
+template: variance_decomposition
+## Mathématiquement
+
+On veut décomposer la variabilité attribuée au modèle selon les différentes sources.
+
+Considérons les différents modèles possibles
+
+$$\begin{align}
+M_0\ :\ Y_{ijk} &= \mu + E_{ijk}\\
+M_{1}\ :\ Y_{ijk} &= \mu + \alpha_i + E_{ijk}\\
+M_{2}\ :\ Y_{ijk} &= \mu + \beta_j + E_{ijk}\\
+M_{12}\ :\ Y_{ijk} &= \mu + \alpha_i + \beta_j + E_{ijk}\\
+M_{comp}\ :\ Y_{ijk} &= \mu + \alpha_i + \beta_j +\gamma_{ij} + E_{ijk}\\
+\end{align}$$
+
+--
+
+<a class = question> Comment mesurer l'effet des différents facteurs</a> 
+
+--
+
+Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
+
+---
+template: variance_decomposition
+## Réduction de variabilité
+
+$$\begin{align}
+SSM & = RSS_0 - RSS_{comp}\\
+SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + {RSS_1 - RSS_{12}} +{RSS_{12} - RSS_{comp}} \\
+\end{align}$$
+--
+
+
+```{r var_ralpha, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS4_Ralpha.png')
+```
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de variabilité
+
+$$\begin{align}
+SSM & = RSS_0 - RSS_{comp}\\
+SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + {RSS_{12} - RSS_{comp}} \\
+\end{align}$$
+
+
+
+```{r var_beta, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS4_Rbeta.png')
+```
+
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de variabilité
+
+$$\begin{align}
+SSM & = RSS_0 - RSS_{comp}\\
+SSM & = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+\end{align}$$
+
+
+
+```{r var_tot, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS4.png')
+```
+
+
+
+---
+template: variance_decomposition
+## Test de type 1
+
+
+ <table style="width:100%">
+  <tr>
+    <th>Source</th>
+    <th>H0</th>
+    <th>SS</th>
+    <th>Df</th>
+    <th>F</th>
+  </tr>
+  <tr>
+    <th> Fact1 </th>
+    <th> M0 et M1 sont équivalents </th>
+    <th> $R(\alpha\vert \mu)$ </th>
+    <th> $I-1$ </th>
+    <th> $$\frac{\frac{R(\alpha\vert \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Fact2 </th>
+    <th> M1 et M12 sont équivalents </th>
+    <th> $R(\beta\vert\alpha, \mu)$ </th>
+    <th> $J-1$ </th>
+    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Inter </th>
+    <th> M12 et Mcomp sont équivalents </th>
+    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
+    <th> $(J-1)(J-1)$ </th>
+    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+</table> 
+
+
+
+
+---
+template: variance_decomposition
+## Tests de type 1
+
+Rôle asymétrique des facteurs (l'ordre des facteurs importe).
+
+--
+
+## Tests de type 2
+
+But : symétriser le rôle des différents facteurs
+
+```{r var_tot_2, eval =TRUE, out.width = "45%"}
+knitr::include_graphics('./RSS5.png')
+```
+
+
+---
+template: variance_decomposition
+## Test de type 2
+
+ <table style="width:100%">
+  <tr>
+    <th>Source</th>
+    <th>H0</th>
+    <th>SS</th>
+    <th>Df</th>
+    <th>F</th>
+  </tr>
+  <tr>
+    <th> Fact1 </th>
+    <th> M2 et M12 sont équivalents </th>
+    <th> $R(\alpha\vert \beta, \mu)$ </th>
+    <th> $I-1$ </th>
+    <th> $$\frac{\frac{R(\alpha\vert\beta, \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Fact2 </th>
+    <th> M1 et M12 sont équivalents </th>
+    <th> $R(\beta\vert\alpha, \mu)$ </th>
+    <th> $J-1$ </th>
+    <th> $$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+<tr>
+    <th> Inter </th>
+    <th> M12 et Mcomp sont équivalents </th>
+    <th> $R(\gamma\vert \beta, \alpha, \mu)$ </th>
+    <th> $(J-1)(J-1)$ </th>
+    <th> $$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$ </th>
+</tr>
+</table> 
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+### Type 1
+```{r freq_comp, eval = TRUE, echo =TRUE}
+MComp <- lm(freqC ~ Sexe + Sport_Fact +Sexe:Sport_Fact, data = freqdata)
+anova(MComp)
+```
+
+--
+### Type 2
+
+```{r freq_comp2, eval = TRUE, echo =TRUE}
+library(car)
+Anova(MComp, type = 2)
+```
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+Il s'agit du cas particulier $n_{ij}$ sont tous égaux. Le plan d'expérience est dit **équilibré**.
+
+--
+
+
+```{r var_eq, eval =TRUE, out.width = "45%"}
+knitr::include_graphics('./RSS3_eq.png')
+```
+
+
+---
+template: variance_decomposition
+## Fréquence cardiaque, plan d'expérience déséquilibré
+
+```{r freq_des, eval = TRUE, echo = c(2,4,5)}
+freqdata_des <- read.table('https://marieetienne.github.io/datasets/FreqCardiaqueDes1.txt', sep =" ", header =TRUE) %>% 
+  mutate(Sport_Fact = as.factor(Sport))
+table(freqdata_des$Sexe, freqdata_des$Sport)
+MComp <- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata_des)
+anova(MComp)
+Anova(MComp, type = 2)
+```
+
+
+
+---
+template: variance_decomposition
+## Exercice
+
+Indiquer dans chaque portion du schéma ci-dessous, le somme des carrés représentés. 
+
+
+```{r var_tot_ex, eval =TRUE, out.width = "55%"}
+knitr::include_graphics('./RSS3.png')
+```
+
+---
+template: pause
+
+---
+name: comp_moyenne
+# Comparaison des différents groupes
+---
+template: comp_moyenne
+
+## Question 
+
+<a class=question> Quels sont les niveaux de pratiques sportives correspondant à des fréquences cardiaques différentes ?</a>
+
+--
+
+Calcul des moyennes par niveau de pratique sportive
+
+```{r mean_sexe, eval = TRUE}
+freqdata_des %>% group_by(Sport) %>%  summarise(m =mean(freqC)) 
+```
+
+
+Calcul des moyennes par sexe
+
+```{r mean_sport, eval = TRUE}
+freqdata_des %>% group_by(Sexe) %>%  summarise(m =mean(freqC)) 
+```
+
+
+--
+<a style=care> Attention : </a> comparaison de femmes sportives avec des hommes sédentaires
+
+Plan d'expérience
+
+```{r plan_xp, eval = TRUE}
+table(freqdata_des$Sexe, freqdata_des$Sport)
+```
+
+
+
+---
+template: comp_moyenne
+
+La moyenne au sein du groupe $i$ pour le facteur est 1 est donnée par :
+$$Y_{i..} = \frac{1}{n_{i+}}\sum_{j=1}^J \sum_{k=1}^{n_ij}Y_{ijk},$$
+avec $n_{i+}=\sum_j n_{ij},$ le nombre total d'observations pour le niveau $i$. 
+
+Alors $$\mathbb{E}(Y_{i..} )= \mu + \alpha_i  + \frac{1}{n_{i+}}\sum_{j=1}^J  n_{ij} (\beta_j  +\gamma_{ij}).$$
+
+--
+Sur notre exemple
+$$\mathbb{E}(Y_{1..} )= \mu  + \alpha_1 + \frac{1}{n_{i+}} \left( 6 (\beta_1 + \gamma_{11}) + 3 (\beta_2 + \gamma_{12})  + 5 (\beta_3 + \gamma_{13}) + 3 (\beta_4 + \gamma_{14})+ 2 (\beta_5 + \gamma_{15})\right).$$
+
+$$\mathbb{E}(Y_{2..} )= \mu  + \alpha_2 + \frac{1}{n_{i+}} \left( 3 (\beta_1 + \gamma_{21}) + 2 (\beta_2 + \gamma_{22})  + 6 (\beta_3 + \gamma_{23}) + 5 (\beta_4 + \gamma_{24})+ 5 (\beta_5 + \gamma_{25})\right).$$
+
+--
+
+$$\begin{align}
+\mathbb{E}(Y_{1..} - Y_{2..} )= & \alpha_1- \alpha_2 + \frac{1}{n_{i+}} \left( 3 \beta_1  + 6\gamma_{11}  - 3\gamma_{21} +\beta_2 + 3\gamma_{12}  - 2\gamma_{22} - \beta_3 +5\gamma_{13}  - 6\gamma_{23}\right. \\
+& \left. -2\beta_4 + 3 \gamma_{14}  -  5\gamma_{24} -3 \beta_5 + 2 \gamma_{15} -5 \gamma_{25} \right).
+\end{align}$$
+
+Les effets potentiels de la pratique sportive n'interviennent pas de la même manière dans les deux moyennes.
+
+
+---
+template: comp_moyenne
+## Moyennes ajustées
+
+C'est la moyenne qu'on observerait dans un plan d'expérience équilibré
+
+$$\tilde{\mu}_{i.} = \mu + \alpha_i + \frac{1}{J}\sum_{j=1}^J (\beta_j +\gamma_{ij}).$$
+$$\tilde{\mu}_{.j} = \mu + \beta_j + \frac{1}{I}\sum_{i=1}^I (\alpha_i +\gamma_{ij}).$$
+
+
+*On redresse artificiellement le plan d'expérience*
+--
+
+$$\tilde{\mu}_{1.}-\tilde{\mu}_{2.} =  \alpha_1  -\alpha_{2}+ \frac{1}{J}\sum_{j=1}^J (\gamma_{1j} -\gamma_{2j}).$$
+
+---
+template: comp_moyenne
+
+## Moyennes ajustées pour le sexe
+
+```{r moy_ajustees, eval= TRUE, echo =TRUE}
+library(emmeans)
+m_ajust_sexe <- emmeans(MComp, "Sexe")
+pairs(m_ajust_sexe)
+plot(m_ajust_sexe)
+```
+
+
+---
+
+template: comp_moyenne
+## Moyennes ajustées pour le sport
+
+```{r moy_ajustees_sport, eval= TRUE, echo =TRUE}
+m_ajust_sport <- emmeans(MComp, "Sport_Fact")
+summary(pairs(m_ajust_sport))
+```
+
+---
+
+template: comp_moyenne
+## Moyennes ajustées pour le sport
+
+```{r ajuste_sport_graph, eval = TRUE}
+plot(m_ajust_sport)
+```
+
+
+---
+template: pause
+
+
+
+```{r ggplot_back, echo = FALSe, eval = TRUE}
+ggplot <- function(...) ggplot2::ggplot(...) 
+```
+
+
