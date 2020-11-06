@@ -128,7 +128,7 @@ ggplot(data = grenouilles) + geom_point(aes(x= Latitude, y = pres_bin) )   + geo
 ```
 
 
-```{r ggplot_back, echo = FALSe, eval = TRUE}
+```{r ggplot_back, echo = FALSE, eval = TRUE}
 ggplot <- function(...) ggplot2::ggplot(...) 
 ```
 

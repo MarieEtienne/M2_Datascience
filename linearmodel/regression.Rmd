@@ -790,3 +790,9 @@ Quel test pourrait permettre d’étudier cette influence ?
 
 Correction en TP </p> 
 
+
+
+```{r ggplot_back, echo = FALSE, eval = TRUE}
+ggplot <- function(...) ggplot2::ggplot(...) 
+```
+

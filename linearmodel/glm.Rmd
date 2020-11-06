@@ -423,8 +423,7 @@ Ecrivez moi !!!
 
 
 
-
-```{r ggplot_back, echo = FALSe, eval = TRUE}
+```{r ggplot_back, echo = FALSE, eval = TRUE}
 ggplot <- function(...) ggplot2::ggplot(...) 
 ```
 
