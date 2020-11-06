@@ -1,0 +1,134 @@
+---
+title: "Modèle linéaire Généralisé"
+output: 
+  html_document:
+   toc: true
+   toc_float: true
+   logo: LogoAgrocampusOuest.jpg
+   number_sections: true
+   highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+library(tibble)
+library(tidyr)
+library(stringr)
+library(purrr)
+library(ggplot2)
+library(dplyr)
+library(car)
+
+```
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
+
+
+
+## Les grenouilless à pattes rouges de Californie
+
+### Présentation du problème
+
+Les auteurs ont collecté dans la littérature et dans les archives des muséums, des informations
+sur la présence ou l'absence de grenouilless sauvages dans 237 points d'eau de Californie. Pour
+chacun des sites, on dispose donc de sa position (longitude + latitude) de la source de
+l'information (Museum, Literature, PersCom ou Field Note) ainsi que de l'information sur la
+présence/absence de grenouilless.\\
+On cherche à caractériser l'aire de répartition de cette espèce en étudiant comment varie la
+probabilité de trouver des grenouilless dans un point d'eau en fonction de la latitude et de la
+longitude. On pourra aussi se demander si les différentes sources d'information documentent
+les mêmes " types " de points d'eau. \\
+Les données se trouvent dans le fichier grenouilles.don \\
+Les colonnes sont : Source Source2 presabs(Présence/Absence) latitude longitude \\
+
+
+### Analyse descriptive
+
+Les données sont disponibles sur [grenouilles](data/grenouilles.don)
+
+```{r desc}
+library(coursesdata)
+data("grenouilless")
+grenouilles <- grenouilles %>% mutate(Status = factor(Status, levels = c('P','A'))) 
+
+n <- nrow(grenouilles)
+
+summary(grenouilles)
+
+grenouilles %>% mutate(pres_bin = ifelse(Status=='A', 0, 1)) -> grenouilles
+
+p <- ggplot(data=grenouilles, aes(x=Latitude, y=pres_bin)) + geom_point()
+p
+
+p <- ggplot(data=grenouilles, aes(x=Longitude, y=pres_bin)) + geom_point()
+p
+
+
+p <- ggplot(data=grenouilles, aes(y = Latitude, x = Longitude, col = Status)) + geom_point() + coord_fixed()
+p
+```
+
+
+
+
+### Etude de l'effet Latitude seule
+$$ Y_k  \overset{i.i.d}{\sim}\mathcal{B}(p_k), \quad logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_k   $$ 
+
+
+
+```{r}
+glm1  <-  glm(Status ~ Latitude, family = binomial, data=grenouilles)
+
+glm0 <- glm(Status ~ 1, family = binomial, data=grenouilles)
+
+summary(glm1)
+anova(glm0, glm1, test = 'Chisq')
+
+```
+
+
+```{r}
+new_data <- data.frame(Latitude = seq(0, 70, by = 0.1))
+new_data %>% mutate(prediction = predict(glm1, newdata = new_data, type = 'response' ) ) -> new_data
+
+ggplot(new_data) + geom_line(aes(x=Latitude, y = prediction)) + geom_point(data=grenouilles, aes(x=Latitude, y = pres_bin)) + xlim(c(33, 40))
+```
+
+### Introduction de la longitude
+
+$$ Y_{k}  \sim \mathcal{B}(p_k), \quad  logit(p_k)  = \beta_0 + \beta_1 x^{(1)}_k + \beta_2 x^{(2)}_k. $$
+
+
+```{r}
+glm12  <-  glm(Status~Latitude+Longitude, family=binomial, data = grenouilles)
+
+anova(glm1, glm12, test = 'Chisq')
+
+glm2  <-  glm(Status ~ Longitude, family=binomial, data=grenouilles)
+
+anova(glm0, glm2)
+
+anova(glm0, glm1)
+
+anova(glm2, glm12, test = 'Chisq')
+
+summary(glm12)
+anova(glm12)
+
+Anova(glm12)
+```
+
+```{r}
+grenouilles %>% mutate(pred = predict(glm12, grenouilles, type = 'response' )) -> grenouilles
+ggplot(data = grenouilles) + geom_point(aes(x= Latitude, y = pres_bin) )   + geom_point(aes(x=Latitude, y = pred), col= 'red')
+```
+
+
+```{r ggplot_back, echo = FALSE, eval = TRUE}
+ggplot <- function(...) ggplot2::ggplot(...) 
+```
+
