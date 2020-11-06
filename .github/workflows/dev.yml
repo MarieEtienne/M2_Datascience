@@ -1,4 +1,4 @@
-name: slides
+name: slides-dev
 
 on:
   push:
@@ -33,9 +33,4 @@ jobs:
         shell: Rscript {0}
       - name: Generate slides
         run: Rscript R/render_dev.R
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./render
   
