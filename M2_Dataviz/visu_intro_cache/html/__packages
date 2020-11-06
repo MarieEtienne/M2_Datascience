@@ -11,6 +11,8 @@ forcats
 cowplot
 flipbookr
 RefManageR
+coursesdata
+ggfortify
 sf
 rnaturalearth
 rnaturalearthdata
