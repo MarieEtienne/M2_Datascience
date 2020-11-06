@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Analyse de la variance</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marie-Pierre Etienne" />
+    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Analyse de la variance
+## à 2 facteurs
+### Marie-Pierre Etienne
+### <a href="https://github.com/marieetienne" class="uri">https://github.com/marieetienne</a>
+### 2020/09/11 (updated: 2020-11-06)
+
+---
+
+
+
+
+
+
+
+
+
+
+
+name: intro
+# Introduction
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes.
+
+
+
+
+
+```r
+library(coursesdata)
+data(freqdata)
+```
+
+&lt;img src="anova2_files/figure-html/freqdata-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+--
+&lt;p class="question"&gt; Les hommes et les femmes ont-ils la même fréquence cardiaque au repos ?&lt;/p&gt;
+
+Nous avions vu dans le cours sur l'analyse de la variance à 1 facteur qu'il n'y avait pas de différence entre homme et femmes.
+
+
+---
+template: intro
+## Notre exemple de fréquence cardiaque
+
+En plus du sexe, le jeu de données contient des informations sur le niveau de pratique sportive
+
+&lt;img src="anova2_files/figure-html/sport-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+--
+&lt;p class=question&gt; Y a t il un effet du sexe ou du sport sur la fréquence cardiaque ? &lt;/p&gt;
+&lt;p class=question&gt; Y a t il un effet du sexe  sur la fréquence cardiaque ? &lt;/p&gt;
+&lt;p class=question&gt; Y a t il un effet du sport sur la fréquence cardiaque ? &lt;/p&gt;
+
+---
+template: intro
+## Cadre général du modèle d'analyse de la variance à 2 facteurs
+
+On étudie le lien entre  
+- une variable quantitative notée `\(Y\)` (la fréquence cardiaque),
+- et deux variables facteurs pouvant prendre respectivement `\(I\)` modalités (I=2 pour le Sexe)  et J modalités (J=5 pour le Sport)
+
+Les données peuvent être visualisées à l'aide d'un boxplot.
+
+
+--
+&lt;p class="question"&gt; Y a t il un effet de l'un au moins des facteurs ?&lt;/p&gt;
+&lt;p class="question"&gt; Y a t il un effet du facteur 1 ?&lt;/p&gt;
+&lt;p class="question"&gt; Y a t il un effet du facteur 2 ?&lt;/p&gt;
+
+
+---
+name: model
+# Le modèle d'analyse de la variance à 2 facteurs
+
+---
+template: model
+
+## Graphiquement 
+
+Une visualisation graphique du modèle d'analyse de la variance.
+
+&lt;br&gt; &lt;br&gt; &lt;br&gt; &lt;br&gt;
+
+
+Comment imagine-t-on le processus aléatoire qui a conduit à nos données ?
+
+
+
+
+---
+
+
+
+
+
+
+
+
+
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-anova_versiongraphique_anova2-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-anova_versiongraphique_anova2-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-anova_versiongraphique_anova2-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+count:false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_anova2_fade-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+
+
+
+
+
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/anova_versiongraphique_M0_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-anova_versiongraphique_M0-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-anova_versiongraphique_M0-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-anova_versiongraphique_M0-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+
+
+
+---
+template: model
+
+Lequel de ces mécanismes est le plus crédible au vu des donées ?
+
+&lt;img src="anova2_files/figure-html/compare_model_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: model
+
+## Version régulière du modèle Mcomp
+
+`$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+avec 
+- `\(i=1,\ldots,I\)` le niveau du facteur 1,
+- `\(j=1,\ldots,J\)` le niveau du facteur 2,
+- `\(k= 1,\ldots, n_{ij}\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
+- `\(n_{ij}\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(n=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
+- `\(\mu_{ij}\)` le comportement moyen du groupe `\((i,j)\)`,
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+### Une écriture équivalente 
+
+`$$Y_{ik} \overset{ind}{\sim}\mathcal{N}(\mu_{ij}, \sigma^2).$$`
+
+
+### Nombre de paramètres du modèle
+
+- `\(I*J\)` paramètres de moyenne  `\((\mu_{11}, \mu_{12}, \ldots,  \mu_{1J}, \ldots \mu_{IJ})\)`; 
+- 1 paramètre de variance `\(\sigma^2\)`
+
+---
+template: model
+
+## Version régulière du modèle Mcomp sur l'exemple 1
+
+`$$Y_{ijk} = \mu_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+avec 
+- `\(i=1,\ldots,2\)` le niveau du facteur Sexe,
+- `\(j=1,\ldots,5\)` le niveau du facteur Sport,
+- `\(k= 1,\ldots, 4\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
+- `\(4\)` le nombre d'individus dans le groupe `\((i,j)\)` et `\(n= 40=\sum_ j\sum_i n_{ij}\)` le nombre total d'individus,
+- `\(\mu_{ij}\)` le comportement moyen du groupe `\((i,j)\)`,
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+
+
+`\(I=2, J= 5\)` et  la convention `\(i=1\)` pour les femmes et `\(i=2\)` pour les hommes.
+
+
+### Nombre de paramètres
+- 10 paramètres de moyenne
+- 1 paramètre de variance
+
+---
+template: model
+## Version singulière du modèle du modèle Mcomp
+
+`$$Y_{ijk} = \mu + \alpha_i +\beta_j +\gamma_{ij} +E_{ijk},\quad E_{ijk}\overset{ind}{\sim}\mathcal{N}(0, \sigma^2),$$`
+avec 
+- `\(i=1,\ldots,I\)` le niveau du facteur 1,
+- `\(j=1,\ldots,J\)` le niveau du facteur 2,
+- `\(k= 1,\ldots, n_{ij}\)` le numéro de l'individu dans le groupe `\((i,j)\)`, 
+- `\(\mu\)`  le comportement moyen de référence
+- `\(\alpha_i\)`  l'effet différentiel du niveau `\(i\)` 
+- `\(\beta_j\)`  l'effet différentiel du niveau `\(j\)` 
+- `\(\gamma_{ij}\)`  l'effet différentiel de la rencontre des niveaux `\((i,j),\)`
+- `\(\sigma^2\)` la variance commune à tous les groupes.
+
+
+### Nombre de paramètres du modèle
+
+- `\(1 + I + J + I*J\)` paramètres de moyenne  
+- 1 paramètre de variance `\(\sigma^2\)`
+
+--
+
+#### La version dans les logiciels et qui permet de séparer les effets des différens facteurs.
+
+
+
+---
+template: model
+## Lien entre les deux versions du même modèle
+
+ &lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Groupe&lt;/th&gt;
+    &lt;th&gt;V. régulière&lt;/th&gt;
+    &lt;th&gt;V. singulière&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;1&lt;/td&gt;
+    &lt;td&gt; `\(\mu_{11}\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_1 + \beta_1 + \gamma_{11}\)` &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;2&lt;/td&gt;
+    &lt;td&gt; `\(\mu_{12}\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_1 + \beta_2 + \gamma_{12}\)` &lt;/td&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt; &lt;/td&gt;
+    &lt;td&gt;  &lt;/td&gt;
+    &lt;td&gt;   &lt;/td&gt;
+  &lt;/tr&gt;
+    &lt;tr&gt;
+    &lt;td&gt;I&lt;/td&gt;
+    &lt;td&gt; `\(\mu_{IJ}\)` &lt;/td&gt;
+    &lt;td&gt; `\(\mu +\alpha_I +\beta_J +\gamma_{IJ}\)` &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt; 
+
+--
+
+&lt;a class=care&gt; Problème &lt;/a&gt;  Le problème est identique au modèle d'analyse de la variance, le modèle sous cette forme est  &lt;a style="font-weight:400;"&gt; indéterminé&lt;/a&gt;.
+
+--
+
+#### Solution : ajouter des contraintes
+Par défaut dans R :
+`\(\alpha_1=0,\)`  `\(\beta_1=0,\)` et `\(\gamma_{1j}=0\)` pour tous les `\(j\)` et `\(\gamma_{i1}=0\)` pour tous les `\(i\)`.
+
+Ce qui correspond à `\(1 + 1 + J + (I-1)=I  + J +1\)` contraintes. 
+
+#### Nombre de paramètres 
+- On a donc `\(1 + I + J + IJ\)` paramètres dont `\(I  + J +1\)` sont contraints, il reste donc
+`\(IJ\)` à estimer pour le comportement moyen
+- 1 paramètre de variance `\(\sigma^2\)`.
+
+
+
+---
+template: model
+## Que signifient ces contraintes (à partir de l'exemple)
+
+Le groupe `\((1,1)\)`, c'est à dire les femmes très sportives ont un comportement moyen dans le modèle égal à `\(\mu +\alpha_1 +\beta_1 + \gamma_{11},\)` ce qui vaut `\(\mu\)` étant données les contraintes.
+
+--
+
+Le groupe `\((1,j)\)` désigne les femmes à la pratique sportive identifiée `\(j\)`. En moyenne leur fréquence cardiaque dans le modèle est `\(\mu + \alpha_1 +\beta_j +\gamma_{1j}\)`, soit étant données les contraintes `\(\mu +\beta_j.\)` `\(\beta_j\)` est donc l'effet différentiel du sport `\(j\)` par rapport au sport `\(1\)`  &lt;a class=care&gt; pour les femmes&lt;/a&gt;.
+
+--
+
+Le groupe `\((i,1)\)` désigne les individus de sexe `\(i\)`  à la pratique sportive identifiée `\(1\)`. En moyenne leur fréquence cardiaque dans le modèle est `\(\mu + \alpha_i +\beta_1 +\gamma_{i1}\)`, soit étant données les contraintes `\(\mu +\alpha_i.\)` `\(\alpha_i\)` est donc l'effet différentiel du sexe `\(i\)`  par rapport au sexe de référence `\(1\)`   &lt;a class=care&gt; pour les sportifs de niveau 1&lt;/a&gt;.
+
+--
+
+Les termes `\(\gamma_{ij}\)` sont difficiles à interpréter et seront discuter en TP.
+
+
+
+---
+template: model
+## Sous forme matricielle
+ `$$\bf{Y = X\theta + E}$$`
+### Forme régulière 
+
+`$$Y=\begin{pmatrix}
+Y_{111}\\
+Y_{112}\\
+\vdots\\
+Y_{11n_{11}}\\
+Y_{121}\\
+\vdots\\
+Y_{12n_{12}}\\
+\vdots\\
+Y_{ijk}\\
+\vdots\\
+Y_{IJn_{IJ}}\end{pmatrix},
+ \quad
+{\bf{X}} =\overset{\color{gray}{\begin{matrix}\mu_{11} &amp; \mu_{12} &amp; \ldots &amp; \ldots &amp;\mu_{IJ}\end{matrix}}}{\begin{pmatrix}
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+\vdots\\
+1 &amp; 0 &amp; 0 &amp; \ldots 0\\
+0 &amp; 1 &amp; 0 &amp; \ldots 0 \\
+\vdots\\
+0 &amp; 1 &amp; 0 &amp; \ldots 0 \\
+\vdots\\
+0 &amp; \ldots  &amp; 1 &amp; \ldots 0 \\\vdots\\
+0 &amp; 0 &amp; 0 &amp; \ldots 1 \end{pmatrix}},\quad
+{\bf{\theta}} =\begin{pmatrix}
+\mu_{11}\\
+\mu_{12}\\
+\vdots\\
+\mu_{1J}\\
+\mu_{21}\\
+\vdots\\
+\mu_{IJ}\end{pmatrix}, \quad{\bf{E}} = \overset{}{\begin{pmatrix}
+E_{111}\\
+E_{112}\\
+\vdots\\
+E_{11n_{11}}\\
+E_{121}\\
+\vdots\\
+E_{12n_{12}}\\
+\vdots\\
+E_{IJn_{IJ}}\end{pmatrix}}$$`
+---
+template: model
+
+## Sous forme matricielle
+ `$$\bf{Y = X\theta + E}$$`
+### Forme singulière
+
+&lt;p class=question&gt; Ecrire le modèle en version singulière sous forme matricielle en intégrant les contraintes.&lt;/p&gt;
+
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+
+
+
+```r
+Mcomp &lt;- lm(freqC ~ Sexe + Sport + Sexe:Sport, data = freqdata)
+model.matrix(Mcomp)
+```
+
+```
+   (Intercept) SexeM Sport SexeM:Sport
+1            1     1     1           1
+2            1     0     1           0
+3            1     1     1           1
+4            1     0     1           0
+5            1     1     1           1
+6            1     0     1           0
+7            1     1     1           1
+8            1     0     1           0
+9            1     1     2           2
+10           1     0     2           0
+11           1     1     2           2
+12           1     0     2           0
+13           1     1     2           2
+14           1     0     2           0
+15           1     1     2           2
+16           1     0     2           0
+17           1     1     3           3
+18           1     0     3           0
+19           1     1     3           3
+20           1     0     3           0
+21           1     1     3           3
+22           1     0     3           0
+23           1     1     3           3
+24           1     0     3           0
+25           1     1     4           4
+26           1     0     4           0
+27           1     1     4           4
+28           1     0     4           0
+29           1     1     4           4
+30           1     0     4           0
+31           1     1     4           4
+32           1     0     4           0
+33           1     1     5           5
+34           1     0     5           0
+35           1     1     5           5
+36           1     0     5           0
+37           1     1     5           5
+38           1     0     5           0
+39           1     1     5           5
+40           1     0     5           0
+attr(,"assign")
+[1] 0 1 2 3
+attr(,"contrasts")
+attr(,"contrasts")$Sexe
+[1] "contr.treatment"
+```
+
+---
+template: model
+
+## sur l'exemple de la fréquence cardiaque
+*Attention, il manque une colonne*
+
+
+```r
+Mcomp &lt;- lm(freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
+model.matrix(Mcomp)
+```
+
+```
+   (Intercept) SexeM Sport_Fact2 Sport_Fact3 Sport_Fact4 Sport_Fact5
+1            1     1           0           0           0           0
+2            1     0           0           0           0           0
+3            1     1           0           0           0           0
+4            1     0           0           0           0           0
+5            1     1           0           0           0           0
+6            1     0           0           0           0           0
+7            1     1           0           0           0           0
+8            1     0           0           0           0           0
+9            1     1           1           0           0           0
+10           1     0           1           0           0           0
+11           1     1           1           0           0           0
+12           1     0           1           0           0           0
+13           1     1           1           0           0           0
+14           1     0           1           0           0           0
+15           1     1           1           0           0           0
+16           1     0           1           0           0           0
+17           1     1           0           1           0           0
+18           1     0           0           1           0           0
+19           1     1           0           1           0           0
+20           1     0           0           1           0           0
+21           1     1           0           1           0           0
+22           1     0           0           1           0           0
+23           1     1           0           1           0           0
+24           1     0           0           1           0           0
+25           1     1           0           0           1           0
+26           1     0           0           0           1           0
+27           1     1           0           0           1           0
+28           1     0           0           0           1           0
+29           1     1           0           0           1           0
+30           1     0           0           0           1           0
+31           1     1           0           0           1           0
+32           1     0           0           0           1           0
+33           1     1           0           0           0           1
+34           1     0           0           0           0           1
+35           1     1           0           0           0           1
+36           1     0           0           0           0           1
+37           1     1           0           0           0           1
+38           1     0           0           0           0           1
+39           1     1           0           0           0           1
+40           1     0           0           0           0           1
+   SexeM:Sport_Fact2 SexeM:Sport_Fact3 SexeM:Sport_Fact4 SexeM:Sport_Fact5
+1                  0                 0                 0                 0
+2                  0                 0                 0                 0
+3                  0                 0                 0                 0
+4                  0                 0                 0                 0
+5                  0                 0                 0                 0
+6                  0                 0                 0                 0
+7                  0                 0                 0                 0
+8                  0                 0                 0                 0
+9                  1                 0                 0                 0
+10                 0                 0                 0                 0
+11                 1                 0                 0                 0
+12                 0                 0                 0                 0
+13                 1                 0                 0                 0
+14                 0                 0                 0                 0
+15                 1                 0                 0                 0
+16                 0                 0                 0                 0
+17                 0                 1                 0                 0
+18                 0                 0                 0                 0
+19                 0                 1                 0                 0
+20                 0                 0                 0                 0
+21                 0                 1                 0                 0
+22                 0                 0                 0                 0
+23                 0                 1                 0                 0
+24                 0                 0                 0                 0
+25                 0                 0                 1                 0
+26                 0                 0                 0                 0
+27                 0                 0                 1                 0
+28                 0                 0                 0                 0
+29                 0                 0                 1                 0
+30                 0                 0                 0                 0
+31                 0                 0                 1                 0
+32                 0                 0                 0                 0
+33                 0                 0                 0                 1
+34                 0                 0                 0                 0
+35                 0                 0                 0                 1
+36                 0                 0                 0                 0
+37                 0                 0                 0                 1
+38                 0                 0                 0                 0
+39                 0                 0                 0                 1
+40                 0                 0                 0                 0
+attr(,"assign")
+ [1] 0 1 2 2 2 2 3 3 3 3
+attr(,"contrasts")
+attr(,"contrasts")$Sexe
+[1] "contr.treatment"
+
+attr(,"contrasts")$Sport_Fact
+[1] "contr.treatment"
+```
+
+---
+class: inverse
+name: pause
+# Pause
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
+
+---
+name: parametre
+# Estimation des paramètres
+
+
+---
+template: parametre
+## Estimation des paramètres du modèle version matricielle
+
+
+Le modèle sous forme matricielle s'écrit
+
+`$$\bf{Y = X\theta + E}.$$`
+--
+
+### Estimation de `\(\theta\)`
+
+`$$\hat{\theta} = (X^\intercal X )^{-1} X^\intercal Y_{obs}.$$`
+
+--
+
+### Estimateur de `\(\theta\)`
+
+`$$T = (X^\intercal X )^{-1} X^\intercal Y.$$`
+--
+
+### Loi de l'estimateur de `\(\theta\)`
+
+
+`$$T  \sim \mathcal{N}_{I}\left(\theta, \sigma^2 (X^\intercal X )^{-1}\right).$$`
+
+---
+template: parametre
+## Le paramètre de variance
+
+La somme des carrés résiduelles s'écrit sous la forme 
+
+`$$RSS = || Y- X \hat{\theta} ||^2$$`
+
+### Estimateur de la variance 
+
+  $$S^2 =\frac{1}{DF_{res}} RSS, $$
+est un &lt;a class=care&gt; estimateur sans bias de  `\(\sigma^2\)` &lt;/a&gt; .
+
+Dans le cas du modèle d'analyse de la variance à 2 facteurs `\(DF_res=n-IJ\)` (n observations et IJ paramètres de moyennes à estimer, le nombre de composantes dans le vecteur `\(\theta\)`)
+
+--
+
+## Estimation de `\(\sigma^2\)`
+
+`$$\hat{\sigma}^2 =\frac{1}{n-IJ} RSS_{obs}.$$`
+---
+template: parametre
+## sur l'exemple de la fréquence cardiaque
+
+
+```r
+summary(Mcomp)
+```
+
+```
+
+Call:
+lm(formula = freqC ~ Sexe + Sport_Fact + Sexe:Sport_Fact, data = freqdata)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -3.00  -1.00   0.00   1.00   3.25 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        81.0000     0.8229  98.438  &lt; 2e-16 ***
+SexeM              -2.0000     1.1637  -1.719 0.095979 .  
+Sport_Fact2         1.5000     1.1637   1.289 0.207247    
+Sport_Fact3         1.5000     1.1637   1.289 0.207247    
+Sport_Fact4         4.7500     1.1637   4.082 0.000305 ***
+Sport_Fact5         8.7500     1.1637   7.519 2.21e-08 ***
+SexeM:Sport_Fact2   0.5000     1.6457   0.304 0.763361    
+SexeM:Sport_Fact3   6.5000     1.6457   3.950 0.000438 ***
+SexeM:Sport_Fact4   1.5000     1.6457   0.911 0.369316    
+SexeM:Sport_Fact5   2.7500     1.6457   1.671 0.105119    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.646 on 30 degrees of freedom
+Multiple R-squared:  0.8689,	Adjusted R-squared:  0.8296 
+F-statistic: 22.09 on 9 and 30 DF,  p-value: 6.689e-11
+```
+
+---
+class: inverse
+name: pause
+# Pause
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;p style="color:#B40F20;font-size:35px;text-align:center;"&gt;Prenons une petite pause !!!&lt;/p&gt; 
+
+---
+name: modcomp
+# Test du modèle complet
+
+
+---
+template: modcomp
+## Rappel exemple fréquence cardiaque (exemple 1)
+
+On a mesuré la fréquence cardiaque de 20 femmes et 20 hommes et leur niveau de pratique sportive
+
+
+
+&lt;img src="anova2_files/figure-html/freqdata2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+--
+&lt;p class="question"&gt; Le sexe ou le niveau de pratique sportive sont ils liés à la fréquence carsdiaque au repos ?&lt;/p&gt;
+
+
+---
+template: modcomp
+## Sous forme de comparaison de modèle
+
+
+&lt;img src="anova2_files/figure-html/compare_model_graph2-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+--
+&lt;p class="question"&gt; Le modèle Mcomp est il plus pertinent que le modèle M0 ?&lt;/p&gt;
+
+
+
+---
+template: modcomp
+## Hypothèses du test
+
+On va donc opposer une hypothèse de travail `\(H_0\)` contre une hypothèse alternative `\(H_1\)`. `\(H_0\)` peut donc prendre différentes formes:
+
+
+`$$\begin{align} 
+H_0 &amp; =\left \lbrace \mbox{Pas de différence entre les différents groupes }\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{pour tout }i, \alpha_i =0, \mbox{pour tout }j,\beta_j=0  \mbox{ et pour tout }(i,j),\gamma_{ij}=0   \right\rbrace\\
+    &amp; =\left \lbrace  M_{comp} \mbox{ est équivalent à } M0 \right\rbrace.
+\end{align}$$`
+
+`\(H_1\)` prend les formes équivalentes suivantes
+
+`$$\begin{align} 
+H_1 &amp; =\left \lbrace \mbox{Au moins 1 groupe est différent des autres}\right\rbrace\\
+    &amp; =\left \lbrace  \mbox{Il existe un }i, \alpha_i  \ne 0  \mbox{ ou un }j, \beta_j \ne 0 \mbox{ ou un } (i,j), \gamma_{ij} \ne 0  \right\rbrace\\
+    &amp; =\left \lbrace  M_{comp} \mbox{ est préférable à } M0 \right\rbrace.
+\end{align}$$`
+
+--
+
+Sous `\(H_0\)`, 
+`$$F= \frac{\frac{SS_{M_{comp}}}{IJ-1}}{\frac{RSS}{n-IJ}} \underset{H_0}{\sim}\mathcal{F}(IJ-1, n-IJ)$$`  
+
+---
+template: modcomp
+## Loi de la statistique de test sous `\(H_0\)` - graphiquement
+
+Sous `\(H_0\)` la loi de distribution de `\(F\)` est 
+
+
+
+
+
+
+---
+
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_01_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_02_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count: false
+
+&lt;img src="anova2_files/figure-html/pvalue_graphique_user_03_output-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+&lt;style&gt;
+.panel1-pvalue_graphique-user {
+  color: black;
+  width: 99%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-pvalue_graphique-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+name: variance_decomposition
+# Decomposition de SSM
+
+---
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+
+&lt;img src="./RSS1.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS2.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS3.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+&lt;br&gt;
+
+&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+count:false
+template: variance_decomposition
+## Visualisation graphique de la décomposition de la variance
+
+&lt;br&gt;
+
+- `\(RSS_0\)` est schématisée par le retangle  ci dessous.
+- La partie rouge correspond à `\(RSS\)`.
+
+
+&lt;br&gt;
+
+&lt;img src="./RSS5.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: variance_decomposition
+## Mathématiquement
+
+On veut décomposer la variabilité attribuée au modèle selon les différentes sources.
+
+Considérons les différents modèles possibles
+
+`$$\begin{align}
+M_0\ :\ Y_{ijk} &amp;= \mu + E_{ijk}\\
+M_{1}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + E_{ijk}\\
+M_{2}\ :\ Y_{ijk} &amp;= \mu + \beta_j + E_{ijk}\\
+M_{12}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j + E_{ijk}\\
+M_{comp}\ :\ Y_{ijk} &amp;= \mu + \alpha_i + \beta_j +\gamma_{ij} + E_{ijk}\\
+\end{align}$$`
+
+--
+
+&lt;a class = question&gt; Comment mesurer l'effet des différents facteurs&lt;/a&gt; 
+
+--
+
+Mesurer la réduction de variabilité liée à la prise en compte d'un facteur.
+
+---
+template: variance_decomposition
+## Réduction de variabilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + {RSS_1 - RSS_{12}} +{RSS_{12} - RSS_{comp}} \\
+\end{align}$$`
+--
+
+
+&lt;img src="./RSS4_Ralpha.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de variabilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + {RSS_{12} - RSS_{comp}} \\
+\end{align}$$`
+
+
+
+&lt;img src="./RSS4_Rbeta.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+count: false
+template: variance_decomposition
+## Réduction de variabilité
+
+`$$\begin{align}
+SSM &amp; = RSS_0 - RSS_{comp}\\
+SSM &amp; = \underbrace{RSS_0 - RSS_{1}}_{R(\alpha\vert \mu )} + \underbrace{RSS_1 - RSS_{12}}_{R(\beta\vert\alpha,\mu)} + \underbrace{RSS_{12} - RSS_{comp}}_{R(\gamma\vert \beta, \alpha, \mu)} \\
+\end{align}$$`
+
+
+
+&lt;img src="./RSS4.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+template: variance_decomposition
+## Test de type 1
+
+
+ &lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Source&lt;/th&gt;
+    &lt;th&gt;H0&lt;/th&gt;
+    &lt;th&gt;SS&lt;/th&gt;
+    &lt;th&gt;Df&lt;/th&gt;
+    &lt;th&gt;F&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;th&gt; Fact1 &lt;/th&gt;
+    &lt;th&gt; M0 et M1 sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\alpha\vert \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\(I-1\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\alpha\vert \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;th&gt; Fact2 &lt;/th&gt;
+    &lt;th&gt; M1 et M12 sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\beta\vert\alpha, \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\(J-1\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;th&gt; Inter &lt;/th&gt;
+    &lt;th&gt; M12 et Mcomp sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\gamma\vert \beta, \alpha, \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\((J-1)(J-1)\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;/table&gt; 
+
+
+
+
+---
+template: variance_decomposition
+## Tests de type 1
+
+Rôle asymétrique des facteurs (l'ordre des facteurs importe).
+
+--
+
+## Tests de type 2
+
+But : symétriser le rôle des différents facteurs
+
+&lt;img src="./RSS5.png" width="45%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: variance_decomposition
+## Test de type 2
+
+ &lt;table style="width:100%"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Source&lt;/th&gt;
+    &lt;th&gt;H0&lt;/th&gt;
+    &lt;th&gt;SS&lt;/th&gt;
+    &lt;th&gt;Df&lt;/th&gt;
+    &lt;th&gt;F&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;th&gt; Fact1 &lt;/th&gt;
+    &lt;th&gt; M2 et M12 sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\alpha\vert \beta, \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\(I-1\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\alpha\vert\beta, \mu)}{I-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;th&gt; Fact2 &lt;/th&gt;
+    &lt;th&gt; M1 et M12 sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\beta\vert\alpha, \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\(J-1\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\beta\vert \alpha, \mu)}{J-1}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;th&gt; Inter &lt;/th&gt;
+    &lt;th&gt; M12 et Mcomp sont équivalents &lt;/th&gt;
+    &lt;th&gt; `\(R(\gamma\vert \beta, \alpha, \mu)\)` &lt;/th&gt;
+    &lt;th&gt; `\((J-1)(J-1)\)` &lt;/th&gt;
+    &lt;th&gt; `$$\frac{\frac{R(\gamma\vert \beta, \alpha, \mu)}{(I-1)(J-1)}}{\frac{RSS}{n-IJ}}$$` &lt;/th&gt;
+&lt;/tr&gt;
+&lt;/table&gt; 
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+### Type 1
+
+```r
+MComp &lt;- lm(freqC ~ Sexe + Sport_Fact +Sexe:Sport_Fact, data = freqdata)
+anova(MComp)
+```
+
+```
+Analysis of Variance Table
+
+Response: freqC
+                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe             1   0.63   0.625  0.2308  0.634439    
+Sport_Fact       4 483.90 120.975 44.6677 3.207e-12 ***
+Sexe:Sport_Fact  4  54.00  13.500  4.9846  0.003347 ** 
+Residuals       30  81.25   2.708                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+--
+### Type 2
+
+
+```r
+library(car)
+Anova(MComp, type = 2)
+```
+
+```
+Anova Table (Type II tests)
+
+Response: freqC
+                Sum Sq Df F value    Pr(&gt;F)    
+Sexe              0.63  1  0.2308  0.634439    
+Sport_Fact      483.90  4 44.6677 3.207e-12 ***
+Sexe:Sport_Fact  54.00  4  4.9846  0.003347 ** 
+Residuals        81.25 30                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+---
+template: variance_decomposition
+## L'exemple des fréquence cardiaque
+
+Il s'agit du cas particulier `\(n_{ij}\)` sont tous égaux. Le plan d'expérience est dit **équilibré**.
+
+--
+
+
+&lt;img src="./RSS3_eq.png" width="45%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: variance_decomposition
+## Fréquence cardiaque, plan d'expérience déséquilibré
+
+
+```r
+table(freqdata_des$Sexe, freqdata_des$Sport)
+```
+
+```
+   
+    1 2 3 4 5
+  F 6 3 5 3 2
+  M 3 2 6 5 5
+```
+
+```r
+anova(MComp)
+```
+
+```
+Analysis of Variance Table
+
+Response: freqC
+                Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+Sexe             1  46.88  46.881  28.129 9.882e-06 ***
+Sport_Fact       4 461.77 115.441  69.265 1.025e-14 ***
+Sexe:Sport_Fact  4  69.73  17.432  10.459 1.995e-05 ***
+Residuals       30  50.00   1.667                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+Anova(MComp, type = 2)
+```
+
+```
+Anova Table (Type II tests)
+
+Response: freqC
+                Sum Sq Df F value    Pr(&gt;F)    
+Sexe              1.14  1  0.6857    0.4142    
+Sport_Fact      461.77  4 69.2648 1.025e-14 ***
+Sexe:Sport_Fact  69.73  4 10.4593 1.995e-05 ***
+Residuals        50.00 30                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+
+---
+template: variance_decomposition
+## Exercice
+
+Indiquer dans chaque portion du schéma ci-dessous, le somme des carrés représentés. 
+
+
+&lt;img src="./RSS3.png" width="55%" height="30%" style="display: block; margin: auto;" /&gt;
+
+---
+template: pause
+
+---
+name: comp_moyenne
+# Comparaison des différents groupes
+---
+template: comp_moyenne
+
+## Question 
+
+&lt;a class=question&gt; Quels sont les niveaux de pratiques sportives correspondant à des fréquences cardiaques différentes ?&lt;/a&gt;
+
+--
+
+Calcul des moyennes par niveau de pratique sportive
+
+
+```
+# A tibble: 5 x 2
+  Sport     m
+  &lt;int&gt; &lt;dbl&gt;
+1     1  80.6
+2     2  81.8
+3     3  85.4
+4     4  85.4
+# … with 1 more row
+```
+
+
+Calcul des moyennes par sexe
+
+
+```
+# A tibble: 2 x 2
+  Sexe      m
+  &lt;chr&gt; &lt;dbl&gt;
+1 F      83.7
+2 M      85.9
+```
+
+
+--
+&lt;a style=care&gt; Attention : &lt;/a&gt; comparaison de femmes sportives avec des hommes sédentaires
+
+Plan d'expérience
+
+
+```
+   
+    1 2 3 4 5
+  F 6 3 5 3 2
+  M 3 2 6 5 5
+```
+
+
+
+---
+template: comp_moyenne
+
+La moyenne au sein du groupe `\(i\)` pour le facteur est 1 est donnée par :
+`$$Y_{i..} = \frac{1}{n_{i+}}\sum_{j=1}^J \sum_{k=1}^{n_ij}Y_{ijk},$$`
+avec `\(n_{i+}=\sum_j n_{ij},\)` le nombre total d'observations pour le niveau `\(i\)`. 
+
+Alors `$$\mathbb{E}(Y_{i..} )= \mu + \alpha_i  + \frac{1}{n_{i+}}\sum_{j=1}^J  n_{ij} (\beta_j  +\gamma_{ij}).$$`
+
+--
+Sur notre exemple
+`$$\mathbb{E}(Y_{1..} )= \mu  + \alpha_1 + \frac{1}{n_{i+}} \left( 6 (\beta_1 + \gamma_{11}) + 3 (\beta_2 + \gamma_{12})  + 5 (\beta_3 + \gamma_{13}) + 3 (\beta_4 + \gamma_{14})+ 2 (\beta_5 + \gamma_{15})\right).$$`
+
+`$$\mathbb{E}(Y_{2..} )= \mu  + \alpha_2 + \frac{1}{n_{i+}} \left( 3 (\beta_1 + \gamma_{21}) + 2 (\beta_2 + \gamma_{22})  + 6 (\beta_3 + \gamma_{23}) + 5 (\beta_4 + \gamma_{24})+ 5 (\beta_5 + \gamma_{25})\right).$$`
+
+--
+
+`$$\begin{align}
+\mathbb{E}(Y_{1..} - Y_{2..} )= &amp; \alpha_1- \alpha_2 + \frac{1}{n_{i+}} \left( 3 \beta_1  + 6\gamma_{11}  - 3\gamma_{21} +\beta_2 + 3\gamma_{12}  - 2\gamma_{22} - \beta_3 +5\gamma_{13}  - 6\gamma_{23}\right. \\
+&amp; \left. -2\beta_4 + 3 \gamma_{14}  -  5\gamma_{24} -3 \beta_5 + 2 \gamma_{15} -5 \gamma_{25} \right).
+\end{align}$$`
+
+Les effets potentiels de la pratique sportive n'interviennent pas de la même manière dans les deux moyennes.
+
+
+---
+template: comp_moyenne
+## Moyennes ajustées
+
+C'est la moyenne qu'on observerait dans un plan d'expérience équilibré
+
+`$$\tilde{\mu}_{i.} = \mu + \alpha_i + \frac{1}{J}\sum_{j=1}^J (\beta_j +\gamma_{ij}).$$`
+`$$\tilde{\mu}_{.j} = \mu + \beta_j + \frac{1}{I}\sum_{i=1}^I (\alpha_i +\gamma_{ij}).$$`
+
+
+*On redresse artificiellement le plan d'expérience*
+--
+
+`$$\tilde{\mu}_{1.}-\tilde{\mu}_{2.} =  \alpha_1  -\alpha_{2}+ \frac{1}{J}\sum_{j=1}^J (\gamma_{1j} -\gamma_{2j}).$$`
+
+---
+template: comp_moyenne
+
+## Moyennes ajustées pour le sexe
+
+
+```r
+library(emmeans)
+m_ajust_sexe &lt;- emmeans(MComp, "Sexe")
+pairs(m_ajust_sexe)
+```
+
+```
+ contrast estimate    SE df t.ratio p.value
+ F - M       0.373 0.442 30 0.844   0.4052 
+
+Results are averaged over the levels of: Sport_Fact 
+```
+
+```r
+plot(m_ajust_sexe)
+```
+
+&lt;img src="anova2_files/figure-html/moy_ajustees-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+template: comp_moyenne
+## Moyennes ajustées pour le sport
+
+
+```r
+m_ajust_sport &lt;- emmeans(MComp, "Sport_Fact")
+summary(pairs(m_ajust_sport))
+```
+
+```
+ contrast estimate    SE df t.ratio p.value
+ 1 - 2      -1.000 0.745 30  -1.342 0.6681 
+ 1 - 3      -4.667 0.601 30  -7.766 &lt;.0001 
+ 1 - 4      -4.933 0.656 30  -7.518 &lt;.0001 
+ 1 - 5     -11.300 0.707 30 -15.981 &lt;.0001 
+ 2 - 3      -3.667 0.707 30  -5.185 0.0001 
+ 2 - 4      -3.933 0.755 30  -5.212 0.0001 
+ 2 - 5     -10.300 0.799 30 -12.886 &lt;.0001 
+ 3 - 4      -0.267 0.612 30  -0.435 0.9921 
+ 3 - 5      -6.633 0.667 30  -9.950 &lt;.0001 
+ 4 - 5      -6.367 0.717 30  -8.881 &lt;.0001 
+
+Results are averaged over the levels of: Sexe 
+P value adjustment: tukey method for comparing a family of 5 estimates 
+```
+
+---
+
+template: comp_moyenne
+## Moyennes ajustées pour le sport
+
+&lt;img src="anova2_files/figure-html/ajuste_sport_graph-1.png" width="60%" height="30%" style="display: block; margin: auto;" /&gt;
+
+
+---
+template: pause
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../resources/collapseoutput.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<style>
+.logo {
+  background-image: url(img/sticker_sotr.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  width: 66px;
+  height: 78px;
+  z-index: 0;
+}
+</style>
+
+<script>
+document
+  .querySelectorAll(
+    '.remark-slide-content' +
+    ':not(.title-slide)' +
+    // add additional classes to exclude here, e.g.
+    // ':not(.inverse)' +
+    ':not(.hide-logo)'
+  )
+  .forEach(el => {
+    el.innerHTML += '<div class="logo"></div>';
+  });
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
