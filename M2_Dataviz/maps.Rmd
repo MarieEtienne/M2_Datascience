@@ -549,7 +549,16 @@ region_complete %>%
 
 ---
 
+### Exercise
 
+Get the data the Coronavirus data available [here](https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv) 
+
+By group ate the regio scale, propose the map of a region  to illustarte 5 key moemnts of the pandemy.
+
+
+
+
+---
 # References
 
 
