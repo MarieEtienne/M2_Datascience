@@ -21,6 +21,7 @@ sf
 rnaturalearth
 GGally
 rnaturalearthdata
+leaflet
 kableExtra
 gganimate
 plotly
