@@ -1,0 +1,63 @@
+---
+title: "leaflet"
+author: "MP Etienne"
+date: "11/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Leaflet to build interactive maps
+
+
+## Presentation of the fisheries example
+
+```{r longline, echo = TRUE, eval = TRUE}
+library(leaflet)
+library(tidyverse)
+
+longline_dta <- read.table('https://raw.githubusercontent.com/MarieEtienne/MarieEtienne.github.io/master/datasets/LonglineExample.csv', 
+           sep = ";", 
+           header= TRUE, 
+           skip = 3) %>% 
+  as_tibble() %>% 
+  rename(Nyellow = Nyelloweye_caught, Area = DFO_STAT_AREA_CODE,
+         Lat = Lat_start , Long = Lon_start,
+         soaktime = soaktime_mn) %>%
+  select(Year, Area, Lat, Long, soaktime, Nyellow)
+longline_dta %>% print(n=5)
+```
+
+
+
+## Mapping the area of interest
+
+```{r leaflet_zone, echo = TRUE, eval = TRUE}
+library(leaflet)
+longline_map <- leaflet() %>% 
+  setView(lng = mean(longline_dta$Long), lat = mean(longline_dta$Lat), zoom = 4) %>% 
+  addTiles()
+longline_map
+```
+
+
+## Adding information
+
+```{r leaflet_point, echo = TRUE, eval = TRUE}
+longline_map %>% addCircles(lng = longline_dta$Long, lat = longline_dta$Lat)
+```
+
+
+
+## Adding color
+
+```{r leaflet_color, echo = TRUE, eval = TRUE}
+pal <- colorNumeric(
+    palette = as.character(wesanderson::wes_palette(name = "Zissou1", type = "continuous") ),
+    domain = longline_dta$Nyellow)
+
+longline_map %>% addCircles(lng = longline_dta$Long, lat = longline_dta$Lat, color = pal(longline_dta$Nyellow))
+```
