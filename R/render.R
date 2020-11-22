@@ -3,8 +3,8 @@ system('mkdir -p render')
 dirnames <- stringr::str_split(
   list.files('.', pattern = '.Rmd',
              full.names = TRUE, recursive = TRUE) ,
-  pattern = '/', simplify = TRUE)[,2]
-
+  pattern = '/', simplify = TRUE)[,2] 
+dirnames <- unique(dirnames)
 
 for(directory in dirnames){
   filenames <- list.files(directory, pattern = '.Rmd',
