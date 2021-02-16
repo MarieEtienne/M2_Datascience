@@ -1,0 +1,388 @@
+---
+title: "Impact de la structure du réseau sur la persistence de variétés cultivées"
+author: "Marie-Pierre Etienne"
+date: "March, 2020"
+output: 
+  xaringan::moon_reader:
+    css: [  'metropolis', 'hygge', 'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+suppressMessages(library('igraph'))
+suppressMessages(library('ggraph'))
+suppressMessages(library('tidygraph'))
+
+suppressMessages(library('ggplot2'))
+suppressMessages(library('network'))
+suppressMessages(library('GGally'))
+suppressMessages(library('sna'))
+suppressMessages(library('animation'))
+```
+
+```{r, load_refs, include=FALSE, cache=FALSE}
+library(RefManageR)
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "alphabetic",
+           style = "markdown",
+           hyperlink = FALSE,
+           dashed = FALSE)
+myBib <- ReadBib("TP.bib", check = FALSE)
+```
+
+# Présentation
+
+
+## Objectif du TP 
+Reproduire (partiellement) les résultats  de `r Citet(myBib, "Barbillon2015" )` sur maintien de la diversité d'espèces cultivées.
+
+Cadre du réseau  semences paysannes.
+.footnote[http://www.semencespaysannes.org/index.php]. 
+
+
+##  Pourquoi une modélisation par réseau ?
+
+Les échanges de graines se font au travers des liens sociaux entretenus par les différents acteurs.
+
+## Etudier l'impact du réseau sur le maintien de la bidiversité 
+
+avec une approche monospécifique 
+
+---
+# Formalisation d'un réseau
+
+Pour modéliser les liens de connaissance liant les acteurs du réseau. 
+
+Modèle de graphe $G$ 
+- un  ensemble de sommets (les acteurs)
+- et des arrêtes (les liens les unissant).
+
+On peut résumer ce réseau sous la forme d'une matrice d'adjacence $A$. La matrice $A$ contient $1$ sur la ligne $i$ et la colonne $j$ si l'individu $i$ est connecté à l'individu $j$, un $0$ sinon.
+
+Le graphe est dit orienté si le fait que $i$ est lié à $j$ n'implique pas forcément que $j$ est lié à $i$, sinon il est non orienté et la matrice $A$ est symétrique.
+
+Q1.  Dessiner (sur papier) le graphe associé à la matrice 
+$$\begin{pmatrix}
+0 & 1 & 1 & 0 & 0 \\
+1 & 0 & 0 & 1 & 0 \\
+1 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 1 \\
+0 & 0 & 0 & 1 & 0 \\
+\end{pmatrix}$$
+
+
+
+---
+
+# Représentation d'un réseau
+
+Package `igraph`  très utile pour l'utilisation des graphes avec `R`. 
+
+Q2.  Définir la matrice $A$ dans R.
+
+```{r def_1, echo = FALSE}
+A <- matrix(c(0, 1, 1, 0, 1,
+              1, 0, 0, 1, 0,
+              1, 0, 0, 0, 0,
+              0, 1, 0, 0, 1,
+              1, 0, 0, 1, 0), ncol = 5)
+```
+
+Q3.  Définir avec `R` le réseau correspondant (`graph_from_adjacency_matrix`).
+
+
+
+```{r plot_G1,  fig.dim= c(8,5)}
+rownames(A) <- colnames(A) <-as.character(1:nrow(A))
+
+g1 <- graph_from_adjacency_matrix(adjmatrix = A, mode = "undirected")
+plot(g1)
+```
+
+---
+# Différents types de réseau
+
+Q4.  Charger le fichier  `AdjancyMatrix.RData` qui contient les matrices d'adjacence `A1, A2, A3` représenter les réseaux associés et discuter de leurs particularités.
+
+---
+# Différents réseaux
+ 
+## Type 1
+
+```{r G1}
+load('../data/graph/AdjancyMatrix.RData')
+g1 <- graph_from_adjacency_matrix(adjmatrix = A1, mode = "undirected")
+plot(g1)
+```
+
+---
+# Différents réseaux
+ 
+## Type 2
+
+```{r G2}
+g2 <- graph_from_adjacency_matrix(adjmatrix = A2, mode = "undirected")
+plot(g2)
+```
+
+
+---
+# Différents réseaux
+ 
+## Type 3
+
+```{r G3}
+g3 <- graph_from_adjacency_matrix(adjmatrix = A3, mode = "undirected")
+plot(g3)
+```
+
+
+---
+# Un modèle d'échange de graines
+
+A une génération (année) donnée 
+
+- un acteur peut perdre sa variété avec proba $e$
+- un acteur possédant la graine peut la transmettre à ses connaissances  avec probabilité $p$.  
+
+
+## Chaîne de Markov
+
+L'état du réseau à la génération $i+1$ ne dépend que de l'état du réseau à la génération $i$. 
+
+## Initialisation 
+1. On stocke l'état du réseau dans un vecteur `culture` de taille $n$ le nombres de sommets du réseau. La composante $i$ du vecteur `culture` vaut $1$ si l'acteur $i$ possède la variété et $0$ sinon. 
+
+Q6. Ecrire le code permettant de tirer pour chaque individu une variable aléatoire de Bernoulli de probabilité $0.5$ pour nous indiquer si il possède ou non la variété. 
+
+
+---
+# Le code correspondant
+
+```{r}
+n       <- nrow( A1 )
+culture <- rbinom( n = n, size = 1, p = 0.5)
+g1      <- graph_from_adjacency_matrix(adjmatrix = A1, mode = "undirected")
+couleur <- c("tomato", "springgreen3")
+plot(g1, vertex.color = couleur[culture+1])
+```
+
+
+---
+
+# Le code correspondant joli
+
+```{r g1_visu_network, fig.dim = c(8,4)}
+g1.network <- network::network(x= A1, vertex.attrnames	= 1:n, directed = FALSE)
+## pour definir un placement fixe une fois pour toute 
+x = gplot.layout.fruchtermanreingold(g1.network, NULL) 
+g1.network %v% "x" = x[, 1]
+g1.network %v% "y" = x[, 2]
+
+t1 = ggnet2(g1.network, mode = c("x", "y"), size = 3, color = "black", node.color = couleur[culture+1])
+t1
+```
+
+---
+# Itération
+
+## Extinction
+
+Q7. simuler tout d'abord l'extinction chez un acteur avec probabilité $e$. 
+
+On peut prendre $e=0.2$. 
+
+
+Q8. Ecrire une fonction  `extinction` prenant en paramètre le vecteur `etat` contenant l'état de la variete chez chaque acteur et la valeur $e$, qui simule l'extinction et renvoie le vecteur culture mis à jour.
+
+
+---
+# Le code correspondant 
+
+```{r ext_func}
+extinction <- function(etat, e){
+  presence <- which(etat==1)
+  if(length(presence)>0){
+  etat[presence] <- rbinom(length(presence), size = 1, prob = 1-e)
+  }
+  return(etat)
+}
+```
+
+
+
+---
+# Itération
+
+## Propagation 
+
+
+Q9. Simuler la propagation de la variété à une génération. 
+
+Un acteur ayant la variété peut la transmettre à chaque acteur de sa connaissance avec probabilité $p$. 
+
+Q10. Ecrire une fonction prenant en parametre le vecteur `etat`, la matrice d'adjacence et le parametre $p$ et qui simule la propagation de la variété. 
+
+---
+
+# Le code qui va bien 
+
+```{r prop, echo=TRUE}
+propagation <- function(etat, A, p){
+  absence <- which( etat == 0 )
+  if(length(absence)>0){
+  nouvelEtat <- sapply(absence, function(a_){
+    voisins <- which( (A[a_,]>0) & (etat==1))
+    1*(runif(1)<1 - (1-p)^{length(voisins)})
+  })
+  etat[absence] <- nouvelEtat
+  }
+  return(etat)
+}
+```
+
+---
+# Iteration complète 
+
+Q11. Ecrire une boucle qui enchaîne les deux étapes et stocker le résultat dans une matrice `culture` pour laquelle une colonne est une génération.
+
+
+Q12.  Ecrire une fonction qui simule l'évolution au sein du réseau à partir d'un état initial.
+
+
+---
+# Code possible
+
+```{r dynamique,  include=TRUE}
+dynamique <- function(etat0, A, p, e, nStep){
+  n <- nrow(A)
+  etat <- matrix(NA, nrow=n, ncol=nStep)
+  etat[,1] <- etat0
+  for(i in 1:(nStep-1)){
+    extin <- extinction(etat = etat[,i], e = e)
+    etat[,i+1] <- propagation(etat = extin, A = A, p = p)
+  }
+  return(etat)
+}
+```
+
+---
+# Visualisation du réseau dynamique obtenu 
+
+```{r visu_dyn}
+nStep <- 30
+e <- 0.6
+p <- 0.6
+culture0 <- rbinom( n = n, size = 1, prob =  0.5)
+culture <- dynamique(culture0, A1, p = p , e = e , nStep)
+i <- 0
+  g1 <- ggnet2(g1.network, mode = c("x", "y"), size = 6, color = "black",
+               node.color =  couleur[culture[,i+1]+1], label = 1:n,
+               node.size = 8, node.alpha = 0.6, label.size = 3)
+for(i in 1:(nStep-1)){
+  g1 <- ggnet2(g1.network, mode = c("x", "y"), size = 6, color = "black",
+               node.color =  couleur[culture[,i+1]+1], label = 1:n, node.size = 8,
+               node.alpha = 0.6, label.size = 3)
+suppressMessages(ggsave(filename = paste0('generation',i+1,'.pdf'),g1))
+}
+```
+
+---
+# Visualisation du réseau dynamique obtenu en vidéo
+
+```{r, eval=TRUE, results='hide', message=FALSE}
+ saveVideo({
+  g1 <- ggnet2(g1.network, mode = c("x", "y"), size = 6, color = "black",
+               node.color =  couleur[culture[,i+1]+1], label = 1:n,
+               node.size = 8, node.alpha = 0.6, label.size = 3)
+  print(g1)
+for(i in 1:(nStep-1)){
+  g1 <- ggnet2(g1.network, mode = c("x", "y"), size = 6, color = "black",
+               node.color =  couleur[culture[,i+1]+1], label = 1:n,
+               node.size = 8, node.alpha = 0.6, label.size = 3)
+  print(g1)
+}
+},video.name = "animation.mp4", img.name = "Rplot",
+ffmpeg = ani.options("ffmpeg"))
+```
+
+---
+# Impact de la structure du réseau sur la probabilité d'extinction
+
+## Calcul de la probabilité d'extinction
+
+On fixe $p=0.6$ et $e=0.5$.
+
+Q13.  Simuler une réalisation du modèle sur 30 générations et vérifier si il y a eu extinction.
+Q14. Simuler 300 réalisations du modèle et compter la proportion d'extinction. C'est une estimation par méthode de Monte Carlo de la probabilité d'extinction de la variété.
+
+```{r MC_A1}
+n      <- nrow(A1)
+e <- 0.6
+p <- 0.6
+nStep <- 30
+culture0 <- rbinom( n = n, size = 1, p = 0.5)
+culture <- dynamique(culture0, A1, p = p,  e = e ,nStep)
+sum(culture[,nStep])==0
+```
+
+---
+# Sur 600 générations 
+
+```{r MC_A1_nsim}
+nSim <- 600
+res <- sapply(1:nSim, function(l_){
+       culture0 <- rbinom( n = n, size = 1, p = 0.5)
+      culture <- dynamique(culture0, A1, p= p, e = e , nStep)
+      return(sum(culture[,nStep])==0)
+})
+sum(res)/length(res)      
+```
+
+
+---
+# Impact de la structure du réseau sur la probabilité d'extinction
+
+Q15.  Estimer la probabilité d'extinction pour les mêmes paramètres avec les différentes réseaux `A2, A3`.
+
+```{r A1_A2}
+n <- nrow(A2)
+res <- sapply(1:nSim, function(l_){
+       culture0 <- rbinom( n = n, size = 1, p = 0.5)
+      culture <- dynamique(culture0, A2, p= p, e = e , nStep)
+      return(sum(culture[,nStep])==0)
+})
+sum(res)/length(res)      
+```
+```{r}
+res <- sapply(1:nSim, function(l_){
+       culture0 <- rbinom( n = n, size = 1, p = 0.5)
+      culture <- dynamique(culture0, A3, p=p, e = e , nStep)
+      return(sum(culture[,nStep])==0)
+})
+sum(res)/length(res)   
+
+```
+
+```{r}
+res <- sapply(1:nSim, function(l_){
+       culture0 <- rbinom( n = n, size = 1, p = 0.5)
+      culture <- dynamique(culture0, A3, p=p, e = e , nStep)
+      return(sum(culture[,nStep])==0)
+})
+sum(res)/length(res)   
+
+```
+
+---
+# References
+
+```{r refs, echo=FALSE, results="asis"}
+PrintBibliography(myBib)
+```

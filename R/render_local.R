@@ -1,6 +1,6 @@
 ## Specify a directeory to generate the rmd files from
 ## by defaults generates all rmd
-directory <- 'M2_Dataviz'
+directory <- 'Mode_Reseau'
 if(is.null(directory)){
   system(glue::glue( 'rm -rf render'))
   directory <- list.files('.', pattern = 'Rmd',

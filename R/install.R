@@ -22,6 +22,17 @@ install.packages('ggpubr')
 # install.packages('gganimate')
 # install.packages('GGally')
 # 
+# graph/reseau ---------------------------------------------------------------
+install.packages('igraph')
+
+install.packages('ggraph')
+install.packages('tidygraph')
+
+install.packages('network')
+install.packages('sna')
+install.packages('animation')
+
+
 # # color -------------------------------------------------------------------
 # install.packages('wesanderson')
 # 
