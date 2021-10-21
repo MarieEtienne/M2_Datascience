@@ -113,7 +113,7 @@ count: false
 # All defaults
 knitr::include_graphics("images/corona_gf.png")
 ```
-
+- [Incidence par G. Forestier (CovidTracker)](https://raw.githubusercontent.com/CovidTrackerFr/covidtracker-data/master/images/charts/france/heatmaps_deps/heatmap_taux_35.jpeg)
 
 ---
 template: intro 
