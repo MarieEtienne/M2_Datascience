@@ -3,7 +3,7 @@ title: "Visualisation de données"
 subtitle: "<br> Pourquoi et comment ? "
 author: "Marie-Pierre Etienne"
 date: '2020/09/11 (updated: `r Sys.Date()`)'
-institute: https://github.com/MarieEtienne/stateoftheRinRennes/
+institute: https://marieetienne.github.io/
 csl: ../resources/apa-no-doi-no-issue.csl
 output:
   xaringan::moon_reader:
