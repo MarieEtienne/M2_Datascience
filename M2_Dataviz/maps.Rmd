@@ -54,6 +54,8 @@ myBib <- ReadBib("./visu.bib", check = FALSE)
 
 - [Leaflet introduction](https://rstudio.github.io/leaflet/)
 
+---
+
 # Drawing a simple map with ggmap
 
 Get free maps thanks to  OpenStreetMap through the `osmdata` package  ( [vignette available](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html) )
