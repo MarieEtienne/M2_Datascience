@@ -8,27 +8,21 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: mpetienne/r-courses:0.30
 
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: brew install gdal geos udunits gifski pandoc-citeproc imagemagick
-      - uses: r-lib/actions/setup-r@master
       - name: Install R packages
         run: |
           install.packages("remotes")
           install.packages(c("devtools","plotly","ggpubr","gifski"))
-          install.packages(c("tidyverse","magick","gganimate","GGally","sf", "ggfortify"))
+          install.packages(c("ggfortify"))
           install.packages('maps')
-          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata","rgeos", "ggpubr", "car", "emmeans"))
-          install.packages(c("kableExtra", 'flexdashboard', 'plotly'))
-          remotes::install_github("ropensci/RefManageR")
-          remotes::install_github("yihui/xaringan")
-          remotes::install_github("gadenbuie/xaringanExtra")
-          remotes::install_github("EvaMaeRey/flipbookr")
+          install.packages(c("wesanderson","ggmap","rnaturalearth","rnaturalearthdata"))
+          install.packages(c("kableExtra", 'flexdashboard'))
           remotes::install_github("ropensci/osmdata")
-          remotes::install_github("allisonhorst/palmerpenguins")
           remotes::install_github("MarieEtienne/coursesdata")
           install.packages("leaflet")
 
