@@ -13,7 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
       - name: Install R packages
         run: |
           install.packages("remotes")
