@@ -33,7 +33,6 @@ library(tidyverse)
 library(ggplot2)
 library(sf)
 library(plotly)
-source(paste0(params$setup_path, "knitr_setup.R"))
 ```
 
 Column {data-width=650}
@@ -48,10 +47,14 @@ Column {data-width=650}
 
 The [flexdashboard website](https://rmarkdown.rstudio.com/flexdashboard/index.html) provides multiple advanced examples.
 
-### Some static maps
+### un graphique simple
 
-```{r info_shp_dpt, child='childs/map_child.Rmd', eval = TRUE,  message = FALSE, warning=FALSE}
+```{r graph_dta}
+
+
 ```
+
+
 
 
 
